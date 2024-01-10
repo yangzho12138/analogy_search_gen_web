@@ -15,7 +15,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.urls import include
+from django.urls import re_path as url
+from django.utils.translation import gettext as _
+
+
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
+    url(r"^", include("analogy.urls")),
+    # path("admin/", admin.site.urls),
 ]
