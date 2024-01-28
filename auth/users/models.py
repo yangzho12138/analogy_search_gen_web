@@ -9,13 +9,32 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return self.email
+    class Meta:
+        db_table = 'auth_customer'
 
-# class Logs(models.Model):
-#     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-#     # search/generate
-#     type = models.CharField(max_length=50)
+class GenLog(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    prompt = models.CharField(max_length=1000)
+    target = models.CharField(max_length=100)
+    src = models.CharField(max_length=100)
+    temp = models.FloatField()
+    freq_penalty = models.FloatField()
+    pres_penalty = models.FloatField()
+    max_length = models.IntegerField()
+    top_p = models.FloatField()
+    best_of = models.IntegerField()
+    analogy = models.CharField(max_length=1000)
 
-#     created_at = models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        return self.analogy
 
-#     def __str__(self):
-#         return self.log
+class SearchLog(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    query = models.CharField(max_length=1000)
+    # remove stop words - words used to do search in ES
+    analogies = models.CharField(max_length=1000)
+
+    def __str__(self):
+        return self.query

@@ -1,0 +1,4 @@
+django_redis
+openai
+celery
+mysqlclient
