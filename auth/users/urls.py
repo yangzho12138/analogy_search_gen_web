@@ -10,7 +10,7 @@ from rest_framework_simplejwt.views import (
 )
 
 urlpatterns = [
-    url(r'^api/users/login', SignUpView.as_view()),
+    url(r'^api/users/sign', SignUpView.as_view()),
     url(r'^api/users/info', InfoView.as_view()),
     url(r'^api/users/genLogs', GenLogView.as_view()),
     url(r'^api/users/passwordReset', PasswordResetView.as_view()),

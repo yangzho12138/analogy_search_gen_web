@@ -2,6 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django.core.mail import send_mail
+from rest_framework import status
 
 # from django.contrib.auth.models import User
 from .models import CustomUser as User
@@ -10,90 +11,90 @@ from .models import CustomUser as User
 class SignUpView(APIView):  
     # sign up
     def post(self, request):
-        data = request.POST
-        username = data.get("username", "").strip()
-        email = data.get("email", "").strip()
-        password = data.get("password", "").strip()
-        confirmedPassword = data.get("confirmedPassword", "").strip()
+        username = request.data.get("username", "").strip()
+        email = request.data.get("email", "").strip()
+        password = request.data.get("password", "").strip()
+        confirmedPassword = request.data.get("confirmedPassword", "").strip()
+        errors = []
         if not username or not password or not confirmedPassword or not email:
-            return Response({
-                'status': 400,
-                'message': 'please fill all the fields'
-            })
+            errors.append('please fill all the fields')
         if password != confirmedPassword:
-            return Response({
-                'status': 400,
-                'message': 'the password entered twice must be the same'
-            })
+            errors.append('the password entered twice must be the same')
         if User.objects.filter(email=email).exists():
-            return Response({
-                'status': 400,
-                'message': 'the email already exists'
-            })
+            errors.append('the email already exists')
         if User.objects.filter(username=username).exists():
-            return Response({
-                'status': 400,
-                'message': 'the username already exists'
-            })
+            errors.append('the username already exists')
+        
+        if len(errors) > 0:
+            return Response(
+                status=status.HTTP_400_BAD_REQUEST,
+                data={
+                    'errors': errors
+                }
+            )
         user = User(username=username, email=email)
         user.set_password(password)
         user.save()
 
-        # synchronize user info to gen system
-        # create_user.delay({
-        #     'username': username,
-        #     'email': email
-        # })
-
-        return Response({
-            'status': 201,
-            'message': 'register success',
-            'data': {
-                'username': username,
-                'email': email
+        return Response(
+            status=status.HTTP_201_CREATED,
+            data={
+                'message': 'success',
+                'data': {
+                    'username': username,
+                    'email': email
+                }
             }
-        })
+        )
     
     # change/update info
     def put(self, request):
-        data = request.PUT
-        email = data.get("email", "").strip()
-        password = data.get("password", "").strip()
-        newPassword = data.get("newPassword", "").strip()
+        email = request.data.get("email", "").strip()
+        password = request.data.get("password", "").strip()
+        newPassword = request.data.get("newPassword", "").strip()
         user = User.objects.get(email=email)
         if not user.exists():
-            return Response({
-                'status': 400,
-                'message': 'the user does not exist'
-            })
+            return Response(
+                status=status.HTTP_400_BAD_REQUEST,
+                data={
+                    'errors': ['the user does not exist']
+                }
+            )
         if not user.check_password(password):
-            return Response({
-                'status': 400,
-                'message': 'the old password is incorrect'
-            })
+            return Response(
+                status=status.HTTP_400_BAD_REQUEST,
+                data={
+                    'errors': ['the old password is incorrect']
+                }
+            )
         user.set_password(newPassword)
         user.save()
-        return Response({
-            'status': 200,
-            'message': 'change password success'
-        })
+        return Response(
+            status=status.HTTP_200_OK,
+            data={
+                'message': 'change password success'
+            }
+        )
 
 class PasswordResetView(APIView):
     def post(self, request):
-        data = request.POST
-        email = data.get("email", "").strip()
+        email = request.data.get("email", "").strip()
         # generate in the frontend
-        newPassword = data.get("newPassword", "").strip()
+        newPassword = request.data.get("newPassword", "").strip()
         if not email:
-            return Response({
-                'status': 400,
-                'message': 'please fill all the fields'
-            })
+            return Response(
+                status=status.HTTP_400_BAD_REQUEST,
+                data={
+                    'errors': ['please fill all the fields']
+                }
+            )
         if not User.objects.filter(email=email).exists():
-            return Response({
-                'status': 400,
-                'message': 'the email does not exist'
-            })
+            return Response(
+                status=status.HTTP_400_BAD_REQUEST,
+                data={
+                    'errors': ['the email does not exist']
+                }
+            )
         user = User.objects.get(email=email)
         # send email
         send_mail(
@@ -103,23 +104,27 @@ class PasswordResetView(APIView):
             [email],  # receiver
             fail_silently=False,
         )
-        return Response({
-            'status': 200,
-            'message': 'send email success'
-        })
+        return Response(
+            status=status.HTTP_200_OK,
+            data={
+                'message': 'send email success'
+            }
+        )
     
 class InfoView(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request):
         user = request.user
-        return Response({
-            'status': 200,
-            'message': 'success',
-            'data': {
-                'username': user.username,
-                'email': user.email
+        return Response(
+            status=status.HTTP_200_OK,
+            data={
+                'message': 'success',
+                'data': {
+                    'username': user.username,
+                    'email': user.email
+                }
             }
-        })
+        )
     
 class GenLogView(APIView):
     permission_classes = [IsAuthenticated]
@@ -139,10 +144,12 @@ class GenLogView(APIView):
             'best_of': log.best_of,
             'analogy': log.analogy
         } for log in logs]
-        return Response({
-            'status': 200,
-            'message': 'success',
-            'data': {
-                'logs': logs
+        return Response(
+            status=status.HTTP_200_OK,
+            data={
+                'message': 'success',
+                'data': {
+                    'logs': logs
+                }
             }
-        })
+        )
