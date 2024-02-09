@@ -1,141 +1,123 @@
 import { Card, Tabs, Tab, Form, Row, Col, InputGroup, Button } from "react-bootstrap"
 import { useState } from "react"
+import Router from "next/router"
 import useRequest from "../hooks/use-request";
+import Modals from "../components/Modal";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
+
+const prompts = [
+    'P1: Explain <target> using an analogy.',
+    'P2: Create an analogy to explain <target>.',
+    'P3: Using an analogy, explain <target>.',
+    'P4: What analogy is used to explain <target>?',
+    'P5: Use an analogy to explain <target>.'
+]
+
+const temps = [
+    '0.0',
+    '0.1',
+    '0.2',
+    '0.3',
+    '0.4',
+    '0.5',
+    '0.6',
+    '0.7',
+    '0.8',
+    '0.9',
+    '1.0'
+]
 
 export default () => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [confirmedPassword, setConfirmedPassword] = useState('');
-    const [error, setError] = useState(false);
 
-    const handleSignIn = (e) => {
-        e.preventDefault();
-        console.log('sign in');
+    const [searchText, setSearchText] = useState('')
+    const [prompt, setPrompt] = useState('')
+    const [temp, setTemp] = useState('')
+
+    const [searchResults, setSearchResults] = useState(null)
+    
+    const doSearch = () => {
+
     }
-
-    const handleSignUp = (e) => {
-        e.preventDefault();
-        console.log('sign up');
-    }
-
     return (
-        <div>
-            <div
-            style={{
-                position: 'absolute',
-                height: '100vh',
-                width: '100vw',
-                backgroundImage: 'url("https://bgsauiuc.files.wordpress.com/2020/07/763-1.jpg?w=736")',
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                filter: 'blur(8px)',
-                zIndex: '-1',
-            }}>
-            </div>
+        <div style={{marginTop: "3%"}}>
             <Row>
-                <Col md="6">
-                    <Card style={{width: '40%', marginLeft: '10%', marginTop: '10%', position: 'absolute'}}>
-                        <Tabs>
-                            <Tab eventKey="signin" title="Sign In">
-                                <Form onSubmit={handleSignIn} style={{margin: "5%"}}>
-                                    <Row>
-                                        <Form.Group as={Col} md="12" controlId="email">
-                                            <Form.Label>Email</Form.Label>
-                                            <InputGroup>
-                                                <InputGroup.Text id="inputGroupPrepend">@</InputGroup.Text>
-                                                <Form.Control
-                                                    type="text"
-                                                    placeholder="Email"
-                                                    aria-describedby="inputGroupPrepend"
-                                                    required
-                                                    value = {email}
-                                                    onChange={(e) => setEmail(e.target.value)}
-                                                />
-                                            </InputGroup>
-                                        </Form.Group>
-                                    </Row>
-                                    <br />
-                                    <Row>
-                                        <Form.Group as={Col} md="12" controlId="password">
-                                            <Form.Label>Password</Form.Label>
-                                            <Form.Control
-                                                type="password"
-                                                placeholder="Password"
-                                                required
-                                                value = {password}
-                                                onChange={(e) => setPassword(e.target.value)}
-                                            />
-                                        </Form.Group>
-                                    </Row>
-                                    <br />
-                                    <Button type="submit" variant="primary">Sign In</Button>
-                                </Form>
-                            </Tab>
-                            <Tab eventKey="signup" title="Sign Up">
-                                <Form onSubmit={handleSignUp} style={{margin: "5%"}}>
-                                    <Row>
-                                        <Form.Group as={Col} md="12" controlId="email">
-                                            <Form.Label>Email</Form.Label>
-                                            <InputGroup>
-                                                <InputGroup.Text id="inputGroupPrepend">@</InputGroup.Text>
-                                                <Form.Control
-                                                    type="text"
-                                                    placeholder="Email"
-                                                    aria-describedby="inputGroupPrepend"
-                                                    required
-                                                    value = {email}
-                                                    onChange={(e) => setEmail(e.target.value)}
-                                                />
-                                            </InputGroup>
-                                        </Form.Group>
-                                    </Row>
-                                    <br />
-                                    <Row>
-                                        <Form.Group as={Col} md="12" controlId="password">
-                                            <Form.Label>Password</Form.Label>
-                                            <Form.Control
-                                                type="password"
-                                                placeholder="Password"
-                                                required
-                                                value = {password}
-                                                onChange={(e) => setPassword(e.target.value)}
-                                            />
-                                        </Form.Group>
-                                    </Row>
-                                    <br />
-                                    <Row>
-                                        <Form.Group as={Col} md="12" controlId="confirmedPassword">
-                                            <Form.Label>Confirmed Password</Form.Label>
-                                            <Form.Control
-                                                type="password"
-                                                placeholder="Confirmed Password"
-                                                required
-                                                value = {confirmedPassword}
-                                                onChange={(e) => setConfirmedPassword(e.target.value)}
-                                            />
-                                        </Form.Group>
-                                    </Row>
-                                    <br />
-                                    <Button type="submit" variant="primary">Sign Up</Button>
-                                </Form>
-                            </Tab>
-                        </Tabs>
-                    </Card>
+                <Col md={3} className="text-center">
+                    Analego Logo
                 </Col>
-                <Col md="6">
-                    <div style={{margin: '10%', marginTop: "20%", color: 'white'}}>
-                        <h1>Ananogy</h1>
+                <Col md={6}>
+                    <Form onSubmit={doSearch}>
+                        <Row>
+                            <Form.Group as={Col} md="8" controlId="searchText">
+                                <InputGroup>
+                                    <InputGroup.Text id="inputGroupPrepend"><FontAwesomeIcon icon={faMagnifyingGlass} /></InputGroup.Text>
+                                        <Form.Control
+                                            type="text"
+                                            placeholder="Search your analogy ..."
+                                            aria-describedby="inputGroupPrepend"
+                                            required
+                                            value = {searchText}
+                                            onChange={(e) => setSearchText(e.target.value)}
+                                    />
+                                </InputGroup>
+                            </Form.Group>
+                            <Col md="2">
+                                <Button type="submit" variant="primary">Search</Button>
+                            </Col>
+                        </Row>
                         <br />
-                        <h3>a comparison between two things, typically for the purpose of explanation or clarification</h3>
-                        <br />
-                        <h3 style={{float: "right"}}>-- Oxford Language</h3>
-                    </div>
+                        <Row>
+                            <Col md="4">
+                                <Form.Select
+                                    value={prompt}
+                                    onChange={(e) => setPrompt(e.target.value)}
+                                >
+                                    <option>Prompt...</option>
+                                    {prompts.map((prompt, index) => {
+                                        return <option key={index} value={prompt}>{prompt}</option>
+                                    })}
+                                </Form.Select>
+                            </Col>
+                            <Col md="4">
+                                <Form.Select
+                                    value={temp}
+                                    onChange={(e) => setTemp(e.target.value)}
+                                >
+                                    <option>Temperature...</option>
+                                    {temps.map((temp, index) => {
+                                        return <option key={index} value={temp}>{temp}</option>
+                                    })}
+                                </Form.Select>
+                            </Col>
+                        </Row>
+                    </Form>
+                </Col>
+                <Col md={3}>
+                    <Button variant="primary" onClick={() => Router.push('/login')}>Generate Analogies</Button>
                 </Col>
             </Row>
+            <br />
             <Row>
-                <Col md="12" style={{textAlign: 'center', color: 'white'}}>
-                    <h1 style={{position: "absolute", bottom: '10%', marginLeft: '30%', width: '40%'}}>Let's Build Analogy!</h1>
-               </Col>
+                <Card style={{margin: '2%'}}>
+                    <Card.Body style={{height: '70vh'}}>
+                        {searchResults == null || searchResults == [] ? (
+                            <div style={{height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: 'grey'}}>
+                                <h1>Oops, No Analogy Found ...</h1>
+                                <h3>Search Again or Generate Analogy</h3>
+                            </div>
+                        ) : (
+                            <>
+                                {searchResults.map((result, index) => {
+                                    return (
+                                        <Card key={index} style={{margin: '1%'}}>
+                                            
+                                        </Card>
+                                    )
+                                })}
+                            </>
+                        )}
+                    </Card.Body>
+                </Card>
             </Row>
         </div>
     )
