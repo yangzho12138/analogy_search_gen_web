@@ -5,10 +5,15 @@ from rest_framework.views import APIView
 # Connect to ES                                            
 
 class SearchView(APIView):
-    # get all the search results
+    # get all the results
     def get(self, request):
         pass
 
     # search for a specific result
+    def post(self, request):
+        pass
+
+class LikeView(APIView):
+    # click on like/dislike
     def post(self, request):
         pass
