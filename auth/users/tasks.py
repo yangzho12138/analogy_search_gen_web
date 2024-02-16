@@ -1,5 +1,5 @@
 from auth.celery import app
-from .models import GenLog, CustomUser as User
+from .models import GenLog, CustomUser as User, Issue
 from celery.utils.log import get_task_logger
 
 logger = get_task_logger(__name__)
@@ -30,4 +30,13 @@ def generate_log(generation_log):
     )
     gen_log.save()
     return generation_log
+
+@app.task(name='auth.users.tasks.analogy_issue')
+def analogy_issue(issue):
+    logger.info('produce_analogy_issue', issue)
+    issue = Issue.objects.get(id=issue['id'])
+    issue.solved = True
+    issue.save()
+    return issue
+    
 
