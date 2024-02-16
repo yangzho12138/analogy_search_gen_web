@@ -2,7 +2,7 @@ import { Card, Tabs, Tab, Form, Row, Col, InputGroup, Button } from "react-boots
 import { useEffect, useState } from "react"
 import Router from "next/router"
 import useRequest from "../hooks/use-request";
-import Modals from "../components/Modal";
+import Modal from "../components/Modal";
 
 const auth_url = process.env.NEXT_PUBLIC_AUTH_BASE_URL;
 
@@ -12,7 +12,7 @@ const LoginPage = () => {
     const [confirmedPassword, setConfirmedPassword] = useState('');
     const [username, setUsername] = useState('');
 
-    let { doRequest : doRequestSignUp, errors : signUpError } = useRequest({
+    const { doRequest : doRequestSignUp, errors : signUpError } = useRequest({
         url: auth_url + '/api/users/signup',
         method: 'post',
         body: {
@@ -24,15 +24,43 @@ const LoginPage = () => {
         } 
     });
 
-    let { doRequest : doRequestSignIn, errors : signInError } = useRequest({
+    const { doRequest : doRequestSignIn, errors : signInError } = useRequest({
         url: auth_url + '/api/users/token',
         method: 'post',
         body: {
             username, password
         },
         onSuccess: (data) => {
-            console.log(data);
+            // console.log(data);
+            // // store token
+            // const now = new Date();
+            // const expiration = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+            // data.expiration = expiration.getTime();
+            // localStorage.setItem('token', JSON.stringify(data));
             Router.push('/');
+        }
+    });
+
+    function generatePassword(length) {
+        const charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        let password = "";
+        for (let i = 0; i < length; i++) {
+            const randomIndex = Math.floor(Math.random() * charset.length);
+            password += charset[randomIndex];
+        }
+        return password;
+    }
+
+    const { doRequest : doRequestPasswordReset, errors : passwordResetError } = useRequest({
+        url: auth_url + '/api/users/passwordReset',
+        method: 'post',
+        body: {
+            email,
+            newPassword: generatePassword(8)
+        },
+        onSuccess: (data) => {
+            window.alert('Password Reset Success, please check your email for new password');
+            closeModal();
         }
     });
 
@@ -44,24 +72,24 @@ const LoginPage = () => {
     const handleSignIn = async(e) => {
         e.preventDefault();
         await doRequestSignIn();
-        console.log('sign in');
+        // console.log('sign in');
     }
 
     const handleSignUp = async(e) => {
         e.preventDefault();
         await doRequestSignUp();
-        console.log('sign up');
+        // console.log('sign up');
     }
 
-    const handlePasswordReset = (e) => {
+    const handlePasswordReset = async(e) => {
         e.preventDefault();
-        console.log('password reset');
         openModal();
     }
 
     const handlePasswordResetEmail = (e) => {
         e.preventDefault();
-        console.log('password reset email');
+        doRequestPasswordReset();
+        // console.log('password reset email');
     }
 
     const handleTrySearch = (e) => {
@@ -81,9 +109,16 @@ const LoginPage = () => {
         }
     }, [signInError]);
 
+    useEffect(() => {
+        if(passwordResetError){
+            setErrors(passwordResetError);
+        }
+    }
+    , [passwordResetError]);
+
     return (
         <div>
-            <Modals isOpen={isModalOpen} onClose={closeModal}>
+            <Modal isOpen={isModalOpen} onClose={closeModal}>
                 <Form onSubmit={handlePasswordResetEmail} style={{margin: "5%"}}>
                     <Row>
                         <Form.Group as={Col} md="12" controlId="email_reset">
@@ -104,13 +139,13 @@ const LoginPage = () => {
                     <br />
                     <Button type="submit" variant="primary">Send Password Reset Email</Button>
                 </Form>
-            </Modals>
+            </Modal>
             {errors && (
-                <Modals isOpen={true} onClose={() => {
+                <Modal isOpen={true} onClose={() => {
                     setErrors(null);
                 }}>
                     {errors}
-                </Modals>
+                </Modal>
             )}
             <div className="index_background">
             </div>
@@ -121,17 +156,16 @@ const LoginPage = () => {
                             <Tab eventKey="signin" title="Sign In">
                                 <Form onSubmit={handleSignIn} style={{margin: "5%"}}>
                                     <Row>
-                                        <Form.Group as={Col} md="12" controlId="email">
-                                            <Form.Label>Email</Form.Label>
+                                        <Form.Group as={Col} md="12" controlId="username">
+                                            <Form.Label>Username</Form.Label>
                                             <InputGroup>
-                                                <InputGroup.Text id="inputGroupPrepend">@</InputGroup.Text>
                                                 <Form.Control
                                                     type="text"
-                                                    placeholder="Email"
+                                                    placeholder="Username"
                                                     aria-describedby="inputGroupPrepend"
                                                     required
-                                                    value = {email}
-                                                    onChange={(e) => setEmail(e.target.value)}
+                                                    value = {username}
+                                                    onChange={(e) => setUsername(e.target.value)}
                                                 />
                                             </InputGroup>
                                         </Form.Group>
@@ -188,7 +222,7 @@ const LoginPage = () => {
                                                 <Form.Label>Username</Form.Label>
                                                 <Form.Control
                                                     type="text"
-                                                    placeholder="username"
+                                                    placeholder="Username"
                                                     required
                                                     value = {username}
                                                     onChange={(e) => setUsername(e.target.value)}
@@ -228,6 +262,12 @@ const LoginPage = () => {
                                 </Form>
                             </Tab>
                         </Tabs>
+                        <div style={{marginLeft: '5%', marginBottom: '5%'}}>
+                            <h5>Why Subscription</h5>
+                            <li>Create your own analogy and share with the community </li>
+                            <li>Track your search history and generation history </li>
+                            <li>More fun waiting for you to discover ... </li>
+                        </div>
                     </Card>
                 </Col>
                 <Col md="6">

@@ -25,6 +25,8 @@ const Modal = ({ isOpen, onClose, children }) => {
                     background: white;
                     padding: 20px;
                     border-radius: 4px;
+                    max-height: 80vh;
+                    overflow: auto;
                 }
                 .close-button {
                     position: absolute;

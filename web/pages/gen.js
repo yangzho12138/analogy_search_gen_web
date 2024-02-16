@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
 import { Card, Form, Row, Col, Button, Tooltip, OverlayTrigger } from "react-bootstrap"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCircleQuestion } from '@fortawesome/free-solid-svg-icons'
+import { faCircleQuestion, faUser, faRightFromBracket } from '@fortawesome/free-solid-svg-icons'
+import Link from '../components/Link'
+import Router from "next/router"
+import useRequest from '../hooks/use-request'
 
+const auth_url = process.env.NEXT_PUBLIC_AUTH_BASE_URL;
 
 const gen_prompts = [
     'What analogy is used to explain <target>?',
@@ -23,22 +27,16 @@ const link_title = {
     "openAIKey": "If you don't have one, you can leave it blank and we will provide one for you.",
     "target": "The concept that you would like to generate an analogy for (e.g. cell).",
     "src": "The topic area that you would like the analogy to be about",
-    "prompt": "Prompt",
-    "tmp": "Randomness",
-    "max_length": "Maxium Length",
-    "top_p": "Top P",
-    "freq_penalty": "Frequency Penalty",
-    "pres_penalty": "Presence Penalty",
-    "best_of": "Best Of"
+    "prompt": "Select the prompt or instruction given to the model for generating the analogy ",
+    "tmp": "Loweing results in less ramdom completions. As randomness approaches zero, the model will become deterministic and repetitive",
+    "max_length": "The maximum number of tokens to generate shared between the prompt and the completion",
+    "top_p": "Controls diversity vai nucleus sampling: 0.5 means half of all likelihood-weighted options are considered",
+    "freq_penalty": "How much to penalize new tokens based on their frequency in the text so far. Decreases the likelihood to repeat the same line verbatim",
+    "pres_penalty": "How much to penalize new tokens based on whether they appear in the text so far. Increases the likelihood to talk about new topics",
+    "best_of": "Returns the 'best' (the one with the highest log probability per token)"
 }
 
 const GenPage = () => {
-    const Link = ({ id, children, title }) => (
-        <OverlayTrigger overlay={<Tooltip id={id}>{title}</Tooltip>}>
-          {children}
-        </OverlayTrigger>
-      );
-
     const [openAIKey, setOpenAIKey] = useState("");
     const [target, setTarget] = useState("");
     const [src, setSrc] = useState("");
@@ -50,7 +48,7 @@ const GenPage = () => {
     const [pres_penalty, setPresPenalty] = useState(0.0);
     const [best_of, setBestOf] = useState(1);
 
-    const [generateResult, setGenerateResult] = useState("dcbuasvcahsvcweivwehcbqkcjbqkcbjqwcwejbjqhcvajsvchasjvchascvahsca");
+    const [generateResult, setGenerateResult] = useState(null);
 
     const [searchQuery, setSearchQuery] = useState('');
     const [options] = useState(gen_prompts);
@@ -64,10 +62,31 @@ const GenPage = () => {
     const saveAnalogy = () => {
     }
 
+    const { doRequest : doRequestLogOut, errors : logOutError } = useRequest({
+        url: auth_url + '/api/users/logout',
+        method: 'post',
+        onSuccess: (data) => {
+            window.alert('Log Out Success');
+        } 
+    });
+
+    const logout = async(e) => {
+        e.preventDefault();
+        await doRequestLogOut();
+        Router.push('/');
+    }
+
     return (
         <div style={{margin: "3%"}}>
-            <Row>
-
+            <Row style={{margin: '5%'}}>
+                <Col md={8}>
+                    <h1>Generate Analogy</h1>
+                </Col>
+                <Col md={4} className="d-flex align-items-center justify-content-end">
+                    <Button variant="primary" onClick={() => Router.push('/')}>Search Analogies</Button>
+                    <Link title='User profile' ><FontAwesomeIcon icon={faUser} size='xl' style={{marginLeft: '10%'}} onClick={() => Router.push('/profile')}/></Link>
+                    <Link title='Log out' ><FontAwesomeIcon icon={faRightFromBracket} size='xl' style={{marginLeft: '5%'}} onClick={logout}/></Link>
+                </Col>
             </Row>
             <Card style={{margin: '5%'}}>
                 <Card.Body>

@@ -37,3 +37,12 @@ input[type='range']::-webkit-slider-thumb {
     cursor: pointer;
     border: none;
 }
+
+.table-cell {
+    height: 10%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 0;
+  }
+  
