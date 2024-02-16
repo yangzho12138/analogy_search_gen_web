@@ -3,9 +3,14 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django.core.mail import send_mail
 from rest_framework import status
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 # from django.contrib.auth.models import User
-from .models import CustomUser as User
+from .models import CustomUser as User, Issue
+
+from .authentication import CookieJWTAuthentication
+
+admin_email = []
 
 # Create your views here.
 class SignUpView(APIView):  
@@ -76,6 +81,20 @@ class SignUpView(APIView):
             }
         )
 
+class LogOutView(APIView):
+    authentication_classes = (CookieJWTAuthentication,)
+    permission_classes = [IsAuthenticated]
+    def post(self, request):
+        response = Response(
+            status=status.HTTP_200_OK,
+            data={
+                'message': 'success'
+            }
+        )
+        response.delete_cookie('access_token')
+        response.delete_cookie('refresh_token')
+        return response
+
 class PasswordResetView(APIView):
     def post(self, request):
         email = request.data.get("email", "").strip()
@@ -104,6 +123,10 @@ class PasswordResetView(APIView):
             [email],  # receiver
             fail_silently=False,
         )
+
+        user.set_password(newPassword)
+        user.save()
+
         return Response(
             status=status.HTTP_200_OK,
             data={
@@ -112,6 +135,7 @@ class PasswordResetView(APIView):
         )
     
 class InfoView(APIView):
+    authentication_classes = (CookieJWTAuthentication,)
     permission_classes = [IsAuthenticated]
     def get(self, request):
         user = request.user
@@ -127,6 +151,7 @@ class InfoView(APIView):
         )
     
 class GenLogView(APIView):
+    authentication_classes = (CookieJWTAuthentication,)
     permission_classes = [IsAuthenticated]
     def get(self, request):
         user = request.user
@@ -153,3 +178,97 @@ class GenLogView(APIView):
                 }
             }
         )
+
+class SearchLogView(APIView):
+    authentication_classes = (CookieJWTAuthentication,)
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        user = request.user
+        logs = user.searchlog_set.all()
+        logs = [{
+            'created_at': log.created_at.strftime("%Y-%m-%d %H:%M:%S"),
+            'query': log.query,
+            'analogies': log.analogies
+        } for log in logs]
+        return Response(
+            status=status.HTTP_200_OK,
+            data={
+                'message': 'success',
+                'data': {
+                    'logs': logs
+                }
+            }
+        )
+
+class FlagAnalogyView(APIView):
+    def post(self, request):
+        # generate check log for admin
+        analogy = request.data.get("analogy", None)
+        issue = request.data.get("issue", "").strip()
+        comment = request.data.get("comment", "").strip()
+        issue = Issue(
+            user = request.user,
+            issue=issue,
+            comment=comment,
+            pid = analogy.pid,
+            target = analogy.target,
+            prompt = analogy.prompt,
+            analogy = analogy.analogy
+        )
+        issue.save()
+        
+        # send email to admin
+        send_mail(
+            'Analogy Issue Reported',  # subject
+            'There is an issue waiting for processing, id: ' + issue.id + ', issue: ' + issue.issue,  # message
+            'Analego',  # sender
+            admin_email,  # receiver
+            fail_silently=False,
+        )
+        return Response(
+            status=status.HTTP_201_CREATED,
+            data={
+                'message': 'success'
+            }
+        )
+
+# customize token framework to store token in cookie
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+        # print("checkpoint", user)
+        token['username'] = user.username
+
+        return token
+    
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
+    def post(self, request, *args, **kwargs):
+        response = super().post(request, *args, **kwargs)
+            
+        if response.status_code == 200:
+            access_token = response.data['access']
+            refresh_token = response.data['refresh']
+
+            response.set_cookie(
+                'access_token',
+                access_token,
+                httponly=True,  # can not be accessed by JavaScript
+                samesite='Lax',  # CSRF
+                # secure=True,  # HTTPS
+                max_age=60 * 60 * 24,  # 1 day
+            )
+                
+            response.set_cookie(
+                'refresh_token',
+                refresh_token,
+                httponly=True,
+                samesite='Lax',  # CSRF
+                # secure=True,
+                max_age=60 * 60 * 24,  # 1 day
+            )
+            
+        return response
