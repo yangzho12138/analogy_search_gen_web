@@ -1,4 +1,5 @@
 */node_modules
 */.next
 */__pycache__
-./search/search/venv/*
+search/search/venv/
+search/search/elasticsearch-8.12.1/
