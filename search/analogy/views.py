@@ -70,7 +70,29 @@ class SearchView(APIView):
             docs.append(doc['_source'])
 
         return Response({"docs": docs})
-        
+class LikeView(APIView):
+    def post(self, request, format=None):
+        # Parse the request data
+        data = request.data
+        id = data.get('id')
+        likeType = data.get('likeType')
+        likeTimes = int(data.get('likeTimes', 0))
+        cancel = data.get('cancel', False)
+
+        # Determine the increase value based on 'cancel' flag
+        increase = -1 if cancel else 1
+
+        try:
+            # Perform the update operation in Elasticsearch
+            es = Elasticsearch("http://localhost:9200")
+            es.update(index=index, id=id, body={
+                "doc": {
+                    likeType: likeTimes + increase
+                }
+            })
+            return Response({"success": True})
+        except Exception as e:
+            return Response({"success": False, "error": str(e)})
 
 # class SearchView(APIView):
 #     def get(self, request, format=None):
