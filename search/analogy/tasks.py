@@ -1,25 +1,79 @@
-from auth.celery import app
-from .models import SearchLog, CustomUser as User
-from celery.utils.log import get_task_logger
+from search.celery import app
+from elasticsearch import Elasticsearch
+from elasticsearch.helpers import bulk
+import redis
+import json
 
-logger = get_task_logger(__name__)
+r = redis.Redis(host='localhost', port=6379, db=1)
+es = Elasticsearch("http://localhost:9200")
+index = 'sci_ranked'
 
-# @app.task(name='auth.users.tasks.create_user')
-# def create_user(user_data):
-#     print('produce_user_created', user_data)
-#     return user_data
+@app.task
+def get_data_from_redis():
+    # check generated analogy
+    try:
+        # Check generated analogy
+        gen_analogies = r.lrange('generationAnalogy', 0, -1)
+        gen_analogies = [json.loads(analogy) for analogy in gen_analogies]
 
-# @app.task(name='search.analogy.tasks.generate_search_log')
-# def generate_search_log(search_log):
-#     logger.info('produce_search_log', search_log)
-#     # store data into database
-#     user = User.objects.get(username=search_log['username'])
-#     ser_log = SearchLog(
-#         user=user,
-#         created_at=search_log['created_at'],
-#         query=search_log['query'],
-#         analogies=search_log['analogies']
-#     )
-#     ser_log.save()
-#     return search_log
+        # Store analogy into es
+        bulk_actions = []
+        for gen_analogy in gen_analogies:
+            bulk_actions.append({
+                "_op_type": "index",
+                "_index": index,
+                "_source": gen_analogy
+            })
+
+        if bulk_actions:
+            bulk(es, bulk_actions)
+
+    except Exception as e:
+        return {
+            'status': 400,
+            'message': 'Storing analogies failed',
+            'data': {
+                'Storing analogy error': str(e)
+            }
+        }
+
+
+    try:
+        # Check delete analogy
+        del_analogies = r.lrange('deleteAnalogy', 0, -1)
+        del_analogies = [json.loads(analogy) for analogy in del_analogies]
+
+        # Delete analogy from es
+        for del_analogy in del_analogies:
+            es.delete(index=index, id=del_analogy["_id"]) # What id should be used to delete the analogy from the elasticsearch index?
+
+    except Exception as e:
+        return {
+            'status': 400,
+            'message': 'Deleting analogies failed',
+            'data': {
+                'Deleting analogy error': str(e)
+            }
+        }
+
+
+    try:
+        # Check update analogy
+        update_analogies = r.lrange('updateAnalogy', 0, -1)
+        update_analogies = [json.loads(analogy) for analogy in update_analogies]
+
+        # Update analogy into es
+        for update_analogy in update_analogies:
+            es.update(index=index, id=update_analogy["_id"], body={"doc": update_analogy}) # What id should be used to update the analogy in the elasticsearch index?
+
+        return 'Data fetched from redis'
+
+    except Exception as e:
+        return {
+            'status': 400,
+            'message': 'Updating analogies failed',
+            'data': {
+                'Updating analogy error': str(e)
+            }
+        }
 

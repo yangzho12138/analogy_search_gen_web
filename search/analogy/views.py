@@ -5,8 +5,6 @@ from rest_framework import status
 import nltk
 import os
 import json
-# from nltk.tokenize import word_tokenize
-# from nltk.corpus import stopwords
 nltk.download('stopwords')
 nltk.download('punkt')
 from nltk.corpus import stopwords
