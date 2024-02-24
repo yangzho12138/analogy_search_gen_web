@@ -92,49 +92,111 @@ class LikeView(APIView):
         except Exception as e:
             return Response({"success": False, "error": str(e)})
 
-# class SearchView(APIView):
-#     def get(self, request, format=None):
-#         # Elasticsearch instance hosted on a remote server
-#         client = Elasticsearch("http://localhost:9200")
+class InitView(APIView):
+    def get(self, request, format=None):
+        # Elasticsearch instance hosted on a remote server
+        client = Elasticsearch("http://localhost:9200")
 
-#         # response = client.info()
-#         # print('response =>',response)
-#         # return Response(response, status=status.HTTP_200_OK)
-#         # Document to be inserted
-#         # doc = {
-#         #     "user": "kc62",
-#         #     "created_at": "February 15, 2024",
-#         #     "query": "force",
-#         #     "analogies": "Force is like a sudden blow in a particular direction, just like a water flows in downward direction from the dam due to gravitational force"
-#         # }
+        # Index name
+        index_name = "sci_ranked"
 
-#         # Index name
-#         index_name = "sci_ranked"
-
-#         # Insert document into Elasticsearch
-#         try:
-#             client.info()
-#             client.indices.create(index=index_name)
-#             # client.index(index=index_name, id="1", document=doc)
-#             return Response({"message": "Index created successfully."})
-#         except Exception as e:
-#             return Response({"error": str(e)}, status=500)
+        # Insert document into Elasticsearch
+        try:
+            client.info()
+            client.indices.create(index=index_name)
+            return Response({"message": "Index created successfully."})
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
         
-#     def post(self, request, format=None):
-#         data = pd.read_excel('/Users/phanidatta673/Downloads/analogy_search_gen_web/search/analogy/sci_ranked.xlsx')
+    def post(self, request, format=None):
+        data = pd.read_excel('/Users/phanidatta673/Downloads/analogy_search_gen_web/search/analogy/sci_ranked.xlsx')
 
-#         # Initialize Elasticsearch client
-#         es = Elasticsearch("http://localhost:9200")
+        # Initialize Elasticsearch client
+        es = Elasticsearch("http://localhost:9200")
 
-#         # Define the Elasticsearch index name
-#         index_name = "sci_ranked"
+        # Define the Elasticsearch index name
+        index_name = "sci_ranked"
 
-#         # Function to index data into Elasticsearch
-#         def index_data(row):
-#             doc = row.to_dict()
-#             es.index(index=index_name, body=doc)
+        # Function to index data into Elasticsearch
+        def index_data(row):
+            # Calculate length of the analogy
+            analogy_len = len(row['analogy'])
 
-#         # Apply the indexing function to each row of the DataFrame
-#         data.apply(index_data, axis=1)
+            # Additional fields
+            additional_fields = {
+                "len": analogy_len,
+                "topp": 0.0,
+                "freq": 0.0,
+                "pres": 0.0,
+                "bo": 0,
+                "like": 0,
+                "dislike": 0
+            }
 
-#         return Response({"message": "Data indexed into Elasticsearch successfully."})
+            # Combine additional fields with the row data
+            doc = {**row.to_dict(), **additional_fields}
+
+            # Index the document into Elasticsearch
+            es.index(index=index_name, body=doc)
+
+        # Apply the indexing function to each row of the DataFrame
+        data.apply(index_data, axis=1)
+
+        return Response({"message": "Data indexed into Elasticsearch successfully."})
+    
+    def delete(self, request, format=None):
+        es = Elasticsearch("http://localhost:9200")
+        index_name = "sci_ranked"
+
+        if es.indices.exists(index=index_name):
+            es.indices.delete(index=index_name)
+            return Response({"message": "Index deleted successfully."})
+        else:
+            return Response({"message": "Index does not exist."}, status=404)
+
+class TestView(APIView):
+    def get(self, request, format=None):
+        # Get analogy from request parameters
+        es = Elasticsearch("http://localhost:9200")
+        analogy = "New analogy"
+
+        # Search for the document in Elasticsearch
+        try:
+            search_results = es.search(index=index, body={"query": {"match": {"analogy": analogy}}})
+            hits = search_results['hits']['hits']
+            return Response(hits)
+            
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
+        
+    def post(self, request):
+        es = Elasticsearch("http://localhost:9200")
+        
+        try:
+            # Extract ID and updated analogy field from the request data
+            analogy_id = request.data.get("id")
+            updated_analogy = request.data.get("analogy")
+
+            # Check if both ID and updated analogy field are present
+            if analogy_id and updated_analogy:
+                # Update the document in Elasticsearch with the new analogy field
+                es.update(index=index, id=analogy_id, body={"doc": {"analogy": updated_analogy}})
+                return Response({"message": "Analogies updated successfully."})
+            else:
+                return Response({"message": "ID or updated analogy field missing."}, status=400)
+
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
+        
+    def delete(self, request, format=None):
+        es = Elasticsearch("http://localhost:9200")
+        try:
+            # Extract document ID from request body
+            document_id = request.data.get('id')
+
+            # Delete document from Elasticsearch
+            es.delete(index=index, id=document_id)
+
+            return Response({"message": "Document deleted successfully."})
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)

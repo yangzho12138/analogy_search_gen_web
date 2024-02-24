@@ -19,6 +19,25 @@ def get_data_from_redis():
         # Store analogy into es
         bulk_actions = []
         for gen_analogy in gen_analogies:
+            default_values = {
+                "analogy": "",
+                "target": "",
+                "prompt": "",
+                "temp": "", #temp is float
+                "src": "",
+                "pid": "",
+                "pid_esc": "",
+                "len": 0,
+                "topp": 0.0,
+                "freq": 0.0,
+                "pres": 0.0,
+                "bo": 0,
+                "like": 0,
+                "dislike": 0
+            }
+
+            gen_analogy = {**default_values, **gen_analogy}
+
             bulk_actions.append({
                 "_op_type": "index",
                 "_index": index,
@@ -45,7 +64,7 @@ def get_data_from_redis():
 
         # Delete analogy from es
         for del_analogy in del_analogies:
-            es.delete(index=index, id=del_analogy["_id"]) # What id should be used to delete the analogy from the elasticsearch index?
+            es.delete(index=index, id=del_analogy["_id"])
 
     except Exception as e:
         return {
@@ -59,12 +78,17 @@ def get_data_from_redis():
 
     try:
         # Check update analogy
+        # only update the analogy
         update_analogies = r.lrange('updateAnalogy', 0, -1)
         update_analogies = [json.loads(analogy) for analogy in update_analogies]
 
         # Update analogy into es
         for update_analogy in update_analogies:
-            es.update(index=index, id=update_analogy["_id"], body={"doc": update_analogy}) # What id should be used to update the analogy in the elasticsearch index?
+            id = update_analogy["_id"]
+            update_fields = update_analogy["analogy"]
+
+            if id and update_fields:
+                es.update(index=index, id=id, body={"doc": {"analogy": update_fields}})
 
         return 'Data fetched from redis'
 
@@ -76,4 +100,3 @@ def get_data_from_redis():
                 'Updating analogy error': str(e)
             }
         }
-
