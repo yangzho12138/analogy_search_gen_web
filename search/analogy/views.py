@@ -2,6 +2,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from elasticsearch import Elasticsearch
 from rest_framework import status
+from elasticsearch.helpers import scan
+import io
 import nltk
 import os
 import json
@@ -100,15 +102,29 @@ class InitView(APIView):
         # Index name
         index_name = "sci_ranked"
 
-        # Insert document into Elasticsearch
+        # Define function to add temp_short field based on temp field value
+        def add_temp_short(doc):
+            if doc.get("temp") == "High Temperature":
+                doc["temp_short"] = "HT"
+            elif doc.get("temp") == "Low Temperature":
+                doc["temp_short"] = "LT"
+            else:
+                doc["temp_short"] = ""
+
+        # Search and update all documents using scroll
         try:
-            client.info()
-            client.indices.create(index=index_name)
-            return Response({"message": "Index created successfully."})
+            scan_resp = scan(client, index=index_name, query={"query": {"match_all": {}}})
+            for hit in scan_resp:
+                source = hit["_source"]
+                add_temp_short(source)
+                # Update document in Elasticsearch
+                client.index(index=index_name, id=hit["_id"], body=source)
+            return Response({"message": "Additional field 'temp_short' added successfully."})
         except Exception as e:
             return Response({"error": str(e)}, status=500)
         
     def post(self, request, format=None):
+        # Read data from analogies.xlsx file
         data = pd.read_excel('/Users/phanidatta673/Downloads/analogy_search_gen_web/search/analogy/sci_ranked.xlsx')
 
         # Initialize Elasticsearch client
@@ -119,22 +135,28 @@ class InitView(APIView):
 
         # Function to index data into Elasticsearch
         def index_data(row):
-            # Calculate length of the analogy
-            analogy_len = len(row['analogy'])
-
             # Additional fields
             additional_fields = {
-                "len": analogy_len,
-                "topp": 0.0,
-                "freq": 0.0,
+                "temp": "",
                 "pres": 0.0,
-                "bo": 0,
+                "src": "",
                 "like": 0,
-                "dislike": 0
+                "dislike": 0,
+                "freq": 0.0,
+                "pid": "",
+                "topp": 0.0,
+                "bo": 0,
+                "len": len(row['analogy']),
+                "pid_esc": "",
+                "prompt": row['prompt']
             }
 
             # Combine additional fields with the row data
-            doc = {**row.to_dict(), **additional_fields}
+            doc = {
+                "analogy": row['analogy'],
+                "target": row['target'],
+                **additional_fields
+            }
 
             # Index the document into Elasticsearch
             es.index(index=index_name, body=doc)
@@ -200,3 +222,36 @@ class TestView(APIView):
             return Response({"message": "Document deleted successfully."})
         except Exception as e:
             return Response({"error": str(e)}, status=500)
+
+from django.http import HttpResponse
+from django.views import View
+import pandas as pd
+from elasticsearch import Elasticsearch
+
+class ToexcelView(View):
+    def get(self, request):
+        # Connect to Elasticsearch
+        client = Elasticsearch("http://localhost:9200")
+
+        # Define index name
+        index_name = "sci_ranked"
+
+        # Query to retrieve all documents
+        query = {"query": {"match_all": {}}}
+
+        # Execute the search
+        search_results = client.search(index=index_name, body=query, size=10000)  # Adjust size if needed
+
+        # Extract source data from search results
+        hits = search_results["hits"]["hits"]
+        source_data = [hit["_source"] for hit in hits]
+
+        # Convert source data to DataFrame
+        df = pd.DataFrame(source_data)
+
+        # Save DataFrame to Excel file
+        excel_file_path = "/Users/phanidatta673/Downloads/analogy_search_gen_web/search/analogy/data.xlsx"  # File path for the Excel file
+        df.to_excel(excel_file_path, index=False)
+
+        return HttpResponse("Excel file has been saved to {}".format(excel_file_path))
+
