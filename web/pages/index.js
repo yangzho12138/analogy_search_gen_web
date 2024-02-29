@@ -5,9 +5,10 @@ import useRequest from "../hooks/use-request";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMagnifyingGlass, faCircleQuestion, faUser, faRightFromBracket } from '@fortawesome/free-solid-svg-icons'
 import Link from "../components/Link";
-import AnologyCard from "../components/AnologyCard";
+import AnalogyCard from "../components/AnalogyCard";
 import axios from "axios";
 import { useRouter } from "next/router";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const prompts = [
     'P1: Explain <target> using an analogy.',
@@ -37,28 +38,21 @@ const link_title = {
 }
 
 const auth_url = process.env.NEXT_PUBLIC_AUTH_BASE_URL;
+const search_url = process.env.NEXT_PUBLIC_SEAECH_BASE_URL;
 
-const HomePage = ({ userLoggedIn }) => {
+const HomePage = ({ userLoggedIn, allAnalogies }) => {
     // const [token, setToken] = useState(null)
     const router = useRouter();
 
-    const [searchText, setSearchText] = useState('')
+    const [query, setQuery] = useState('')
     const [prompt, setPrompt] = useState('')
     const [temp, setTemp] = useState('')
 
-    const [searchResults, setSearchResults] = useState([{
-        target: 'Cell',
-        prompt: 'P1: Explain <target> using an analogy.',
-        analogy: 'Figure 2 shows the analogy generation interface. Users enter their OpenAI API key, the target concept, and optionally a source domain of their interest that the analogy should be about. Additionally, we provide a list of prompts that, Figure 2 shows the analogy generation interface. Users enter their OpenAI API key, the target concept, and optionally a source domain of their interest that the analogy should be about. Additionally, we provide a list of prompts that',
-        likes: 10,
-        dislikes: 2
-    },{
-        target: 'Cell',
-        prompt: 'P1: Explain <target> using an analogy.',
-        analogy: 'Figure 2 shows the analogy generation interface. Users enter their OpenAI API key, the target concept, and optionally a source domain of their interest that the analogy should be about. Additionally, we provide a list of prompts that',
-        likes: 10,
-        dislikes: 2
-    }])
+    const [isCard, setIsCard] = useState(true)
+
+    const [searchResults, setSearchResults] = useState(allAnalogies);
+
+    const [isLoading, setIsLoading] = useState(false);
 
     const { doRequest : doRequestLogOut, errors : logOutError } = useRequest({
         url: auth_url + '/api/users/logout',
@@ -67,9 +61,25 @@ const HomePage = ({ userLoggedIn }) => {
             window.alert('Log Out Success');
         } 
     });
-    
-    const doSearch = () => {
 
+    const { doRequest : doRequestSearch, errors : searchError } = useRequest({
+        url: search_url + '/api/search',
+        method: 'post',
+        body: {
+            query,
+            prompt,
+            temp
+        },
+        onSuccess: (data) => {
+            setSearchResults(data);
+        }
+    });
+    
+    const doSearch = async(e) => {
+        e.preventDefault();
+        setIsLoading(true);
+        await doRequestSearch();
+        setIsLoading(false);
     }
     
     const logout = async(e) => {
@@ -94,6 +104,7 @@ const HomePage = ({ userLoggedIn }) => {
 
     return (
         <div style={{marginTop: "3%"}}>
+             <LoadingSpinner isLoading={isLoading} />
             <Row>
                 <Col md={3} className="text-center">
                     <span style={{font: 'italic 5em Georgia', color: 'orange'}}>A</span>
@@ -107,7 +118,7 @@ const HomePage = ({ userLoggedIn }) => {
                 <Col md={6}>
                     <Form onSubmit={doSearch}>
                         <Row>
-                            <Form.Group as={Col} md="8" controlId="searchText">
+                            <Form.Group as={Col} md="8" controlId="query">
                                 <InputGroup>
                                     <InputGroup.Text id="inputGroupPrepend"><FontAwesomeIcon icon={faMagnifyingGlass} /></InputGroup.Text>
                                         <Form.Control
@@ -115,8 +126,8 @@ const HomePage = ({ userLoggedIn }) => {
                                             placeholder="Search your analogy ..."
                                             aria-describedby="inputGroupPrepend"
                                             required
-                                            value = {searchText}
-                                            onChange={(e) => setSearchText(e.target.value)}
+                                            value = {query}
+                                            onChange={(e) => setQuery(e.target.value)}
                                     />
                                 </InputGroup>
                             </Form.Group>
@@ -170,10 +181,21 @@ const HomePage = ({ userLoggedIn }) => {
             </Row>
             <br />
             <Row>
+                <Row style={{marginLeft: '1%'}}>
+                    <Col md={3}>
+                        <Form.Select
+                            value={isCard}
+                            onChange={(e) => setIsCard(e.target.value)}
+                        >
+                            <option value={true}>Card View</option>
+                            <option value={false}>List View</option>        
+                        </Form.Select>
+                    </Col>
+                </Row>
                 <Card style={{margin: '2%'}}>
                     <Card.Body style={{height: '70vh', display: 'flex', flexDirection: 'row', flexWrap: 'wrap', alignItems: 'flex-start', overflowY: 'auto'}}>
-                        {searchResults == null || searchResults == [] ? (
-                            <div style={{height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: 'grey'}}>
+                        {searchResults === null || searchResults.length === 0 ? (
+                            <div style={{height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: 'grey', marginLeft: '30%'}}>
                                 <h1>Oops, No Analogy Found ...</h1>
                                 <h3>Search Again or Generate Analogy</h3>
                             </div>
@@ -181,7 +203,7 @@ const HomePage = ({ userLoggedIn }) => {
                             <>
                                 {searchResults.map((result, index) => {
                                     return (
-                                        <AnologyCard key={index} searchResult={result} />
+                                        <AnalogyCard key={index} searchResult={result} isCard={isCard}/>
                                     )
                                 })}
                             </>
@@ -195,6 +217,7 @@ const HomePage = ({ userLoggedIn }) => {
 
 HomePage.getInitialProps = async ( { req } ) => {
     let userLoggedIn = false;
+    let allAnalogies = [];
 
     let cookies = '';
     if (req && req.headers.cookie) {
@@ -216,8 +239,24 @@ HomePage.getInitialProps = async ( { req } ) => {
         console.log(err);
     }
 
+    try{
+        const res = await axios.get( search_url + '/api/search', {
+            headers: {
+                cookie: cookies
+            },
+            withCredentials: true,
+        });
+        console.log(res);
+        if(res.status == 200){
+            // allAnalogies = res.data;
+        }
+    } catch(err){
+        console.log(err);
+    }
+
     return {
         userLoggedIn,
+        allAnalogies
     }
 }
 

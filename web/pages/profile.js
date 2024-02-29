@@ -178,8 +178,9 @@ const ProfilePage = ({userInfo, searchLog, genLog}) => {
                         <Card.Body>
                             <Card.Title><h3>User Profile</h3></Card.Title>
                             <br />
-                            <h5>Username: {userInfo.username}</h5>
-                            <h5>Email: {userInfo.email}</h5>
+                            <h6>Username: {userInfo.username}</h6>
+                            <h6>Email: {userInfo.email}</h6>
+                            <h6>Free API Key Remaining Usage Time: {userInfo.free_openai_api_key}</h6>
                             <a href="#" onClick={changePassword}>Change Password</a>
                         </Card.Body>
                     </Card>
