@@ -13,10 +13,4 @@ app.conf.task_routes = {
     'gen.generation.tasks.generate_log': {'queue': 'generate_log_queue'},
     }
 
-app.conf.beat_schedule = {
-    'add-analogy-5-seconds': {
-        'task': 'gen.generation.tasks.send_analogy',
-        'schedule': 5.0,
-    },
-}
 app.autodiscover_tasks()

@@ -6,6 +6,7 @@ class CustomUser(AbstractUser):
     username = models.CharField(max_length=50, unique=True)
     email = models.EmailField(max_length=254, unique=True)
     password = models.CharField(max_length=100)
+    free_openai_api_key = models.IntegerField(default=50)
 
     def __str__(self):
         return self.email

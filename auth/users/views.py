@@ -145,7 +145,8 @@ class InfoView(APIView):
                 'message': 'success',
                 'data': {
                     'username': user.username,
-                    'email': user.email
+                    'email': user.email,
+                    'free_openai_api_key': user.free_openai_api_key
                 }
             }
         )
