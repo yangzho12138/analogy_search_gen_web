@@ -40,7 +40,7 @@ const link_title = {
 const auth_url = process.env.NEXT_PUBLIC_AUTH_BASE_URL;
 const search_url = process.env.NEXT_PUBLIC_SEAECH_BASE_URL;
 
-const HomePage = ({ userLoggedIn, allAnalogies }) => {
+const HomePage = ({ userInfo, allAnalogies }) => {
     // const [token, setToken] = useState(null)
     const router = useRouter();
 
@@ -50,7 +50,24 @@ const HomePage = ({ userLoggedIn, allAnalogies }) => {
 
     const [isCard, setIsCard] = useState(true)
 
-    const [searchResults, setSearchResults] = useState(allAnalogies);
+    // const [searchResults, setSearchResults] = useState(allAnalogies);
+    const [searchResults, setSearchResults] = useState([{
+        target: 'Cell',
+        prompt: 'P1: Explain <target> using an analogy.',
+        analogy: 'Figure 2 shows the analogy generation interface. Users enter their OpenAI API key, the target concept, and optionally a source domain of their interest that the analogy should be about. Additionally, we provide a list of prompts that, Figure 2 shows the analogy generation interface. Users enter their OpenAI API key, the target concept, and optionally a source domain of their interest that the analogy should be about. Additionally, we provide a list of prompts that',
+        temp: 0.5,
+        likes: 10,
+        dislikes: 2,
+        pid: 1
+    },{
+        target: 'Cell',
+        prompt: 'P1: Explain <target> using an analogy.',
+        temp: 0.5,
+        analogy: 'Figure 2 shows the analogy generation interface. Users enter their OpenAI API key, the target concept, and optionally a source domain of their interest that the analogy should be about. Additionally, we provide a list of prompts that',
+        likes: 10,
+        dislikes: 2,
+        pid: 2
+    }]);
 
     const [isLoading, setIsLoading] = useState(false);
 
@@ -165,7 +182,7 @@ const HomePage = ({ userLoggedIn, allAnalogies }) => {
                     </Form>
                 </Col>
                 <Col md={3}>
-                    {userLoggedIn === false ? (
+                    {userInfo === null ? (
                         <>
                             <Button variant="primary" disabled>Generate Analogies</Button>
                             <Link title='Subsribed user only, click to signin' ><FontAwesomeIcon icon={faCircleQuestion} style={{marginLeft: '3%'}} onClick={() => Router.push('/login')}/></Link>
@@ -203,7 +220,7 @@ const HomePage = ({ userLoggedIn, allAnalogies }) => {
                             <>
                                 {searchResults.map((result, index) => {
                                     return (
-                                        <AnalogyCard key={index} searchResult={result} isCard={isCard}/>
+                                        <AnalogyCard key={index} searchResult={result} isCard={isCard} userInfo={userInfo}/>
                                     )
                                 })}
                             </>
@@ -216,7 +233,8 @@ const HomePage = ({ userLoggedIn, allAnalogies }) => {
 }
 
 HomePage.getInitialProps = async ( { req } ) => {
-    let userLoggedIn = false;
+    // let userLoggedIn = false;
+    let userInfo = null;
     let allAnalogies = [];
 
     let cookies = '';
@@ -233,30 +251,33 @@ HomePage.getInitialProps = async ( { req } ) => {
         });
         console.log(res);
         if(res.status == 200){
-            userLoggedIn = true;
+            // userLoggedIn = true;
+            console.log(res.data.data);
+            userInfo = res.data.data;
         }
     }catch(err){
         console.log(err);
     }
 
-    try{
-        const res = await axios.get( search_url + '/api/search', {
-            headers: {
-                cookie: cookies
-            },
-            withCredentials: true,
-        });
-        console.log(res);
-        if(res.status == 200){
-            // allAnalogies = res.data;
-        }
-    } catch(err){
-        console.log(err);
-    }
+    // try{
+    //     const res = await axios.get( search_url + '/api/search', {
+    //         headers: {
+    //             cookie: cookies
+    //         },
+    //         withCredentials: true,
+    //     });
+    //     console.log(res);
+    //     if(res.status == 200){
+    //         // allAnalogies = res.data;
+    //     }
+    // } catch(err){
+    //     console.log(err);
+    // }
 
     return {
-        userLoggedIn,
-        allAnalogies
+        // userLoggedIn,
+        userInfo,
+        allAnalogies,
     }
 }
 

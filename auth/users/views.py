@@ -6,7 +6,7 @@ from rest_framework import status
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 # from django.contrib.auth.models import User
-from .models import CustomUser as User, Issue
+from .models import CustomUser as User, Issue, Comment
 
 from .authentication import CookieJWTAuthentication
 
@@ -206,26 +206,86 @@ class FlagAnalogyView(APIView):
         # generate check log for admin
         analogy = request.data.get("analogy", None)
         issue = request.data.get("issue", "").strip()
-        comment = request.data.get("comment", "").strip()
+        issueDetails = request.data.get("issueDetails", "").strip()
+        username = request.data.get("username", None)
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            user = None
         issue = Issue(
-            user = request.user,
+            user = user,
             issue=issue,
-            comment=comment,
-            pid = analogy.pid,
-            target = analogy.target,
-            prompt = analogy.prompt,
-            analogy = analogy.analogy
+            detail=issueDetails,
+            pid = analogy['pid'],
+            target = analogy['target'],
+            prompt = analogy['prompt'],
+            analogy = analogy['analogy']
         )
         issue.save()
         
         # send email to admin
-        send_mail(
-            'Analogy Issue Reported',  # subject
-            'There is an issue waiting for processing, id: ' + issue.id + ', issue: ' + issue.issue,  # message
-            'Analego',  # sender
-            admin_email,  # receiver
-            fail_silently=False,
+        # send_mail(
+        #     'Analogy Issue Reported',  # subject
+        #     'There is an issue waiting for processing, id: ' + str(issue.id) + ', issue: ' + issue.issue,  # message
+        #     'Analego',  # sender
+        #     admin_email,  # receiver
+        #     fail_silently=False,
+        # )
+        return Response(
+            status=status.HTTP_201_CREATED,
+            data={
+                'message': 'success'
+            }
         )
+
+class CommentAnalogyView(APIView):
+    def get(self, request):
+        pid = request.query_params.get('pid', '')
+        if pid == '':
+            return Response(
+                status=status.HTTP_400_BAD_REQUEST,
+                data={
+                    'errors': ['pid is required']
+                }
+            )
+        comments = Comment.objects.filter(pid=pid, admin_selected=True) 
+        return Response(
+            status=status.HTTP_200_OK,
+            data={
+                'message': 'success',
+                'data': {
+                    'comments': [{
+                        'id': comment.id,
+                        'username': comment.user.username if comment.user else 'anonymous',
+                        'created_at': comment.created_at.strftime("%Y-%m-%d %H:%M:%S"),
+                        'comment': comment.comment,
+                        'replyTo_username': comment.replyTo.user.username if comment.replyTo and comment.replyTo.user else "anonymous",
+                        'replyTo_comment': comment.replyTo.comment if comment.replyTo else None
+                    } for comment in comments]
+                }
+            }  
+        )
+
+    def post(self, request):
+        comment = request.data.get("comment", "").strip()
+        analogy = request.data.get("analogy", None)
+        replyTo = request.data.get("replyTo", None)
+        username = request.data.get("username", None)
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            user = None
+        comment = Comment(
+            user = user,
+            comment = comment,
+            pid = analogy['pid'],
+            target = analogy['target'],
+            prompt = analogy['prompt'],
+            analogy = analogy['analogy'],
+            replyTo = Comment.objects.get(id=replyTo) if replyTo else None
+        )
+        comment.save()
+
         return Response(
             status=status.HTTP_201_CREATED,
             data={

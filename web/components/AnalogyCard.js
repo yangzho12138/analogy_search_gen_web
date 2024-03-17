@@ -1,9 +1,13 @@
-import React from 'react'
-import { Card, Row, Col, Form, Button } from 'react-bootstrap'
+import React, { use } from 'react'
+import { Card, Row, Col, Form, Button, ListGroup } from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faThumbsUp, faThumbsDown, faFlag, faTemperatureThreeQuarters, faComment } from '@fortawesome/free-solid-svg-icons'
 import Modals from './Modal';
 import { useState } from 'react';
+import useRequest from '../hooks/use-request';
+import Comment from './Comment';
+
+const auth_url = process.env.NEXT_PUBLIC_AUTH_BASE_URL;
 
 const issueOptions = [
     'Offensive Content',
@@ -12,20 +16,69 @@ const issueOptions = [
     'Other'
 ]
 
-const AnalogyCard = ({searchResult, isCard}) => {
+const AnalogyCard = ({searchResult, isCard, userInfo }) => {
     // console.log(isCard)
+    // console.log(userInfo)
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const openModal = () => setIsModalOpen(true);
-    const closeModal = () => setIsModalOpen(false);
+    const closeModal = () => {
+        setIsIssue(false);
+        // setShowComments(false);
+        setIsModalOpen(false);
+    }
 
     const [issue, setIssue] = useState('');
+    const [issueDetails, setIssueDetails] = useState('');
+    const [isIssue, setIsIssue] = useState(false);
+    
     const [comment, setComment] = useState('');
+    const [replyToId, setReplyToId] = useState(null);
+    const [replyToUsername, setReplyToUsername] = useState(null);
+    const [comments, setComments] = useState([]);
+    const [showComments, setShowComments] = useState(false);
 
-    const ReportAnlogy = () => {
+    const { doRequest: doRequestReport, errors: reportError } = useRequest({
+        url: auth_url + '/api/users/flag',
+        method: 'post',
+        body: {
+            issue,
+            details: issueDetails,
+            analogy: searchResult,
+            username: userInfo.username,
+        },
+        onSuccess: (data) => {
+            alert('Thank you for your report, a memeber of our team will review the analogy shortly.');
+        }
+    });
+
+    const { doRequest: doRequestCommnet, errors: commentError } = useRequest({
+        url: auth_url + '/api/users/comment',
+        method: 'post',
+        body: {
+            comment,
+            analogy: searchResult,
+            replyTo: replyToId,
+            username: userInfo.username,
+        },
+        onSuccess: (data) => {
+            alert('Thank you for your comment, if selected, it will be displayed.');
+        },
+    });
+
+    const { doRequest: doRequestComments, errors: commentsError } = useRequest({
+        url: auth_url + '/api/users/comment?pid=' + searchResult.pid,
+        method: 'get',
+        onSuccess: (data) => {
+            setComments(data.data.comments);
+        }
+    })
+
+    const reportAnlogy = () => {
         console.log('report analogy')
         setIssue('');
-        setComment('');
+        setIssueDetails('');
+        setIsIssue(true);
         openModal();
     }
 
@@ -37,22 +90,50 @@ const AnalogyCard = ({searchResult, isCard}) => {
         }
         if(window.confirm('Are you sure you want to report this analogy?')){
             // api call
-
+            await doRequestReport();
             // close modal
             closeModal();
-            alert('Thank you for your report, a memeber of our team will review the analogy shortly.');
         }
     }
 
     const likeAnalogy = (isLike) => {
         
     }
+
+    const commnetAnlogy = async() => {
+        console.log('comment analogy')
+        setComment('');
+        setReplyToId(null);
+
+        await doRequestComments();
+        openModal();
+    }
+
+    const handleAnalogyComment = async (e) => {
+        e.preventDefault();
+        if(comment === ''){
+            alert('Please enter a comment');
+            return;
+        }
+        if(window.confirm('Are you sure you want to comment this analogy?')){
+            // api call
+            await doRequestCommnet();
+            // close modal
+            closeModal();
+        }
+    }
+
+    const handldReplyToComment = (id, username) => {
+        setReplyToId(id);
+        setReplyToUsername(username);
+    }
     
 
     return (
         <>
         <Modals isOpen={isModalOpen} onClose={closeModal}>
-            <Form onSubmit={handleAnalogyReport} style={{margin: "5%"}}>
+            {isIssue === true ? (
+                <Form onSubmit={handleAnalogyReport} style={{margin: "5%"}}>
                     <Row><h3>Report An Issue</h3></Row>
                     <br />
                     <Row>
@@ -69,13 +150,62 @@ const AnalogyCard = ({searchResult, isCard}) => {
                     <br />
                     <Row>
                         <Form.Group as={Col} controlId="comment">
-                            <Form.Label>Comment (optional)</Form.Label>
-                            <Form.Control as="textarea" rows={3} value={comment} onChange={(e) => setComment(e.target.value)}/>
+                            <Form.Label>Detail (optional)</Form.Label>
+                            <Form.Control as="textarea" rows={3} value={issueDetails} onChange={(e) => setIssueDetails(e.target.value)}/>
                         </Form.Group>
                     </Row>
                     <br />
                     <Button type="submit" variant="primary">Submit</Button>
-            </Form>
+                </Form>
+            ) : (
+                <>
+                    <Form onSubmit={handleAnalogyComment} style={{marginLeft: "5%"}}>
+                        <Row>
+                            <h3>Comment</h3>
+                        </Row>
+                        <br />
+                        <Row>
+                            <Form.Group as={Col} controlId="comment">
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                                <Form.Label style={{ marginRight: '8px', marginBottom: '0' }}>Comment:</Form.Label>
+                                {replyToId && (
+                                    <p style={{
+                                    backgroundColor: 'grey',
+                                    margin: '0',
+                                    padding: '0 4px',
+                                    borderRadius: '4px'
+                                    }}>
+                                    Reply to: {replyToUsername}
+                                    </p>
+                                )}
+                            </div>
+                                <Form.Control as="textarea" rows={3} value={comment} onChange={(e) => setComment(e.target.value)}/>
+                            </Form.Group>
+                        </Row>
+                        <br />
+                        <Button type="submit" variant="primary">Submit</Button>
+                        {showComments === true ? (
+                            <>
+                                <Button variant="link" onClick={() => setShowComments(false)} style={{marginLeft: '5%'}}>Hide Comments</Button>
+                                <br />
+                                <br />
+                                {comments !== null && comments.length !== 0 ? (
+                                    <div style={{maxHeight: '60vh', overflowY: 'auto', border: '1px solid grey',  borderRadius: '10px', padding: '10px'}}>
+                                            {comments.map((comment, index) => {
+                                                return <Comment key={index} comment={comment} replyToComment={handldReplyToComment}/>
+                                            })}
+                                    </div>
+                                ) : (
+                                    <p>No comments yet</p>
+                                )}
+                            </>
+                        ) : (
+                            <Button variant="link" onClick={() => setShowComments(true)} style={{marginLeft: '5%'}}>Show Comments</Button>
+                        )}
+                    </Form>
+                    <br />
+                </>
+            )}
         </Modals>
         {isCard === true || isCard === 'true' ? (
             <Card style={{ width: '30%', height: '50%', display: 'inline-block', margin:'1%' }}>
@@ -95,16 +225,16 @@ const AnalogyCard = ({searchResult, isCard}) => {
                         {searchResult.analogy}
                     </Card.Text>
                     <Row>
-                        <Col md='3' onClick={likeAnalogy(true)} style={{ cursor: 'pointer' }}>
-                            <FontAwesomeIcon icon={faThumbsUp} /> {' Like(' + searchResult.likes + ')'}
+                        <Col md='2' onClick={() => likeAnalogy(true)} style={{ cursor: 'pointer' }}>
+                            <FontAwesomeIcon icon={faThumbsUp} /> {' ' + searchResult.likes}
                         </Col>
-                        <Col md='3' onClick={likeAnalogy(false)} style={{ cursor: 'pointer' }}>
-                            <FontAwesomeIcon icon={faThumbsDown} /> {' Dislike(' + searchResult.dislikes + ')'}
+                        <Col md='2' onClick={() => likeAnalogy(false)} style={{ cursor: 'pointer' }}>
+                            <FontAwesomeIcon icon={faThumbsDown} /> {' ' + searchResult.dislikes}
                         </Col>
-                        <Col md='3' onClick={ReportAnlogy} style={{ cursor: 'pointer' }}>
+                        <Col md='4' onClick={reportAnlogy} style={{ cursor: 'pointer' }}>
                             <FontAwesomeIcon icon={faFlag} style={{color: 'red'}}/> {' Report'}
                         </Col>
-                        <Col md='3'>
+                        <Col md='4' onClick={() => commnetAnlogy(searchResult.pid)} style={{ cursor: 'pointer' }}>
                             <FontAwesomeIcon icon={faComment} /> {' Comment'}
                         </Col>
                     </Row>
@@ -132,15 +262,18 @@ const AnalogyCard = ({searchResult, isCard}) => {
                             {searchResult.analogy}
                         </Card.Text>
                         <Row>
-                            <Col md='4' onClick={likeAnalogy(true)} style={{ cursor: 'pointer' }}>
-                                <FontAwesomeIcon icon={faThumbsUp} /> {' Like(' + searchResult.likes + ')'}
+                            <Col md='2' onClick={() => likeAnalogy(true)} style={{ cursor: 'pointer' }}>
+                                <FontAwesomeIcon icon={faThumbsUp} /> {' ' + searchResult.likes}
                             </Col>
-                            <Col md='4' onClick={likeAnalogy(false)} style={{ cursor: 'pointer' }}>
-                                <FontAwesomeIcon icon={faThumbsDown} /> {' Dislike(' + searchResult.dislikes + ')'}
+                            <Col md='2' onClick={() => likeAnalogy(false)} style={{ cursor: 'pointer' }}>
+                                <FontAwesomeIcon icon={faThumbsDown} /> {' ' + searchResult.dislikes}
                             </Col>
-                            <Col md='4' onClick={ReportAnlogy} style={{ cursor: 'pointer' }}>
+                            <Col md='4' onClick={reportAnlogy} style={{ cursor: 'pointer' }}>
                                 <FontAwesomeIcon icon={faFlag} style={{color: 'red'}}/> {' Report'}
                             </Col>
+                            <Col md='4' onClick={() => commnetAnlogy(searchResult.pid)} style={{ cursor: 'pointer' }}>
+                            <FontAwesomeIcon icon={faComment} /> {' Comment'}
+                        </Col>
                         </Row>
                     </Card.Body>
                 </Card>

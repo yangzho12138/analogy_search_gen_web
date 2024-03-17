@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import CustomUser, GenLog, SearchLog, Issue
+from .models import CustomUser, GenLog, SearchLog, Issue, Comment
 import redis
 import json
 
@@ -35,15 +35,22 @@ def update_analogy(self, request, queryset):
         }))
 
 class IssueAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'created_at', 'issue', 'comment', 'solved', 'pid', 'target', 'prompt', 'analogy', 'admin_comment')
+    list_display = ('id', 'user', 'created_at', 'issue', 'detail', 'solved', 'pid', 'target', 'prompt', 'analogy', 'admin_comment')
     search_fields = ('id', 'user__email', 'user__username', 'created_at', 'issue', 'target', 'prompt', 'analogy', 'pid')
     list_editable = ('solved', 'admin_comment', 'analogy')
     list_filter = ('solved',)
     actions = [delete_analogy, update_analogy]
+
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user', 'created_at', 'comment', 'pid', 'target', 'prompt', 'analogy','admin_selected', 'admin_comment')
+    search_fields = ('id', 'user__email', 'user__username', 'created_at', 'comment', 'pid', 'target', 'prompt', 'analogy',)
+    list_editable = ('admin_selected', 'admin_comment')
+    list_filter = ('admin_selected',)
 
 
 admin.site.register(CustomUser, CustomUserAdmin)
 admin.site.register(GenLog, GenLogAdmin)
 admin.site.register(SearchLog, SearchLogAdmin)
 admin.site.register(Issue, IssueAdmin)
+admin.site.register(Comment, CommentAdmin)
 

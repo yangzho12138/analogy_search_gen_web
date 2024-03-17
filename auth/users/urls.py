@@ -6,6 +6,8 @@ from users.views import InfoView
 from users.views import GenLogView
 from users.views import SearchLogView
 from users.views import PasswordResetView
+from users.views import FlagAnalogyView
+from users.views import CommentAnalogyView
 # from rest_framework_simplejwt.views import (
 #     TokenObtainPairView,
 #     TokenRefreshView,
@@ -19,6 +21,8 @@ urlpatterns = [
     url(r'^api/users/genLogs', GenLogView.as_view()),
     url(r'^api/users/searchLogs', SearchLogView.as_view()),
     url(r'^api/users/passwordReset', PasswordResetView.as_view()),
+    url(r'^api/users/flag', FlagAnalogyView.as_view()),  
+    url(r'^api/users/comment', CommentAnalogyView.as_view()),
     # path('api/users/token', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     # path('api/users/token/refresh', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/users/token', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
