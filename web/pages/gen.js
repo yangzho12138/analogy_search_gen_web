@@ -8,6 +8,7 @@ import useRequest from '../hooks/use-request'
 import axios from 'axios'
 import Modal from '../components/Modal'
 import LoadingSpinner from '../components/LoadingSpinner'
+import { useRouter } from 'next/router';
 
 const auth_url = process.env.NEXT_PUBLIC_AUTH_BASE_URL;
 const gen_url = process.env.NEXT_PUBLIC_GEN_BASE_URL;
@@ -41,16 +42,28 @@ const link_title = {
 }
 
 const GenPage = ({ userInfo }) => {
+    const router = useRouter();
+    const { preSetPrompt,
+        preSetTarget,
+        preSetSrc,
+        preSetTmp,
+        preSetFreq_penalty,
+        preSetPres_penalty,
+        preSetMax_length,
+        preSetTop_p,
+        preSetBest_of } = router.query;
+
+
     const [openAIKey, setOpenAIKey] = useState("");
-    const [target, setTarget] = useState("");
-    const [src, setSrc] = useState("");
-    const [prompt, setPrompt] = useState(gen_prompts[0]);
-    const [temp, setTemp] = useState(0.0);
-    const [max_length, setMaxLength] = useState(0);
-    const [top_p, setTopP] = useState(1.0);
-    const [freq_penalty, setFreqPenalty] = useState(0.0);
-    const [pres_penalty, setPresPenalty] = useState(0.0);
-    const [best_of, setBestOf] = useState(1);
+    const [target, setTarget] = useState(preSetTarget === undefined ? "" : preSetTarget);
+    const [src, setSrc] = useState(preSetSrc === undefined ? "" : preSetSrc);
+    const [prompt, setPrompt] = useState(preSetPrompt === undefined ? gen_prompts[0] : preSetPrompt);
+    const [temp, setTemp] = useState(preSetTmp === undefined ? 0.0 : parseFloat(preSetTmp));
+    const [max_length, setMaxLength] = useState(preSetMax_length === undefined ? 0 : parseInt(preSetMax_length));
+    const [top_p, setTopP] = useState(preSetTop_p === undefined ? 1.0 : parseFloat(preSetTop_p));
+    const [freq_penalty, setFreqPenalty] = useState(preSetFreq_penalty === undefined ? 0.0 : parseFloat(preSetFreq_penalty));
+    const [pres_penalty, setPresPenalty] = useState(preSetPres_penalty === undefined ? 0.0 : parseFloat(preSetPres_penalty));
+    const [best_of, setBestOf] = useState(preSetBest_of === undefined ? 1 : parseInt(preSetBest_of));
 
     const [generateResult, setGenerateResult] = useState(null);
 

@@ -24,7 +24,7 @@ const AnalogyCard = ({searchResult, isCard, userInfo }) => {
     const openModal = () => setIsModalOpen(true);
     const closeModal = () => {
         setIsIssue(false);
-        // setShowComments(false);
+        setShowComments(false);
         setIsModalOpen(false);
     }
 
@@ -45,7 +45,7 @@ const AnalogyCard = ({searchResult, isCard, userInfo }) => {
             issue,
             details: issueDetails,
             analogy: searchResult,
-            username: userInfo.username,
+            username: userInfo ? userInfo.username : "anonymous",
         },
         onSuccess: (data) => {
             alert('Thank you for your report, a memeber of our team will review the analogy shortly.');
@@ -59,7 +59,7 @@ const AnalogyCard = ({searchResult, isCard, userInfo }) => {
             comment,
             analogy: searchResult,
             replyTo: replyToId,
-            username: userInfo.username,
+            username: userInfo ? userInfo.username : "anonymous",
         },
         onSuccess: (data) => {
             alert('Thank you for your comment, if selected, it will be displayed.');
@@ -190,7 +190,7 @@ const AnalogyCard = ({searchResult, isCard, userInfo }) => {
                                 <br />
                                 <br />
                                 {comments !== null && comments.length !== 0 ? (
-                                    <div style={{maxHeight: '60vh', overflowY: 'auto', border: '1px solid grey',  borderRadius: '10px', padding: '10px'}}>
+                                    <div style={{maxHeight: '40vh', overflowY: 'auto', border: '1px solid grey',  borderRadius: '10px', padding: '10px'}}>
                                             {comments.map((comment, index) => {
                                                 return <Comment key={index} comment={comment} replyToComment={handldReplyToComment}/>
                                             })}

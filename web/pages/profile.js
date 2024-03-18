@@ -4,13 +4,17 @@ import { Row, Col, Card, Form, Button } from 'react-bootstrap';
 import LogList from '../components/LogList';
 import axios from 'axios';
 import Modal from '../components/Modal';
+import Link from '../components/Link';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircleQuestion } from '@fortawesome/free-solid-svg-icons';
+import useRequest from '../hooks/use-request';
 
 const auth_url = process.env.NEXT_PUBLIC_AUTH_BASE_URL;
 
 const log = [
     {
         "created_at": "2021-08-10T00:00:00",
-        "prompt": "P1: Explain <target> using an analogy.",
+        "prompt": "Explain <target> using an analogy.",
         "target": "Cell",
         "src": "Biology",
         "tmp": "0.5",
@@ -23,7 +27,7 @@ const log = [
     },
     {
         "created_at": "2021-08-10T00:00:00",
-        "prompt": "P1: Explain <target> using an analogy.",
+        "prompt": "Explain <target> using an analogy.",
         "target": "Football",
         "src": "Biology",
         "tmp": "0.5",
@@ -36,7 +40,7 @@ const log = [
     },
     {
         "created_at": "2021-08-10T00:00:00",
-        "prompt": "P1: Explain <target> using an analogy.",
+        "prompt": "Explain <target> using an analogy.",
         "target": "Cell",
         "src": "Biology",
         "tmp": "0.5",
@@ -49,7 +53,7 @@ const log = [
     },
     {
         "created_at": "2021-08-10T00:00:00",
-        "prompt": "P1: Explain <target> using an analogy.",
+        "prompt": "Explain <target> using an analogy.",
         "target": "Football",
         "src": "Biology",
         "tmp": "0.5",
@@ -62,7 +66,7 @@ const log = [
     },
     {
         "created_at": "2021-08-10T00:00:00",
-        "prompt": "P1: Explain <target> using an analogy.",
+        "prompt": "Explain <target> using an analogy.",
         "target": "Cell",
         "src": "Biology",
         "tmp": "0.5",
@@ -75,7 +79,7 @@ const log = [
     },
     {
         "created_at": "2021-08-10T00:00:00",
-        "prompt": "P1: Explain <target> using an analogy.",
+        "prompt": "Explain <target> using an analogy.",
         "target": "Football",
         "src": "Biology",
         "tmp": "0.5",
@@ -88,6 +92,7 @@ const log = [
     }
 ]
 
+// fields shown in the detail modal
 const genFields = [
     "created_at",
     "prompt",
@@ -101,22 +106,66 @@ const genFields = [
     "best_of",
     "analogy"
 ]
-
+// fields shown in the list
 const genListFields = [
     "created_at",
     "target",
     "src",
 ]
-
+// fields that can be searched
 const genSearchFields = [
     "target",
     "src",
     "analogy"
 ]
 
+const issueFields = [
+    "created_at",
+    "issue",
+    "detail",
+    "target",
+    "prompt",
+    "analogy",
+    "solved",
+    "admin_comment"
+]
+
+const issueListFields = [
+    "target",
+    "issue",
+    "solved"
+]
+
+const issueSearchFields = [
+    "target",
+    "issue",
+    "solved"
+]
+
+const commentReplyFields = [
+    'username',
+    'created_at',
+    'target',
+    'prompt',
+    'analogy',
+    'comment_origin',
+    'comment_reply',
+]
+
+const commentReplyListFields = [
+    'username',
+    'created_at',
+    'target'
+]
+
+const commentReplySearchFields = [
+    'username',
+    'target'
+]
 
 
-const ProfilePage = ({userInfo, searchLog, genLog}) => {
+
+const ProfilePage = ({userInfo, searchLog, genLog, issueLog, commentReplyInfo}) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [oldPassword, setOldPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
@@ -141,6 +190,15 @@ const ProfilePage = ({userInfo, searchLog, genLog}) => {
         }
         // api call
 
+    }
+
+    const { doRequest: doRequestUpdateNotification, errors: updateNotificationError } = useRequest({
+        url: auth_url + '/api/users/info',
+        method: 'put'
+    });
+
+    const handleSwitchChange = async () => {
+        await doRequestUpdateNotification();
     }
 
 
@@ -173,22 +231,54 @@ const ProfilePage = ({userInfo, searchLog, genLog}) => {
             </Row>
             <br />
             <Row style={{height: '90vh'}}>
-                <Col md={4}>
-                    <Card style={{height: '100%'}}>
-                        <Card.Body>
-                            <Card.Title><h3>User Profile</h3></Card.Title>
-                            <br />
-                            <h6>Username: {userInfo.username}</h6>
-                            <h6>Email: {userInfo.email}</h6>
-                            <h6>Free API Key Remaining Usage Time: {userInfo.free_openai_api_key}</h6>
-                            <a href="#" onClick={changePassword}>Change Password</a>
-                        </Card.Body>
-                    </Card>
+                <Col md={5}>
+                    <Row style={{height: '20vh', marginRight: '1%'}}>
+                        <Card style={{height: '100%'}}>
+                            <Card.Body style={{overflow: 'auto'}}>
+                                <Card.Title><h3>User Profile</h3></Card.Title>
+                                <br />
+                                <Form>
+                                <div style={{ display: 'flex', alignItems: 'center' }}>
+                                    <Form.Check // prettier-ignore
+                                        type="switch"
+                                        id="custom-switch"
+                                        label="Notification"
+                                        onChange={handleSwitchChange}
+                                        value={Boolean(userInfo.notification)}
+                                    />
+                                    <Link title={"Open to receive notification when your reported issue status changed or someone replied to your comment"}><FontAwesomeIcon style={{marginLeft: '10px'}} icon={faCircleQuestion} /></Link>
+                                </div>
+                                </Form>
+                                <h6>Username: {userInfo.username}</h6>
+                                <h6>Email: {userInfo.email}</h6>
+                                <h6>Free API Key Remaining Usage Time: {userInfo.free_openai_api_key}</h6>
+                                <a href="#" onClick={changePassword}>Change Password</a>
+                            </Card.Body>
+                        </Card>
+                    </Row>
+                    <br />
+                    <Row style={{height: '32vh', marginRight: '1%'}}>
+                        <Card style={{height: '100%'}}>
+                            <Card.Body style={{overflow: 'auto'}}>
+                                <Card.Title><h3>Issues</h3></Card.Title>
+                                <LogList logs={issueLog} fields={issueFields} searchFields={issueSearchFields} listFields={issueListFields} userInfo={userInfo} type={'issue'}/>
+                            </Card.Body>
+                        </Card>
+                    </Row>
+                    <br />
+                    <Row style={{height: '33vh', marginRight: '1%'}}>
+                        <Card style={{height: '100%'}}>
+                            <Card.Body style={{overflow: 'auto'}}>
+                                <Card.Title><h3>Comments</h3></Card.Title>
+                                <LogList logs={commentReplyInfo} fields={commentReplyFields} searchFields={commentReplySearchFields} listFields={commentReplyListFields} userInfo={userInfo} type={'comment'}/>
+                            </Card.Body>
+                        </Card>
+                    </Row>
                 </Col>
-                <Col md={8}>
+                <Col md={7}>
                     <Row style={{height: '45vh'}}>
                         <Card style={{height: '100%'}}>
-                            <Card.Body>
+                            <Card.Body style={{overflow: 'auto'}}>
                                 <Card.Title><h3>Search Log</h3></Card.Title>
                             </Card.Body>
                         </Card>
@@ -198,7 +288,7 @@ const ProfilePage = ({userInfo, searchLog, genLog}) => {
                         <Card style={{height: '100%'}}>
                         <Card.Body style={{overflow: 'auto'}}>
                                 <Card.Title><h3>Generation Log</h3></Card.Title>
-                                <LogList logs={log} fields={genFields} searchFields={genSearchFields} listFields={genListFields}/>
+                                <LogList logs={log} fields={genFields} searchFields={genSearchFields} listFields={genListFields} userInfo={userInfo} type={'genLog'}/>
                             </Card.Body>
                         </Card>
                     </Row>
@@ -218,6 +308,8 @@ ProfilePage.getInitialProps = async ({ req }) => {
     let userInfo = null;
     let searchLog = null;
     let genLog = null;
+    let issueLog = null;
+    let commentReplyInfo = null;
 
     try{
         const res = await axios.get( auth_url + '/api/users/info', {
@@ -226,9 +318,10 @@ ProfilePage.getInitialProps = async ({ req }) => {
             },
             withCredentials: true,
         });
-        console.log(res);
+        // console.log(res);
         if(res.status == 200){
             userInfo = res.data.data;
+            console.log(userInfo);
         }
     }catch(err){
         console.log(err);
@@ -241,7 +334,7 @@ ProfilePage.getInitialProps = async ({ req }) => {
             },
             withCredentials: true,
         });
-        console.log(res);
+        // console.log(res);
         if(res.status == 200){
             searchLog = res.data.data;
         }
@@ -256,9 +349,42 @@ ProfilePage.getInitialProps = async ({ req }) => {
             },
             withCredentials: true,
         });
-        console.log(res);
+        // console.log(res);
         if(res.status == 200){
             genLog = res.data.data;
+        }
+    } catch(err){
+        console.log(err);
+    }
+
+    try{
+        const res = await axios.get( auth_url + '/api/users/issueInfo', {
+            headers: {
+                cookie: cookies
+            },
+            withCredentials: true,
+        });
+        // console.log(res);
+        if(res.status == 200){
+            issueLog = res.data.data.issues;
+            // console.log("issueLog");
+            console.log(issueLog);
+        }
+    } catch(err){
+        console.log(err);
+    }
+
+    try{
+        const res = await axios.get( auth_url + '/api/users/commentReplyInfo', {
+            headers: {
+                cookie: cookies
+            },
+            withCredentials: true,
+        });
+        console.log(res);
+        if(res.status == 200){
+            commentReplyInfo = res.data.data.replies;
+            console.log(commentReplyInfo);
         }
     } catch(err){
         console.log(err);
@@ -268,6 +394,8 @@ ProfilePage.getInitialProps = async ({ req }) => {
         userInfo,
         searchLog,
         genLog,
+        issueLog,
+        commentReplyInfo
     }
 }
 

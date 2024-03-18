@@ -5,6 +5,8 @@ from .models import CustomUser, GenLog, SearchLog, Issue, Comment
 import redis
 import json
 
+from django.core.mail import send_mail
+
 r = redis.Redis(host='localhost', port=6379, db=1)
 
 class CustomUserAdmin(admin.ModelAdmin):
@@ -40,6 +42,19 @@ class IssueAdmin(admin.ModelAdmin):
     list_editable = ('solved', 'admin_comment', 'analogy')
     list_filter = ('solved',)
     actions = [delete_analogy, update_analogy]
+
+    def save_model(self, request, obj, form, change):
+        if change and 'solved' in form.changed_data and obj.solved:
+            if obj.user.email and obj.user.notification == True:
+                # send email
+                send_mail(
+                    'Your Issue Status Changed',  # subject
+                    'Your reported issue\'s status changed, please go to the user profile to see the detail. Thank you for the contribution to our community!',  # message
+                    'Analego',  # sender
+                    [obj.user.email],  # receiver
+                    fail_silently=False,
+                )
+            super().save_model(request, obj, form, change)
 
 class CommentAdmin(admin.ModelAdmin):
     list_display = ('id', 'user', 'created_at', 'comment', 'pid', 'target', 'prompt', 'analogy','admin_selected', 'admin_comment')

@@ -146,8 +146,21 @@ class InfoView(APIView):
                 'data': {
                     'username': user.username,
                     'email': user.email,
+                    'notification': user.notification,
                     'free_openai_api_key': user.free_openai_api_key
                 }
+            }
+        )
+    
+    # change notification status
+    def put(self, request):
+        user = request.user
+        user.notification = not user.notification
+        user.save()
+        return Response(
+            status=status.HTTP_200_OK,
+            data={
+                'message': 'success'
             }
         )
     
@@ -275,6 +288,7 @@ class CommentAnalogyView(APIView):
             user = User.objects.get(username=username)
         except User.DoesNotExist:
             user = None
+        print(analogy)
         comment = Comment(
             user = user,
             comment = comment,
@@ -286,10 +300,106 @@ class CommentAnalogyView(APIView):
         )
         comment.save()
 
+        if replyTo:
+            replyComment = Comment.objects.get(id=replyTo)
+            replyToUser = replyComment.user
+            if replyToUser and replyToUser.notification == True:
+                # send email
+                send_mail(
+                    'Your Comment Has Been Replied',  # subject
+                    'Your comment has been replied, please go to the user profile to see the detail. Thank you for the contribution to our community!',  # message
+                    'Analego',  # sender
+                    [replyToUser.email],  # receiver
+                    fail_silently=False,
+                )
+
         return Response(
             status=status.HTTP_201_CREATED,
             data={
                 'message': 'success'
+            }
+        )
+
+class IssueLogView(APIView):
+    authentication_classes = (CookieJWTAuthentication,)
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        user = request.user
+        issues = Issue.objects.filter(user=user)
+        issues = [{
+            'id': issue.id,
+            'created_at': issue.created_at.strftime("%Y-%m-%d %H:%M:%S"),
+            'issue': issue.issue,
+            'detail': issue.detail,
+            'target': issue.target,
+            'prompt': issue.prompt,
+            'analogy': issue.analogy,
+            'solved': issue.solved,
+            'admin_comment': issue.admin_comment
+        } for issue in issues]
+        return Response(
+            status=status.HTTP_200_OK,
+            data={
+                'message': 'success',
+                'data': {
+                    'issues': issues
+                }
+            }
+        )
+    
+    def put(self, request):
+        user = request.user
+        issueId = request.data.get("issueId", "")
+        updatedIssue = request.data.get("issue", "").strip()
+        updatedIssueDetail = request.data.get("issueDetail", "").strip()
+        issue = Issue.objects.get(id=issueId, user=user, solved=False)
+        if not issue:
+            return Response(
+                status=status.HTTP_400_BAD_REQUEST,
+                data={
+                    'errors': ['the issue does not exist or has been solved']
+                }
+            )
+        issue.issue = updatedIssue
+        issue.detail = updatedIssueDetail
+        issue.save()
+        return Response(
+            status=status.HTTP_200_OK,
+            data={
+                'message': 'success'
+            }
+        )
+
+class CommentReplyInfoView(APIView):
+    authentication_classes = (CookieJWTAuthentication,)
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        user = request.user
+        comments = Comment.objects.filter(user=user)
+        all_replies = []
+
+        for comment in comments:
+            replies = comment.replies.filter(admin_selected=True).order_by('-created_at')
+            replies = [{
+                'id': reply.id,
+                'username': reply.user.username if reply.user else 'anonymous',
+                'created_at': reply.created_at.strftime("%Y-%m-%d %H:%M:%S"),
+                'pid': comment.pid,
+                'target': comment.target,
+                'prompt': comment.prompt,
+                'analogy': comment.analogy,
+                'comment_origin': comment.comment,
+                'comment_reply': reply.comment,
+            } for reply in replies]
+            all_replies.extend(replies)
+        # print(all_replies)
+        return Response(
+            status=status.HTTP_200_OK,
+            data={
+                'message': 'success',
+                'data': {
+                    'replies': all_replies
+                }
             }
         )
 
