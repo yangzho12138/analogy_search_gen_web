@@ -202,7 +202,8 @@ class SearchLogView(APIView):
         logs = [{
             'created_at': log.created_at.strftime("%Y-%m-%d %H:%M:%S"),
             'query': log.query,
-            'analogies': log.analogies
+            'prompt': log.prompt,
+            'tmp': log.tmp
         } for log in logs]
         return Response(
             status=status.HTTP_200_OK,

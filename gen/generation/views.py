@@ -33,6 +33,7 @@ class GenerationView(APIView):
     # generate the analogy
     def post(self, request):
         user = User.objects.get(username=request.user.username)
+        print(user.free_openai_api_key)
         api_key = request.data.get('api_key', '')
         if api_key == '' and user.free_openai_api_key > 0:
             openai.api_key = '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'
@@ -86,7 +87,7 @@ class GenerationView(APIView):
         }
 
         # send generation log to auth system
-        generate_log.delay(generationLog)
+        # generate_log.delay(generationLog)
 
         return Response(
             status = status.HTTP_200_OK,

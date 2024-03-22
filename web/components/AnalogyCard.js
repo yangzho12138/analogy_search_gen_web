@@ -8,6 +8,7 @@ import useRequest from '../hooks/use-request';
 import Comment from './Comment';
 
 const auth_url = process.env.NEXT_PUBLIC_AUTH_BASE_URL;
+const search_url = process.env.NEXT_PUBLIC_SEARCH_BASE_URL;
 
 const issueOptions = [
     'Offensive Content',
@@ -66,12 +67,21 @@ const AnalogyCard = ({searchResult, isCard, userInfo }) => {
         },
     });
 
-    const { doRequest: doRequestComments, errors: commentsError } = useRequest({
+    const { doRequest: doRequestGetComments, errors: getCommentsError } = useRequest({
         url: auth_url + '/api/users/comment?pid=' + searchResult.pid,
         method: 'get',
         onSuccess: (data) => {
             setComments(data.data.comments);
         }
+    })
+
+    const { doRequest: doRequestLike, errors: likeError } = useRequest({
+        url: search_url + '/api/like',
+        method: 'post',
+        body: {
+            id: searchResult.pid,
+
+        },
     })
 
     const reportAnlogy = () => {
@@ -105,7 +115,7 @@ const AnalogyCard = ({searchResult, isCard, userInfo }) => {
         setComment('');
         setReplyToId(null);
 
-        await doRequestComments();
+        await doRequestGetComments();
         openModal();
     }
 

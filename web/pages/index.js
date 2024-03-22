@@ -11,11 +11,11 @@ import { useRouter } from "next/router";
 import LoadingSpinner from "../components/LoadingSpinner";
 
 const prompts = [
-    'P1: Explain <target> using an analogy.',
-    'P2: Create an analogy to explain <target>.',
-    'P3: Using an analogy, explain <target>.',
-    'P4: What analogy is used to explain <target>?',
-    'P5: Use an analogy to explain <target>.'
+    'Explain <target> using an analogy.',
+    'Create an analogy to explain <target>.',
+    'Using an analogy, explain <target>.',
+    'What analogy is used to explain <target>?',
+    'Use an analogy to explain <target>.'
 ]
 
 const temps = [
@@ -43,10 +43,14 @@ const search_url = process.env.NEXT_PUBLIC_SEAECH_BASE_URL;
 const HomePage = ({ userInfo, allAnalogies }) => {
     // const [token, setToken] = useState(null)
     const router = useRouter();
+    const { preSetPrompt,
+        preSetTmp,
+        preSetQuery } = router.query;
 
-    const [query, setQuery] = useState('')
-    const [prompt, setPrompt] = useState('')
-    const [temp, setTemp] = useState('')
+
+    const [query, setQuery] = useState(preSetQuery === undefined ? '' : preSetQuery)
+    const [prompt, setPrompt] = useState(preSetPrompt === undefined ? '' : preSetPrompt)
+    const [temp, setTemp] = useState(preSetTmp === undefined ? '' : preSetTmp)
 
     const [isCard, setIsCard] = useState(true)
 

@@ -198,6 +198,24 @@ const LogList = ({ logs, fields, searchFields, listFields, userInfo, type }) => 
                         </div>
                     </>
                 )}
+                {type === 'searchLog' && (
+                    <>
+                        <h2>Search Log Detail</h2>
+                        <div>
+                            <Button variant="link" onClick={() => {
+                                router.replace({
+                                    pathname: '/',
+                                    query: {
+                                        preSetPrompt: logDetail?.prompt,
+                                        preSetTmp: logDetail?.tmp,
+                                        preSetQuery: logDetail?.query,
+                                    }
+                                })
+                            }}>Search again based on these parameters</Button>
+                        </div>
+                    </>
+
+                )}
                 {type === 'issue' && (
                     <h2>Issue History Detail</h2>
                 )}
@@ -255,7 +273,7 @@ const LogList = ({ logs, fields, searchFields, listFields, userInfo, type }) => 
                 </Form.Group>
             </Form>
             <br />
-            <Table striped bordered hover>
+            <Table striped bordered hover className='custom-table'>
                 <thead>
                 <tr>
                     {listFields.map((field, index) => (

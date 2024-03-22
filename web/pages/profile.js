@@ -24,71 +24,15 @@ const log = [
         "top_p": "0.5",
         "best_of": "1",
         "analogy": "Figure 2 shows the analogy generation interface. Users enter their OpenAI API key, the target concept, and optionally a source domain of their interest that the analogy should be about. Additionally, we provide a list of prompts that, Figure 2 shows the analogy generation interface. Users enter their OpenAI API key, the target concept, and optionally a source domain of their interest that the analogy should be about. Additionally, we provide a list of prompts that",
-    },
+    }
+]
+
+const SLog = [
     {
         "created_at": "2021-08-10T00:00:00",
+        "query": "What is the capital of France?",
         "prompt": "Explain <target> using an analogy.",
-        "target": "Football",
-        "src": "Biology",
         "tmp": "0.5",
-        "freq_penalty": "0.5",
-        "pres_penalty": "0.5",
-        "max_length": "100",
-        "top_p": "0.5",
-        "best_of": "1",
-        "analogy": "Figure 2 shows the analogy generation interface. Users enter their OpenAI API key, the target concept, and optionally a source domain of their interest that the analogy should be about. Additionally, we provide a list of prompts that, Figure 2 shows the analogy generation interface. Users enter their OpenAI API key, the target concept, and optionally a source domain of their interest that the analogy should be about. Additionally, we provide a list of prompts that",
-    },
-    {
-        "created_at": "2021-08-10T00:00:00",
-        "prompt": "Explain <target> using an analogy.",
-        "target": "Cell",
-        "src": "Biology",
-        "tmp": "0.5",
-        "freq_penalty": "0.5",
-        "pres_penalty": "0.5",
-        "max_length": "100",
-        "top_p": "0.5",
-        "best_of": "1",
-        "analogy": "Figure 2 shows the analogy generation interface. Users enter their OpenAI API key, the target concept, and optionally a source domain of their interest that the analogy should be about. Additionally, we provide a list of prompts that, Figure 2 shows the analogy generation interface. Users enter their OpenAI API key, the target concept, and optionally a source domain of their interest that the analogy should be about. Additionally, we provide a list of prompts that",
-    },
-    {
-        "created_at": "2021-08-10T00:00:00",
-        "prompt": "Explain <target> using an analogy.",
-        "target": "Football",
-        "src": "Biology",
-        "tmp": "0.5",
-        "freq_penalty": "0.5",
-        "pres_penalty": "0.5",
-        "max_length": "100",
-        "top_p": "0.5",
-        "best_of": "1",
-        "analogy": "Figure 2 shows the analogy generation interface. Users enter their OpenAI API key, the target concept, and optionally a source domain of their interest that the analogy should be about. Additionally, we provide a list of prompts that, Figure 2 shows the analogy generation interface. Users enter their OpenAI API key, the target concept, and optionally a source domain of their interest that the analogy should be about. Additionally, we provide a list of prompts that",
-    },
-    {
-        "created_at": "2021-08-10T00:00:00",
-        "prompt": "Explain <target> using an analogy.",
-        "target": "Cell",
-        "src": "Biology",
-        "tmp": "0.5",
-        "freq_penalty": "0.5",
-        "pres_penalty": "0.5",
-        "max_length": "100",
-        "top_p": "0.5",
-        "best_of": "1",
-        "analogy": "Figure 2 shows the analogy generation interface. Users enter their OpenAI API key, the target concept, and optionally a source domain of their interest that the analogy should be about. Additionally, we provide a list of prompts that, Figure 2 shows the analogy generation interface. Users enter their OpenAI API key, the target concept, and optionally a source domain of their interest that the analogy should be about. Additionally, we provide a list of prompts that",
-    },
-    {
-        "created_at": "2021-08-10T00:00:00",
-        "prompt": "Explain <target> using an analogy.",
-        "target": "Football",
-        "src": "Biology",
-        "tmp": "0.5",
-        "freq_penalty": "0.5",
-        "pres_penalty": "0.5",
-        "max_length": "100",
-        "top_p": "0.5",
-        "best_of": "1",
-        "analogy": "Figure 2 shows the analogy generation interface. Users enter their OpenAI API key, the target concept, and optionally a source domain of their interest that the analogy should be about. Additionally, we provide a list of prompts that, Figure 2 shows the analogy generation interface. Users enter their OpenAI API key, the target concept, and optionally a source domain of their interest that the analogy should be about. Additionally, we provide a list of prompts that",
     }
 ]
 
@@ -117,6 +61,24 @@ const genSearchFields = [
     "target",
     "src",
     "analogy"
+]
+
+const searchFields = [
+    'created_at',
+    'query',
+    'prompt',
+    'tmp',
+]
+
+const searchListFields = [
+    'created_at',
+    'query',
+    'prompt',
+    'tmp',
+]
+
+const searchSearchFields = [
+    'query',
 ]
 
 const issueFields = [
@@ -280,6 +242,7 @@ const ProfilePage = ({userInfo, searchLog, genLog, issueLog, commentReplyInfo}) 
                         <Card style={{height: '100%'}}>
                             <Card.Body style={{overflow: 'auto'}}>
                                 <Card.Title><h3>Search Log</h3></Card.Title>
+                                <LogList logs={SLog} fields={searchFields} searchFields={searchSearchFields} listFields={searchListFields} userInfo={userInfo} type={'searchLog'}/>
                             </Card.Body>
                         </Card>
                     </Row>
@@ -306,10 +269,10 @@ ProfilePage.getInitialProps = async ({ req }) => {
     }
 
     let userInfo = null;
-    let searchLog = null;
-    let genLog = null;
-    let issueLog = null;
-    let commentReplyInfo = null;
+    let searchLog = [];
+    let genLog = [];
+    let issueLog = [];
+    let commentReplyInfo = [];
 
     try{
         const res = await axios.get( auth_url + '/api/users/info', {
@@ -336,7 +299,7 @@ ProfilePage.getInitialProps = async ({ req }) => {
         });
         // console.log(res);
         if(res.status == 200){
-            searchLog = res.data.data;
+            searchLog = res.data.data.logs;
         }
     } catch(err){
         console.log(err);
@@ -351,7 +314,7 @@ ProfilePage.getInitialProps = async ({ req }) => {
         });
         // console.log(res);
         if(res.status == 200){
-            genLog = res.data.data;
+            genLog = res.data.data.logs;
         }
     } catch(err){
         console.log(err);

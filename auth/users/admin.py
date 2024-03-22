@@ -18,8 +18,8 @@ class GenLogAdmin(admin.ModelAdmin):
     search_fields = ('user__email', 'user__username', 'created_at', 'prompt', 'target', 'src', 'temp', 'freq_penalty', 'pres_penalty', 'max_length', 'top_p', 'best_of', 'analogy')
 
 class SearchLogAdmin(admin.ModelAdmin):
-    list_display = ('user', 'created_at', 'query', 'analogies')
-    search_fields = ('user__email', 'user__username', 'created_at', 'query', 'analogies')
+    list_display = ('user', 'created_at', 'query', 'prompt', 'tmp')
+    search_fields = ('user__email', 'user__username', 'created_at', 'query', 'prompt', 'tmp')
 
 def delete_analogy(self, request, queryset):
     for obj in queryset:
@@ -54,7 +54,7 @@ class IssueAdmin(admin.ModelAdmin):
                     [obj.user.email],  # receiver
                     fail_silently=False,
                 )
-            super().save_model(request, obj, form, change)
+        super().save_model(request, obj, form, change)
 
 class CommentAdmin(admin.ModelAdmin):
     list_display = ('id', 'user', 'created_at', 'comment', 'pid', 'target', 'prompt', 'analogy','admin_selected', 'admin_comment')
