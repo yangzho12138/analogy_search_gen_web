@@ -3,14 +3,17 @@ from rest_framework.response import Response
 from elasticsearch import Elasticsearch
 from rest_framework import status
 from elasticsearch.helpers import scan
+from django.http import HttpResponse
 import io
 import nltk
 import os
 import json
+import math
 nltk.download('stopwords')
 nltk.download('punkt')
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
+import numpy as np
 import pandas as pd
 index = 'sci_ranked'
 
@@ -18,10 +21,10 @@ index = 'sci_ranked'
 class SearchView(APIView):
     def get(self, request):
         # Initialize Elasticsearch client
-        es = Elasticsearch("http://localhost:9200")
+        es = Elasticsearch("http://128.174.136.29:9200")
 
         # Get all search results from the Elasticsearch index "sci_ranked"
-        response = es.search(index="sci_ranked", body={"query": {"match_all": {}}})
+        response = es.search(index="sci_ranked", body={"query": {"match_all": {}}}, size=100)
 
         # Extract relevant information from the Elasticsearch response
         docs = []
@@ -32,7 +35,7 @@ class SearchView(APIView):
         return Response({"response":response})
     def post(self, request):
         # Initialize Elasticsearch client
-        es = Elasticsearch("http://localhost:9200")
+        es = Elasticsearch("http://128.174.136.29:9200")
 
         # Get the search query from the request data
         data = request.data
@@ -84,7 +87,7 @@ class LikeView(APIView):
 
         try:
             # Perform the update operation in Elasticsearch
-            es = Elasticsearch("http://localhost:9200")
+            es = Elasticsearch("http://128.174.136.29:9200")
             es.update(index=index, id=id, body={
                 "doc": {
                     likeType: likeTimes + increase
@@ -94,92 +97,10 @@ class LikeView(APIView):
         except Exception as e:
             return Response({"success": False, "error": str(e)})
 
-class InitView(APIView):
-    def get(self, request, format=None):
-        # Elasticsearch instance hosted on a remote server
-        client = Elasticsearch("http://localhost:9200")
-
-        # Index name
-        index_name = "sci_ranked"
-
-        # Define function to add temp_short field based on temp field value
-        def add_temp_short(doc):
-            if doc.get("temp") == "High Temperature":
-                doc["temp_short"] = "HT"
-            elif doc.get("temp") == "Low Temperature":
-                doc["temp_short"] = "LT"
-            else:
-                doc["temp_short"] = ""
-
-        # Search and update all documents using scroll
-        try:
-            scan_resp = scan(client, index=index_name, query={"query": {"match_all": {}}})
-            for hit in scan_resp:
-                source = hit["_source"]
-                add_temp_short(source)
-                # Update document in Elasticsearch
-                client.index(index=index_name, id=hit["_id"], body=source)
-            return Response({"message": "Additional field 'temp_short' added successfully."})
-        except Exception as e:
-            return Response({"error": str(e)}, status=500)
-        
-    def post(self, request, format=None):
-        # Read data from analogies.xlsx file
-        data = pd.read_excel('/Users/phanidatta673/Downloads/analogy_search_gen_web/search/analogy/sci_ranked.xlsx')
-
-        # Initialize Elasticsearch client
-        es = Elasticsearch("http://localhost:9200")
-
-        # Define the Elasticsearch index name
-        index_name = "sci_ranked"
-
-        # Function to index data into Elasticsearch
-        def index_data(row):
-            # Additional fields
-            additional_fields = {
-                "temp": "",
-                "pres": 0.0,
-                "src": "",
-                "like": 0,
-                "dislike": 0,
-                "freq": 0.0,
-                "pid": "",
-                "topp": 0.0,
-                "bo": 0,
-                "len": len(row['analogy']),
-                "pid_esc": "",
-                "prompt": row['prompt']
-            }
-
-            # Combine additional fields with the row data
-            doc = {
-                "analogy": row['analogy'],
-                "target": row['target'],
-                **additional_fields
-            }
-
-            # Index the document into Elasticsearch
-            es.index(index=index_name, body=doc)
-
-        # Apply the indexing function to each row of the DataFrame
-        data.apply(index_data, axis=1)
-
-        return Response({"message": "Data indexed into Elasticsearch successfully."})
-    
-    def delete(self, request, format=None):
-        es = Elasticsearch("http://localhost:9200")
-        index_name = "sci_ranked"
-
-        if es.indices.exists(index=index_name):
-            es.indices.delete(index=index_name)
-            return Response({"message": "Index deleted successfully."})
-        else:
-            return Response({"message": "Index does not exist."}, status=404)
-
 class TestView(APIView):
     def get(self, request, format=None):
         # Get analogy from request parameters
-        es = Elasticsearch("http://localhost:9200")
+        es = Elasticsearch("http://128.174.136.29:9200")
         analogy = "New analogy"
 
         # Search for the document in Elasticsearch
@@ -192,26 +113,23 @@ class TestView(APIView):
             return Response({"error": str(e)}, status=500)
         
     def post(self, request):
-        es = Elasticsearch("http://localhost:9200")
-        
+        es = Elasticsearch("http://128.174.136.29:9200")
+
+        # Get the ID from the request data
+        data = request.data
+        id = data.get('id')  # Assuming you pass the ID in the request data
+
+        # Query Elasticsearch to get the document with the specified ID
         try:
-            # Extract ID and updated analogy field from the request data
-            analogy_id = request.data.get("id")
-            updated_analogy = request.data.get("analogy")
-
-            # Check if both ID and updated analogy field are present
-            if analogy_id and updated_analogy:
-                # Update the document in Elasticsearch with the new analogy field
-                es.update(index=index, id=analogy_id, body={"doc": {"analogy": updated_analogy}})
-                return Response({"message": "Analogies updated successfully."})
-            else:
-                return Response({"message": "ID or updated analogy field missing."}, status=400)
-
+            response = es.get(index="sci_ranked", id=id)
+            # Extract relevant information from the Elasticsearch response
+            doc = response['_source']
+            return Response({"document": doc})
         except Exception as e:
-            return Response({"error": str(e)}, status=500)
+            return Response({"error": f"Error retrieving document: {e}"}, status=400)
         
     def delete(self, request, format=None):
-        es = Elasticsearch("http://localhost:9200")
+        es = Elasticsearch("http://128.174.136.29:9200")
         try:
             # Extract document ID from request body
             document_id = request.data.get('id')
@@ -222,16 +140,10 @@ class TestView(APIView):
             return Response({"message": "Document deleted successfully."})
         except Exception as e:
             return Response({"error": str(e)}, status=500)
-
-from django.http import HttpResponse
-from django.views import View
-import pandas as pd
-from elasticsearch import Elasticsearch
-
-class ToexcelView(View):
+class ToexcelView(APIView):
     def get(self, request):
         # Connect to Elasticsearch
-        client = Elasticsearch("http://localhost:9200")
+        client = Elasticsearch("http://128.174.136.29:9200")
 
         # Define index name
         index_name = "sci_ranked"
@@ -255,3 +167,60 @@ class ToexcelView(View):
 
         return HttpResponse("Excel file has been saved to {}".format(excel_file_path))
 
+class UploadataView(APIView):
+    def post(self, request):
+        # Initialize Elasticsearch client
+        es = Elasticsearch("http://128.174.136.29:9200")
+
+        # Load data from Excel file
+        try:
+            df = pd.read_excel('/home/kc62/analogy_search_gen_web/search/analogy/data.xlsx')
+        except Exception as e:
+            return Response({"error": f"Error loading Excel file: {e}"}, status=400)
+
+        # Index each row as a document in Elasticsearch
+        successful_docs = []
+        failed_docs = []
+        for index, row in df.iterrows():
+            # Assign empty strings to critical fields if they are empty
+            temp = row['temp'] if pd.notna(row['temp']) else ''
+            src = row['src'] if pd.notna(row['src']) else ''
+            pid = row['pid'] if pd.notna(row['pid']) else ''
+            pid_esc = row['pid_esc'] if pd.notna(row['pid_esc']) else ''
+            temp_short = row['temp_short'] if pd.notna(row['temp_short']) else ''
+
+            # Prepare the document to be indexed
+            doc = {
+                "temp": temp,
+                "pres": np.float64(row['pres']) if pd.notna(row['pres']) and not np.isinf(row['pres']) else 0.0,
+                "src": src,
+                "like": row['like'],
+                "dislike": row['dislike'],
+                "freq": np.float64(row['freq']) if pd.notna(row['freq']) and not np.isinf(row['freq']) else 0.0,
+                "pid": pid,
+                "topp": np.float64(row['topp']) if pd.notna(row['topp']) and not np.isinf(row['topp']) else 0.0,
+                "bo": row['bo'],
+                "target": row['target'],
+                "analogy": row['analogy'],
+                "len": row['len'],
+                "pid_esc": pid_esc,
+                "prompt": row['prompt'],
+                "temp_short": temp_short
+            }
+
+            # Index the document in Elasticsearch
+            try:
+                result = es.index(index="sci_ranked", body=doc)
+                successful_docs.append(result['_id'])
+            except Exception as e:
+                failed_docs.append({"doc": doc, "error": str(e)})
+
+        # Construct the response
+        response_data = {
+            "success_count": len(successful_docs),
+            "failed_count": len(failed_docs),
+            "successful_docs": successful_docs,
+            "failed_docs": failed_docs
+        }
+
+        return Response(response_data)
