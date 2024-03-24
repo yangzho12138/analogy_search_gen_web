@@ -11,7 +11,8 @@ app = Celery('tasks',
 app.conf.task_routes = {
     # 'auth.users.tasks.create_user': {'queue': 'user_created_queue'}
     'gen.generation.tasks.generate_log': {'queue': 'generate_log_queue'},
-    'auth.users.tasks.analogy_issue': {'queue': 'analogy_issue_queue'},
-    }
+    # 'auth.users.tasks.analogy_issue': {'queue': 'analogy_issue_queue'},
+    'search.analogy.tasks.search_log': {'queue': 'search_log_queue'},
+}
 
 app.autodiscover_tasks()

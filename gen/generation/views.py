@@ -87,7 +87,7 @@ class GenerationView(APIView):
         }
 
         # send generation log to auth system
-        # generate_log.delay(generationLog)
+        generate_log.delay(generationLog)
 
         return Response(
             status = status.HTTP_200_OK,

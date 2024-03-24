@@ -12,7 +12,6 @@ index = 'sci_ranked'
 def get_data_from_redis():
     # check generated analogy
     try:
-         
         gen_analogies =  r.lrange('generationAnalogy', 0, -1)
         gen_analogies = [json.loads(analogy) for analogy in gen_analogies]
         bulk_actions = []
@@ -91,3 +90,8 @@ def get_data_from_redis():
                 'Updating analogy error': str(e)
             }
         }
+
+@app.task(name='search.analogy.tasks.search_log')
+def search_log(log_data):
+    print('Log generated:', log_data)
+    return log_data
