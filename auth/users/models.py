@@ -38,7 +38,7 @@ class SearchLog(models.Model):
     # remove stop words - words used to do search in ES
     # analogies = models.CharField(max_length=1000)
     prompt = models.CharField(max_length=1000)
-    tmp = models.FloatField(default=0.0)
+    temp = models.FloatField(default=0.0)
 
     def __str__(self):
         return self.query

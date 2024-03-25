@@ -25,6 +25,7 @@ def  get_response(prompt,temp,max_length,top_p,freq_penalty,pres_penalty):
         frequency_penalty=freq_penalty,
         presence_penalty=pres_penalty
     )
+    print(response['choices'][0]['message']['content'])
     return response['choices'][0]['message']['content']
 
 class GenerationView(APIView):

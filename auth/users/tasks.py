@@ -40,17 +40,17 @@ def search_log(search_log):
         created_at=search_log['created_at'],
         query=search_log['query'],
         prompt=search_log['prompt'],
-        tmp=search_log['tmp']
+        temp=search_log['temp']
     )
     search_log.save()
     return search_log
 
-# @app.task(name='auth.users.tasks.analogy_issue')
-# def analogy_issue(issue):
-#     logger.info('produce_analogy_issue', issue)
-#     issue = Issue.objects.get(id=issue['id'])
-#     issue.solved = True
-#     issue.save()
-#     return issue
+@app.task(name='auth.users.tasks.analogy_issue')
+def analogy_issue(issue):
+    logger.info('produce_analogy_issue', issue)
+    issue = Issue.objects.get(id=issue['id'])
+    issue.solved = True
+    issue.save()
+    return issue
     
 

@@ -17,7 +17,7 @@ const log = [
         "prompt": "Explain <target> using an analogy.",
         "target": "Cell",
         "src": "Biology",
-        "tmp": "0.5",
+        "temp": "0.5",
         "freq_penalty": "0.5",
         "pres_penalty": "0.5",
         "max_length": "100",
@@ -32,7 +32,7 @@ const SLog = [
         "created_at": "2021-08-10T00:00:00",
         "query": "What is the capital of France?",
         "prompt": "Explain <target> using an analogy.",
-        "tmp": "0.5",
+        "temp": "0.5",
     }
 ]
 
@@ -42,7 +42,7 @@ const genFields = [
     "prompt",
     "target",
     "src",
-    "tmp",
+    "temp",
     "freq_penalty",
     "pres_penalty",
     "max_length",
@@ -67,14 +67,14 @@ const searchFields = [
     'created_at',
     'query',
     'prompt',
-    'tmp',
+    'temp',
 ]
 
 const searchListFields = [
     'created_at',
     'query',
     'prompt',
-    'tmp',
+    'temp',
 ]
 
 const searchSearchFields = [

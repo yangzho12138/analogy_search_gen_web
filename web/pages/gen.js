@@ -33,7 +33,7 @@ const link_title = {
     "target": "The concept that you would like to generate an analogy for (e.g. cell).",
     "src": "The topic area that you would like the analogy to be about",
     "prompt": "Select the prompt or instruction given to the model for generating the analogy ",
-    "tmp": "Loweing results in less ramdom completions. As randomness approaches zero, the model will become deterministic and repetitive",
+    "temp": "Loweing results in less ramdom completions. As randomness approaches zero, the model will become deterministic and repetitive",
     "max_length": "The maximum number of tokens to generate shared between the prompt and the completion",
     "top_p": "Controls diversity vai nucleus sampling: 0.5 means half of all likelihood-weighted options are considered",
     "freq_penalty": "How much to penalize new tokens based on their frequency in the text so far. Decreases the likelihood to repeat the same line verbatim",
@@ -46,7 +46,7 @@ const GenPage = ({ userInfo }) => {
     const { preSetPrompt,
         preSetTarget,
         preSetSrc,
-        preSetTmp,
+        preSetTemp,
         preSetFreq_penalty,
         preSetPres_penalty,
         preSetMax_length,
@@ -58,8 +58,8 @@ const GenPage = ({ userInfo }) => {
     const [target, setTarget] = useState(preSetTarget === undefined ? "" : preSetTarget);
     const [src, setSrc] = useState(preSetSrc === undefined ? "" : preSetSrc);
     const [prompt, setPrompt] = useState(preSetPrompt === undefined ? gen_prompts[0] : preSetPrompt);
-    const [temp, setTemp] = useState(preSetTmp === undefined ? 0.0 : parseFloat(preSetTmp));
-    const [max_length, setMaxLength] = useState(preSetMax_length === undefined ? 0 : parseInt(preSetMax_length));
+    const [temp, setTemp] = useState(preSetTemp === undefined ? 0.0 : parseFloat(preSetTemp));
+    const [max_length, setMaxLength] = useState(preSetMax_length === undefined ? 1 : parseInt(preSetMax_length));
     const [top_p, setTopP] = useState(preSetTop_p === undefined ? 1.0 : parseFloat(preSetTop_p));
     const [freq_penalty, setFreqPenalty] = useState(preSetFreq_penalty === undefined ? 0.0 : parseFloat(preSetFreq_penalty));
     const [pres_penalty, setPresPenalty] = useState(preSetPres_penalty === undefined ? 0.0 : parseFloat(preSetPres_penalty));
@@ -97,7 +97,7 @@ const GenPage = ({ userInfo }) => {
         },
         onSuccess: (data) => {
             window.alert('Generate Success');
-            setGenerateResult(data);
+            setGenerateResult(data.resp);
         } 
     });
 
@@ -260,8 +260,8 @@ const GenPage = ({ userInfo }) => {
                             </Row>
                             <br />
                             <Row>
-                                <Form.Group as={Row} md="8" controlId="tmp">
-                                    <Form.Label column sm='6'>Randomness <Link title={link_title['tmp']}><FontAwesomeIcon icon={faCircleQuestion} /></Link></Form.Label>
+                                <Form.Group as={Row} md="8" controlId="temp">
+                                    <Form.Label column sm='6'>Randomness <Link title={link_title['temp']}><FontAwesomeIcon icon={faCircleQuestion} /></Link></Form.Label>
                                     <Col sm='4'>
                                         <Form.Control
                                             style={{ border: 'none' }}
@@ -304,7 +304,7 @@ const GenPage = ({ userInfo }) => {
                                             onChange={(e) => {
                                                 setMaxLength(parseFloat(e.target.value));
                                             }}
-                                            min="0"
+                                            min="1"
                                             max="4000"
                                             step="1"
                                         />

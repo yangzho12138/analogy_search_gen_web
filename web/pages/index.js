@@ -11,11 +11,11 @@ import { useRouter } from "next/router";
 import LoadingSpinner from "../components/LoadingSpinner";
 
 const prompts = [
-    'Explain <target> using an analogy.',
-    'Create an analogy to explain <target>.',
-    'Using an analogy, explain <target>.',
-    'What analogy is used to explain <target>?',
-    'Use an analogy to explain <target>.'
+    'P1: Explain <target> using an analogy.',
+    'P2: Create an analogy to explain <target>.',
+    'P3: Using an analogy, explain <target>.',
+    'P4: What analogy is used to explain <target>?',
+    'P5: Use an analogy to explain <target>.'
 ]
 
 const temps = [
@@ -34,7 +34,7 @@ const temps = [
 
 const link_title = {
     "prompt": "Select the prompt or instruction given to the model for generating the analogy ",
-    "tmp": "Loweing results in less ramdom completions. As randomness approaches zero, the model will become deterministic and repetitive",
+    "temp": "Loweing results in less ramdom completions. As randomness approaches zero, the model will become deterministic and repetitive",
 }
 
 const auth_url = process.env.NEXT_PUBLIC_AUTH_BASE_URL;
@@ -44,33 +44,39 @@ const HomePage = ({ userInfo, allAnalogies }) => {
     // const [token, setToken] = useState(null)
     const router = useRouter();
     const { preSetPrompt,
-        preSetTmp,
+        preSetTemp,
         preSetQuery } = router.query;
 
-
+    console.log(preSetPrompt, preSetTemp, preSetQuery, prompts.find(prompt => prompt.includes(preSetPrompt)));
     const [query, setQuery] = useState(preSetQuery === undefined ? '' : preSetQuery)
-    const [prompt, setPrompt] = useState(preSetPrompt === undefined ? '' : preSetPrompt)
-    const [temp, setTemp] = useState(preSetTmp === undefined ? '' : preSetTmp)
+    const [prompt, setPrompt] = useState(preSetPrompt === undefined ? '' :  prompts.find(prompt => prompt.includes(preSetPrompt)))
+    const [temp, setTemp] = useState(preSetTemp === undefined ? '' : preSetTemp)
 
-    const [isCard, setIsCard] = useState(true)
+    const [isCard, setIsCard] = useState(false)
 
     // const [searchResults, setSearchResults] = useState(allAnalogies);
     const [searchResults, setSearchResults] = useState([{
-        target: 'Cell',
-        prompt: 'P1: Explain <target> using an analogy.',
-        analogy: 'Figure 2 shows the analogy generation interface. Users enter their OpenAI API key, the target concept, and optionally a source domain of their interest that the analogy should be about. Additionally, we provide a list of prompts that, Figure 2 shows the analogy generation interface. Users enter their OpenAI API key, the target concept, and optionally a source domain of their interest that the analogy should be about. Additionally, we provide a list of prompts that',
-        temp: 0.5,
-        likes: 10,
-        dislikes: 2,
-        pid: 1
+        "analogy": "Macrophages are like the police of the body. They are the first responders when there is an infection or injury. They go to the scene and try to clean up the mess.",
+        "target": "Macrophages",
+        "prompt": "Using an analogy, explain macrophages.",
+        "temp": "0.0",
+        "src": " police of the body",
+        "pid": "1",
+        "pid_esc": "P3: Using an analogy, explain &lttarget&gt.",
+        "temp_short": "LT",
+        "like": 0,
+        "dislike": 0
     },{
-        target: 'Cell',
-        prompt: 'P1: Explain <target> using an analogy.',
-        temp: 0.5,
-        analogy: 'Figure 2 shows the analogy generation interface. Users enter their OpenAI API key, the target concept, and optionally a source domain of their interest that the analogy should be about. Additionally, we provide a list of prompts that',
-        likes: 10,
-        dislikes: 2,
-        pid: 2
+        "analogy": "Mitochondria are the \"powerhouses\" of cells. Just as a power plant provides electricity for an entire city, mitochondria provide the energy that cells need to function. Mitochondria convert food into a form of energy that cells can use. They also play other important roles in cell metabolism and reproduction.",
+        "target": "Mitochondria",
+        "prompt": "Use an analogy to explain mitochondria.",
+        "temp": "0.5",
+        "src": " powerhouses of cells",
+        "pid": "2",
+        "pid_esc": "P5: Use an analogy to explain &lttarget&gt.",
+        "temp_short": "HT",
+        "like": 0,
+        "dislike": 0
     }]);
 
     const [isLoading, setIsLoading] = useState(false);
@@ -87,6 +93,7 @@ const HomePage = ({ userInfo, allAnalogies }) => {
         url: search_url + '/api/search',
         method: 'post',
         body: {
+            username: userInfo === null ? '' : userInfo.username,
             query,
             prompt,
             temp
@@ -170,7 +177,7 @@ const HomePage = ({ userInfo, allAnalogies }) => {
                                     })}
                                 </Form.Select>
                             </Col>
-                            <Col md="1"className="d-flex justify-content-center" ><Link title={link_title['tmp']}><FontAwesomeIcon icon={faCircleQuestion} /></Link></Col>
+                            <Col md="1"className="d-flex justify-content-center" ><Link title={link_title['temp']}><FontAwesomeIcon icon={faCircleQuestion} /></Link></Col>
                             <Col md="4">
                                 <Form.Select
                                     value={temp}

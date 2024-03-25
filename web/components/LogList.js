@@ -186,7 +186,7 @@ const LogList = ({ logs, fields, searchFields, listFields, userInfo, type }) => 
                                         preSetPrompt: logDetail?.prompt,
                                         preSetTarget: logDetail?.target,
                                         preSetSrc: logDetail?.src,
-                                        preSetTmp: logDetail?.tmp,
+                                        preSetTemp: logDetail?.temp,
                                         preSetFreq_penalty: logDetail?.freq_penalty,
                                         preSetPres_penalty: logDetail?.pres_penalty,
                                         preSetMax_length: logDetail?.max_length,
@@ -207,7 +207,7 @@ const LogList = ({ logs, fields, searchFields, listFields, userInfo, type }) => 
                                     pathname: '/',
                                     query: {
                                         preSetPrompt: logDetail?.prompt,
-                                        preSetTmp: logDetail?.tmp,
+                                        preSetTemp: logDetail?.temp,
                                         preSetQuery: logDetail?.query,
                                     }
                                 })

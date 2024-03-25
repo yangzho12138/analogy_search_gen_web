@@ -39,6 +39,9 @@ const AnalogyCard = ({searchResult, isCard, userInfo }) => {
     const [comments, setComments] = useState([]);
     const [showComments, setShowComments] = useState(false);
 
+    const [like, setLike] = useState(searchResult.like);
+    const [dislike, setDislike] = useState(searchResult.dislike);
+
     const { doRequest: doRequestReport, errors: reportError } = useRequest({
         url: auth_url + '/api/users/flag',
         method: 'post',
@@ -78,10 +81,6 @@ const AnalogyCard = ({searchResult, isCard, userInfo }) => {
     const { doRequest: doRequestLike, errors: likeError } = useRequest({
         url: search_url + '/api/like',
         method: 'post',
-        body: {
-            id: searchResult.pid,
-
-        },
     })
 
     const reportAnlogy = () => {
@@ -106,8 +105,31 @@ const AnalogyCard = ({searchResult, isCard, userInfo }) => {
         }
     }
 
-    const likeAnalogy = (isLike) => {
-        
+    const likeAnalogy = async(isLike, e) => {
+        const icon = e.currentTarget.querySelector('svg');
+        const isRed = window.getComputedStyle(icon).color === 'rgb(255, 0, 0)';
+        if(isRed){
+            icon.style.color = 'black';
+            if(isLike){
+                setLike(like - 1);
+            } else {
+                setDislike(dislike - 1);
+            }
+        } else {
+            icon.style.color = 'red';
+            if(isLike){
+                setLike(like + 1);
+            } else {
+                setDislike(dislike + 1);
+            }
+        }
+        // await doRequestLike({
+        //     body: {
+        //         id: searchResult.pid,
+        //         likeType: isLike ? 'like' : 'dislike',
+        //         cancel: isRed,
+        //     },
+        // })
     }
 
     const commnetAnlogy = async() => {
@@ -235,11 +257,11 @@ const AnalogyCard = ({searchResult, isCard, userInfo }) => {
                         {searchResult.analogy}
                     </Card.Text>
                     <Row>
-                        <Col md='2' onClick={() => likeAnalogy(true)} style={{ cursor: 'pointer' }}>
-                            <FontAwesomeIcon icon={faThumbsUp} /> {' ' + searchResult.likes}
+                        <Col md='2' onClick={(e) => likeAnalogy(true, e)} style={{ cursor: 'pointer' }}>
+                            <FontAwesomeIcon icon={faThumbsUp} /> {' ' + like}
                         </Col>
-                        <Col md='2' onClick={() => likeAnalogy(false)} style={{ cursor: 'pointer' }}>
-                            <FontAwesomeIcon icon={faThumbsDown} /> {' ' + searchResult.dislikes}
+                        <Col md='2' onClick={(e) => likeAnalogy(false, e)} style={{ cursor: 'pointer' }}>
+                            <FontAwesomeIcon icon={faThumbsDown} /> {' ' + dislike}
                         </Col>
                         <Col md='4' onClick={reportAnlogy} style={{ cursor: 'pointer' }}>
                             <FontAwesomeIcon icon={faFlag} style={{color: 'red'}}/> {' Report'}
@@ -272,11 +294,11 @@ const AnalogyCard = ({searchResult, isCard, userInfo }) => {
                             {searchResult.analogy}
                         </Card.Text>
                         <Row>
-                            <Col md='2' onClick={() => likeAnalogy(true)} style={{ cursor: 'pointer' }}>
-                                <FontAwesomeIcon icon={faThumbsUp} /> {' ' + searchResult.likes}
+                            <Col md='2' onClick={(e) => likeAnalogy(true, e)} style={{ cursor: 'pointer' }}>
+                                <FontAwesomeIcon icon={faThumbsUp} /> {' ' + like}
                             </Col>
-                            <Col md='2' onClick={() => likeAnalogy(false)} style={{ cursor: 'pointer' }}>
-                                <FontAwesomeIcon icon={faThumbsDown} /> {' ' + searchResult.dislikes}
+                            <Col md='2' onClick={(e) => likeAnalogy(false, e)} style={{ cursor: 'pointer' }}>
+                                <FontAwesomeIcon icon={faThumbsDown} /> {' ' + dislike}
                             </Col>
                             <Col md='4' onClick={reportAnlogy} style={{ cursor: 'pointer' }}>
                                 <FontAwesomeIcon icon={faFlag} style={{color: 'red'}}/> {' Report'}

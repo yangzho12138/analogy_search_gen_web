@@ -10,6 +10,9 @@ nltk.download('punkt')
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 import pandas as pd
+from django.utils import timezone
+from .tasks import search_log
+
 index = 'sci_ranked'
 class SearchView(APIView):
     def get(self, request):
@@ -33,6 +36,16 @@ class SearchView(APIView):
         # Get the search query from the request data
         data = request.data
         query = data.get('query', '')
+        prompt = data.get('prompt', '')
+        temp = data.get('temp', '')
+        username = data.get('username', '')
+
+        query_filter = []
+        if(prompt != ''):
+            query_filter.append({ "terms": { "pid.keyword": prompt } })
+        if(temp != ''):
+             query_filter.append({ "terms": { "temp.keyword": temp } })
+        
 
         # Preprocess the query by removing stop words
         stop_words = set(stopwords.words('english'))
@@ -52,6 +65,7 @@ class SearchView(APIView):
                             }
                         } for text in filtered_query
                     ],
+                    "filter": query_filter,
                     "minimum_should_match": 1
                 }
             }
@@ -59,6 +73,18 @@ class SearchView(APIView):
 
         # Search Elasticsearch index "sci_ranked" with the filtered query
         response = es.search(index="sci_ranked", body=body)
+
+        # search log
+        searchLog = {
+            "username": username,
+            "query": query,
+            "created_at": timezone.now().strftime("%Y-%m-%d %H:%M:%S"),
+            "prompt": prompt,
+            "temp": temp
+        }
+
+        # send search log to auth system
+        search_log.delay(searchLog)
 
         # Extract relevant information from the Elasticsearch response
         docs = []
