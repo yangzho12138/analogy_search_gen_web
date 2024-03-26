@@ -129,3 +129,9 @@ class GenerationView(APIView):
             'analogy': analogy
         }
         r.rpush('generationAnalogy', json.dumps(generationAnalogy))
+        return Response(
+            status = status.HTTP_200_OK,
+            data = {
+                'message': 'Analogy added successfully'
+            }
+        )

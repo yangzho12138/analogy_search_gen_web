@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMagnifyingGlass, faCircleQuestion, faUser, faRightFromBracket } from '@fortawesome/free-solid-svg-icons'
 import Link from "../components/Link";
 import AnalogyCard from "../components/AnalogyCard";
-import axios from "axios";
+import axios, { all } from "axios";
 import { useRouter } from "next/router";
 import LoadingSpinner from "../components/LoadingSpinner";
 
@@ -55,29 +55,7 @@ const HomePage = ({ userInfo, allAnalogies }) => {
     const [isCard, setIsCard] = useState(false)
 
     // const [searchResults, setSearchResults] = useState(allAnalogies);
-    const [searchResults, setSearchResults] = useState([{
-        "analogy": "Macrophages are like the police of the body. They are the first responders when there is an infection or injury. They go to the scene and try to clean up the mess.",
-        "target": "Macrophages",
-        "prompt": "Using an analogy, explain macrophages.",
-        "temp": "0.0",
-        "src": " police of the body",
-        "pid": "1",
-        "pid_esc": "P3: Using an analogy, explain &lttarget&gt.",
-        "temp_short": "LT",
-        "like": 0,
-        "dislike": 0
-    },{
-        "analogy": "Mitochondria are the \"powerhouses\" of cells. Just as a power plant provides electricity for an entire city, mitochondria provide the energy that cells need to function. Mitochondria convert food into a form of energy that cells can use. They also play other important roles in cell metabolism and reproduction.",
-        "target": "Mitochondria",
-        "prompt": "Use an analogy to explain mitochondria.",
-        "temp": "0.5",
-        "src": " powerhouses of cells",
-        "pid": "2",
-        "pid_esc": "P5: Use an analogy to explain &lttarget&gt.",
-        "temp_short": "HT",
-        "like": 0,
-        "dislike": 0
-    }]);
+    const [searchResults, setSearchResults] = useState(allAnalogies);
 
     const [isLoading, setIsLoading] = useState(false);
 
@@ -99,7 +77,7 @@ const HomePage = ({ userInfo, allAnalogies }) => {
             temp
         },
         onSuccess: (data) => {
-            setSearchResults(data);
+            setSearchResults(data.docs);
         }
     });
     
@@ -231,7 +209,10 @@ const HomePage = ({ userInfo, allAnalogies }) => {
                             <>
                                 {searchResults.map((result, index) => {
                                     return (
-                                        <AnalogyCard key={index} searchResult={result} isCard={isCard} userInfo={userInfo}/>
+                                        <>
+                                            <AnalogyCard key={index} searchResult={result} isCard={isCard} userInfo={userInfo}/>
+                                            <br />
+                                        </>
                                     )
                                 })}
                             </>
@@ -270,20 +251,21 @@ HomePage.getInitialProps = async ( { req } ) => {
         console.log(err);
     }
 
-    // try{
-    //     const res = await axios.get( search_url + '/api/search', {
-    //         headers: {
-    //             cookie: cookies
-    //         },
-    //         withCredentials: true,
-    //     });
-    //     console.log(res);
-    //     if(res.status == 200){
-    //         // allAnalogies = res.data;
-    //     }
-    // } catch(err){
-    //     console.log(err);
-    // }
+    try{
+        const res = await axios.get( search_url + '/api/search', {
+            headers: {
+                cookie: cookies
+            },
+            withCredentials: true,
+        });
+        console.log(res);
+        if(res.status == 200){
+            allAnalogies = res.data.docs;
+            console.log("test123 ", allAnalogies);
+        }
+    } catch(err){
+        console.log(err);
+    }
 
     return {
         // userLoggedIn,

@@ -11,30 +11,30 @@ import useRequest from '../hooks/use-request';
 
 const auth_url = process.env.NEXT_PUBLIC_AUTH_BASE_URL;
 
-const log = [
-    {
-        "created_at": "2021-08-10T00:00:00",
-        "prompt": "Explain <target> using an analogy.",
-        "target": "Cell",
-        "src": "Biology",
-        "temp": "0.5",
-        "freq_penalty": "0.5",
-        "pres_penalty": "0.5",
-        "max_length": "100",
-        "top_p": "0.5",
-        "best_of": "1",
-        "analogy": "Figure 2 shows the analogy generation interface. Users enter their OpenAI API key, the target concept, and optionally a source domain of their interest that the analogy should be about. Additionally, we provide a list of prompts that, Figure 2 shows the analogy generation interface. Users enter their OpenAI API key, the target concept, and optionally a source domain of their interest that the analogy should be about. Additionally, we provide a list of prompts that",
-    }
-]
+// const log = [
+//     {
+//         "created_at": "2021-08-10T00:00:00",
+//         "prompt": "Explain <target> using an analogy.",
+//         "target": "Cell",
+//         "src": "Biology",
+//         "temp": "0.5",
+//         "freq_penalty": "0.5",
+//         "pres_penalty": "0.5",
+//         "max_length": "100",
+//         "top_p": "0.5",
+//         "best_of": "1",
+//         "analogy": "Figure 2 shows the analogy generation interface. Users enter their OpenAI API key, the target concept, and optionally a source domain of their interest that the analogy should be about. Additionally, we provide a list of prompts that, Figure 2 shows the analogy generation interface. Users enter their OpenAI API key, the target concept, and optionally a source domain of their interest that the analogy should be about. Additionally, we provide a list of prompts that",
+//     }
+// ]
 
-const SLog = [
-    {
-        "created_at": "2021-08-10T00:00:00",
-        "query": "What is the capital of France?",
-        "prompt": "Explain <target> using an analogy.",
-        "temp": "0.5",
-    }
-]
+// const SLog = [
+//     {
+//         "created_at": "2021-08-10T00:00:00",
+//         "query": "What is the capital of France?",
+//         "prompt": "Explain <target> using an analogy.",
+//         "temp": "0.5",
+//     }
+// ]
 
 // fields shown in the detail modal
 const genFields = [
@@ -242,7 +242,7 @@ const ProfilePage = ({userInfo, searchLog, genLog, issueLog, commentReplyInfo}) 
                         <Card style={{height: '100%'}}>
                             <Card.Body style={{overflow: 'auto'}}>
                                 <Card.Title><h3>Search Log</h3></Card.Title>
-                                <LogList logs={SLog} fields={searchFields} searchFields={searchSearchFields} listFields={searchListFields} userInfo={userInfo} type={'searchLog'}/>
+                                <LogList logs={searchLog} fields={searchFields} searchFields={searchSearchFields} listFields={searchListFields} userInfo={userInfo} type={'searchLog'}/>
                             </Card.Body>
                         </Card>
                     </Row>
@@ -251,7 +251,7 @@ const ProfilePage = ({userInfo, searchLog, genLog, issueLog, commentReplyInfo}) 
                         <Card style={{height: '100%'}}>
                         <Card.Body style={{overflow: 'auto'}}>
                                 <Card.Title><h3>Generation Log</h3></Card.Title>
-                                <LogList logs={log} fields={genFields} searchFields={genSearchFields} listFields={genListFields} userInfo={userInfo} type={'genLog'}/>
+                                <LogList logs={genLog} fields={genFields} searchFields={genSearchFields} listFields={genListFields} userInfo={userInfo} type={'genLog'}/>
                             </Card.Body>
                         </Card>
                     </Row>

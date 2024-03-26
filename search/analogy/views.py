@@ -20,15 +20,16 @@ class SearchView(APIView):
         es = Elasticsearch("http://localhost:9200")
 
         # Get all search results from the Elasticsearch index "sci_ranked"
-        response = es.search(index="sci_ranked", body={"query": {"match_all": {}}})
+        response = es.search(index="sci_ranked", body={"query": {"match_all": {}}}, size=100)
 
         # Extract relevant information from the Elasticsearch response
         docs = []
         for doc in response['hits']['hits']:
+            doc['_source']['pid'] = doc['_id']
             docs.append(doc['_source'])
 
         # return Response({"docs": docs})
-        return Response({"response":response})
+        return Response({"docs": docs})
     def post(self, request):
         # Initialize Elasticsearch client
         es = Elasticsearch("http://localhost:9200")
@@ -42,9 +43,9 @@ class SearchView(APIView):
 
         query_filter = []
         if(prompt != ''):
-            query_filter.append({ "terms": { "pid.keyword": prompt } })
+            query_filter.append({ "terms": { "pid.keyword": [prompt] } })
         if(temp != ''):
-             query_filter.append({ "terms": { "temp.keyword": temp } })
+             query_filter.append({ "terms": { "temp.keyword": [temp] } })
         
 
         # Preprocess the query by removing stop words
@@ -89,6 +90,7 @@ class SearchView(APIView):
         # Extract relevant information from the Elasticsearch response
         docs = []
         for doc in response['hits']['hits']:
+            doc['_source']['pid'] = doc['_id']
             docs.append(doc['_source'])
 
         return Response({"docs": docs})
