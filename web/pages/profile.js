@@ -208,7 +208,7 @@ const ProfilePage = ({userInfo, searchLog, genLog, issueLog, commentReplyInfo}) 
                                         onChange={handleSwitchChange}
                                         value={Boolean(userInfo.notification)}
                                     />
-                                    <Link title={"Open to receive notification when your reported issue status changed or someone replied to your comment"}><FontAwesomeIcon style={{marginLeft: '10px'}} icon={faCircleQuestion} /></Link>
+                                    <Link title={"Turn on to receive notification when your reported issue status changed or someone replied to your comment"}><FontAwesomeIcon style={{marginLeft: '10px'}} icon={faCircleQuestion} /></Link>
                                 </div>
                                 </Form>
                                 <h6>Username: {userInfo.username}</h6>

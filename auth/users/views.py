@@ -170,6 +170,7 @@ class GenLogView(APIView):
     def get(self, request):
         user = request.user
         logs = user.genlog_set.all()
+        logs = sorted(logs, key=lambda log: log.created_at, reverse=True)
         logs = [{
             'created_at': log.created_at.strftime("%Y-%m-%d %H:%M:%S"),
             'prompt': log.prompt,
@@ -199,6 +200,7 @@ class SearchLogView(APIView):
     def get(self, request):
         user = request.user
         logs = user.searchlog_set.all()
+        logs = sorted(logs, key=lambda log: log.created_at, reverse=True)
         logs = [{
             'created_at': log.created_at.strftime("%Y-%m-%d %H:%M:%S"),
             'query': log.query,
