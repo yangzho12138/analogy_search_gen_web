@@ -37,9 +37,10 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django_celery_beat",
     "analogy"
 ]
-
+CELERY_BROKER_URL = 'amqps://lhcyjupx:rKqBe890tVvjUWkMdnCwmUl0szi8FL-F@shark.rmq.cloudamqp.com/lhcyjupx?ssl=1&ssl_options={"ssl_verify_hostname": false}'
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
