@@ -5,7 +5,7 @@ from celery import Celery
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'auth.settings')
 
 app = Celery('tasks',
-             broker='amqps://lhcyjupx:rKqBe890tVvjUWkMdnCwmUl0szi8FL-F@shark.rmq.cloudamqp.com/lhcyjupx',
+             broker='amqps://tldvxkdd:Ip77pJGCzVH0b0LOyuJCLz5YToOn1Zaq@gull.rmq.cloudamqp.com/tldvxkdd',
              backend='rpc://')
 
 app.conf.task_routes = {
