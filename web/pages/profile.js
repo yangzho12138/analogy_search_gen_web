@@ -133,10 +133,23 @@ const ProfilePage = ({userInfo, searchLog, genLog, issueLog, commentReplyInfo}) 
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
 
+    const [modalInfo, setModalInfo] = useState("changePassword");
+
     const openModal = () => setIsModalOpen(true);
     const closeModal = () => setIsModalOpen(false);
 
     const changePassword = () => {
+        setModalInfo("changePassword");
+        openModal();
+    }
+
+    const roleDetail = () => {
+        setModalInfo("roleDetail");
+        openModal();
+    }
+
+    const pointsDetail = () => {
+        setModalInfo("pointsDetail");
         openModal();
     }
 
@@ -167,29 +180,66 @@ const ProfilePage = ({userInfo, searchLog, genLog, issueLog, commentReplyInfo}) 
     return (
         <div style={{margin: "3%"}}>
             <Modal isOpen={isModalOpen} onClose={closeModal}>
-                <h2>Change Password</h2>
-                <br />
-                <Form onSubmit={submitPasswordChange}>
-                    <Form.Group>
-                        <Form.Label>Old Password</Form.Label>
-                        <Form.Control type="password" value={oldPassword} onChange={(e) => setOldPassword(e.target.value)}/>
-                    </Form.Group>
-                    <br />
-                    <Form.Group>
-                        <Form.Label>New Password</Form.Label>
-                        <Form.Control type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)}/>
-                    </Form.Group>
-                    <br />
-                    <Form.Group>
-                        <Form.Label>Confirm New Password</Form.Label>
-                        <Form.Control type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)}/>
-                    </Form.Group>
-                    <br />
-                    <Button type="submit">Change Password</Button>
-                </Form>
+                {modalInfo === "changePassword" && (
+                    <>
+                        <h2>Change Password</h2>
+                        <br />
+                        <Form onSubmit={submitPasswordChange}>
+                            <Form.Group>
+                                <Form.Label>Old Password</Form.Label>
+                                <Form.Control type="password" value={oldPassword} onChange={(e) => setOldPassword(e.target.value)}/>
+                            </Form.Group>
+                            <br />
+                            <Form.Group>
+                                <Form.Label>New Password</Form.Label>
+                                <Form.Control type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)}/>
+                            </Form.Group>
+                            <br />
+                            <Form.Group>
+                                <Form.Label>Confirm New Password</Form.Label>
+                                <Form.Control type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)}/>
+                            </Form.Group>
+                            <br />
+                            <Button type="submit">Change Password</Button>
+                        </Form>
+                    </>
+                )}
+                {modalInfo === "roleDetail" && (
+                    <>
+                        <h2>Role Detail</h2>
+                        <br />
+                        <h4>Q1: What are the roles</h4>
+                        <div>We have 3 different roles: Student, Teacher and Expert</div>
+                        <br />
+                        <h4>Q2: What is the difference between roles</h4>
+                        <div></div>
+                        <br />
+                        <h4>Q3: How to change role</h4>
+                        <div>If you are a teacher or an expert, you can email your credentail to . After verify your credentials, we will update your role!</div>
+                        <div>You can apply for the Expert role if you:</div>
+                        <div></div>
+                    </>
+                )}
+                {modalInfo === "pointsDetail" && (
+                    <>
+                        <h2>Points Detail</h2>
+                        <br />
+                        <h4>Q1: What are points</h4>
+                        <div>Points are proof of user activity and community contribution</div>
+                        <br />
+                        <h4>Q2: What can points do</h4>
+                        <div>Points can be used to exchange for free API key usage time</div>
+                        <br />
+                        <h4>Q3: How to earn points</h4>
+                        <div>1. Create an analogy: 10 points</div>
+                        <div>2. Created analogy is liked by other students / teachers / experts: 5 / 10 / 15 points</div>
+                        <div>3. Report an issue and solved by admin: 20 points</div>
+                        <div>4. Comment is selected by admin: 10 points</div>
+                    </>
+                )}
             </Modal>
             <Row>
-                <a href="/">Back</a>
+                <a href="/search">Back</a>
             </Row>
             <br />
             <Row style={{height: '90vh'}}>
@@ -213,6 +263,12 @@ const ProfilePage = ({userInfo, searchLog, genLog, issueLog, commentReplyInfo}) 
                                 </Form>
                                 <h6>Username: {userInfo.username}</h6>
                                 <h6>Email: {userInfo.email}</h6>
+                                <div style={{display: 'flex'}}>
+                                    <h6>Role: {userInfo.role}</h6> <Link title={"Click the icon to see more about roles"}><FontAwesomeIcon onClick={roleDetail} style={{marginLeft: '10px'}} icon={faCircleQuestion} /></Link>
+                                </div>
+                                <div style={{display: 'flex'}}>
+                                    <h6>Points: {userInfo.points}</h6> <Link title={"Click the icon to see more about points"}><FontAwesomeIcon onClick={pointsDetail} style={{marginLeft: '10px'}} icon={faCircleQuestion} /></Link>
+                                </div>
                                 <h6>Free API Key Remaining Usage Time: {userInfo.free_openai_api_key}</h6>
                                 <a href="#" onClick={changePassword}>Change Password</a>
                             </Card.Body>
@@ -331,7 +387,7 @@ ProfilePage.getInitialProps = async ({ req }) => {
         if(res.status == 200){
             issueLog = res.data.data.issues;
             // console.log("issueLog");
-            console.log(issueLog);
+            // console.log(issueLog);
         }
     } catch(err){
         console.log(err);
@@ -347,7 +403,7 @@ ProfilePage.getInitialProps = async ({ req }) => {
         console.log(res);
         if(res.status == 200){
             commentReplyInfo = res.data.data.replies;
-            console.log(commentReplyInfo);
+            // console.log(commentReplyInfo);
         }
     } catch(err){
         console.log(err);

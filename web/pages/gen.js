@@ -188,7 +188,7 @@ const GenPage = ({ userInfo }) => {
                         <h1>Generate Analogy</h1>
                     </Col>
                     <Col md={4} className="d-flex align-items-center justify-content-end">
-                        <Button variant="primary" onClick={() => Router.push('/')}>Search Analogies</Button>
+                        <Button variant="primary" onClick={() => Router.push('/search')}>Search Analogies</Button>
                         <Link title='User profile' ><FontAwesomeIcon icon={faUser} size='xl' style={{marginLeft: '10%'}} onClick={() => Router.push('/profile')}/></Link>
                         <Link title='Log out' ><FontAwesomeIcon icon={faRightFromBracket} size='xl' style={{marginLeft: '5%'}} onClick={logout}/></Link>
                     </Col>
