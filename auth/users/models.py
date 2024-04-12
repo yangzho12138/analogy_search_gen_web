@@ -8,6 +8,18 @@ class CustomUser(AbstractUser):
     password = models.CharField(max_length=100)
     free_openai_api_key = models.IntegerField(default=50)
     notification = models.BooleanField(default=False)
+    ADMIN = 'ADMIN'
+    STUDENT = 'STUDENT'
+    TEACHER = 'TEACHER'
+    EXPERT = 'EXPERT'
+    ROLE_CHOICES = [
+        (ADMIN, 'ADMIN'),
+        (STUDENT, 'STUDENT'),
+        (TEACHER, 'TEACHER'),
+        (EXPERT, 'EXPERT'),
+    ]
+    role=models.CharField(max_length=100, choices=ROLE_CHOICES, default=STUDENT)
+    points = models.IntegerField(default=0)
 
     def __str__(self):
         return self.email

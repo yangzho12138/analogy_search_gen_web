@@ -147,7 +147,9 @@ class InfoView(APIView):
                     'username': user.username,
                     'email': user.email,
                     'notification': user.notification,
-                    'free_openai_api_key': user.free_openai_api_key
+                    'free_openai_api_key': user.free_openai_api_key,
+                    'role': user.role,
+                    'points': user.points
                 }
             }
         )
