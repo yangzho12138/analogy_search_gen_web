@@ -1,4 +1,4 @@
-1. Create a virtual environment in /auth, /gen and /search folders  
+Create a virtual environment in /auth, /gen and /search folders  
 `python3 -m venv <venv name>`  
 # Search:  
 Path: “/analogy_search_gen_web/search/“  
