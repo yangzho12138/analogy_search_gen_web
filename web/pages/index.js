@@ -1,20 +1,16 @@
 import { Card, Tabs, Tab, Form, Row, Col, InputGroup, Button } from "react-bootstrap"
-import { use, useEffect, useState } from "react"
 import Router from "next/router"
-import useRequest from "../hooks/use-request";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faGithub } from '@fortawesome/free-brands-svg-icons'
 import { faMagnifyingGlass, faPaperPlane, faComment, faPaperclip, faStar } from '@fortawesome/free-solid-svg-icons'
-import Link from "../components/Link";
-import AnalogyCard from "../components/AnalogyCard";
-import axios, { all } from "axios";
-import { useRouter } from "next/router";
-import LoadingSpinner from "../components/LoadingSpinner";
+import Sidebar from "../components/Sidebar"
+
 
 const HomePage = () => {
     return(
         <div style={{margin: "5%"}}>
-            <Row>
+            <Sidebar />
+            <Row id="welcome_section">
                 <h1 style={{font: 'italic 5em Georgia'}}>Analego</h1>
             </Row>
             <Row>
@@ -36,7 +32,7 @@ const HomePage = () => {
             <br />
             <br />
             <Row>
-                <h3 style={{font: 'italic 250% Georgia'}}>- Why Analogy -</h3>
+                <h3 style={{font: 'italic 250% Georgia'}} id='analogy_section'>- Why Analogy -</h3>
                 <p className="index-text">By connecting abstract or unfamiliar concepts (called the target) to more familiar ones (called the source), analogies play a huge role in education as they help with understanding concepts, problem-solving, increasing learners' interest and motivation. </p>
                 <hr />
                 <p style={{font: 'italic 200% Georgia'}}>Example</p>
@@ -49,10 +45,10 @@ const HomePage = () => {
             <br />
             <br />
             <br />
-            <h3 style={{font: 'italic 250% Georgia', marginBottom: '3%'}}>- Features -</h3>
+            <h3 style={{font: 'italic 250% Georgia', marginBottom: '3%'}} id='features_section'>- Features -</h3>
             <Row>
                 <Col md={6}>
-                    <h3 style={{font: 'italic 200% Georgia'}}>-- Search --</h3>
+                    <h3 style={{font: 'italic 200% Georgia'}} id='features_search_section'>-- Search --</h3>
                     <p className="index-text"><FontAwesomeIcon icon={faMagnifyingGlass} /> Search: To find a suitable analogy from our database, enter your search query (e.g., body). Since many of these analogies are generated using AI, you can filter results based on the configuration (e.g., prompt instruction) used to generate the analogy.</p>
                     <p className="index-text"><FontAwesomeIcon icon={faPaperPlane} /> Feedback: Provide feedback on the analogy in the form of likes and dislikes. Additionally, you can report an offensive or inappropriate analogy. The report will be reviewed by our team and the analogy would be removed from our database if needed.</p>
                     <p className="index-text"><FontAwesomeIcon icon={faComment} /> Discuss: Start a conversation around the analogy with the broader community (e.g., analyze its limitations, ask for further clarification, share your experience with using it in your teaching).</p>
@@ -72,7 +68,7 @@ const HomePage = () => {
                     </div>
                 </Col>
                 <Col md={6}>
-                    <h3 style={{font: 'italic 200% Georgia'}}>-- Generate --</h3>
+                    <h3 style={{font: 'italic 200% Georgia'}} id='features_generate_section'>-- Generate --</h3>
                     <p className="index-text">If you're unable to find a suitable existing analogy, you can generate a new one. We leverage ChatGPT for this.You first need to sign up and log into the website. Then,</p>
                     <br />
                     <p className="index-text"><FontAwesomeIcon icon={faPaperclip} /> We provide you with 50 free usages per month, meaning that you can generate up to 50 analogies per month for free. You could also optionally provide your own <a href="https://help.openai.com/en/articles/4936850-where-do-i-find-my-openai-api-key">OpenAI API key</a> in case you need to generate more analogies.</p>
@@ -86,7 +82,7 @@ const HomePage = () => {
             <br />
             <Row>
                 <Col md={6}>
-                    <h3 style={{font: 'italic 200% Georgia'}}>-- Profile --</h3>
+                    <h3 style={{font: 'italic 200% Georgia'}} id='features_profile_section'>-- Profile --</h3>
                     <p className="index-text">Once you've signed up, you can view details about your user profile and usage history including  issues reported about offensive analogies, your comments and replies received on them, and your past searches and generation log. </p>
                 </Col>
                 <Col md={6} className="d-flex align-items-center">
@@ -98,7 +94,7 @@ const HomePage = () => {
             <br />
             <br />
             <br />
-            <h3 style={{font: 'italic 250% Georgia', marginBottom: '3%'}}>- Ongoing Research & Overall Version  -</h3>
+            <h3 style={{font: 'italic 250% Georgia', marginBottom: '3%'}} id='research_section'>- Ongoing Research & Overall Version  -</h3>
             <Row>
                 <Col md={6}>
                     <p className="index-text">Our vision is to create Analego as a human-AI collaborative system where students and teachers leverage AI, specifically large language models (LLMs), for analogy-based instruction. Specifically, it consists of a self-sustained analogy repository built in two main ways: (i) analogy detection and extraction from the Web; (ii) analogy co-generation by LLMs, teachers and students.</p>
@@ -116,16 +112,16 @@ const HomePage = () => {
             <Row>
                 <p className="index-example">Analego is based on the following research publications:</p>
                 <ul style={{margin: '1%'}}>
-                    <li><FontAwesomeIcon icon={faStar} /> Bhavya, Yang Zhou, Shradha Sehgal, Suma Bhat, Chengxiang Zhai. “Analego: Let's build analogies together!” Demo presentation at the AAAI 2024 Workshop on AI for Education (AI4Ed). 2024. <a href="">Link</a></li>
-                    <li><FontAwesomeIcon icon={faStar} /> Bhavya, Shradha Sehgal, Jinjun Xiong, Chengxiang Zhai. “AnaDE1.0: A Novel Data Set for Benchmarking Analogy Detection and Extraction” In Proceedings of the 18th Conference of the European Chapter of the Association for Computational Linguistics (EACL). 2024. <a href="">Link</a></li>
-                    <li><FontAwesomeIcon icon={faStar} /> Bhavya, Jinjun Xiong, Chengxiang Zhai. “CAM: A Large Language Model-based Creative Analogy Mining Framework” In Proceedings of the ACM Web Conference (WWW). 2023.  <a href="">Link</a></li>
-                    <li><FontAwesomeIcon icon={faStar} /> Bhavya, Jinjun Xiong, Chengxiang Zhai. “Analogy Generation by Prompting Large Language Models: A Case Study of InstructGPT.” In Proceedings of the 15th International Conference on Natural Language Generation (INLG). 2022.  <a href="">Link</a></li>
+                    <li><FontAwesomeIcon icon={faStar} /> Bhavya, Yang Zhou, Shradha Sehgal, Suma Bhat, Chengxiang Zhai. “Analego: Let's build analogies together!” Demo presentation at the AAAI 2024 Workshop on AI for Education (AI4Ed). 2024.</li>
+                    <li><FontAwesomeIcon icon={faStar} /> Bhavya, Shradha Sehgal, Jinjun Xiong, Chengxiang Zhai. “AnaDE1.0: A Novel Data Set for Benchmarking Analogy Detection and Extraction” In Proceedings of the 18th Conference of the European Chapter of the Association for Computational Linguistics (EACL). 2024. <a href="https://aclanthology.org/2024.eacl-long.103/ ">Link</a></li>
+                    <li><FontAwesomeIcon icon={faStar} /> Bhavya, Jinjun Xiong, Chengxiang Zhai. “CAM: A Large Language Model-based Creative Analogy Mining Framework” In Proceedings of the ACM Web Conference (WWW). 2023.  <a href="https://bhaavya.github.io/files/www23.pdf ">Link</a></li>
+                    <li><FontAwesomeIcon icon={faStar} /> Bhavya, Jinjun Xiong, Chengxiang Zhai. “Analogy Generation by Prompting Large Language Models: A Case Study of InstructGPT.” In Proceedings of the 15th International Conference on Natural Language Generation (INLG). 2022.  <a href="https://aclanthology.org/2022.inlg-main.25/">Link</a></li>
                 </ul>
             </Row>
             <br />
             <br />
             <br />
-            <h3 style={{font: 'italic 250% Georgia', marginBottom: '3%'}}>- Disclaimer  -</h3>
+            <h3 style={{font: 'italic 250% Georgia', marginBottom: '3%'}} id='disclaimer'>- Disclaimer  -</h3>
             <p className="index-text">This website uses ChatGPT for generation of analogies. Please refer to their <a href="https://openai.com/policies/terms-of-use">Terms of Use</a> before usage.</p>
         </div>
     )

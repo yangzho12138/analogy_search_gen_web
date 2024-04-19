@@ -173,12 +173,14 @@ const SearchPage = ({ userInfo, allAnalogies }) => {
                 <Col md={3}>
                     {userInfo === null ? (
                         <>
-                            <Button variant="primary" disabled>Generate Analogies</Button>
+                            <Button variant="primary" disabled style={{marginRight: '2%'}}>Generate</Button>
+                            <Button variant="primary" disabled>Assignment</Button>
                             <Link title='Subsribed user only, click to signin' ><FontAwesomeIcon icon={faCircleQuestion} style={{marginLeft: '3%'}} onClick={() => Router.push('/login')}/></Link>
                         </>
                     ) : (
                         <>
-                            <Button variant="primary" onClick={() => Router.push('/gen')}>Generate Analogies</Button>
+                            <Button variant="primary" onClick={() => Router.push('/gen')} style={{marginRight: '1%'}}>Generate</Button>
+                            <Button variant="primary" onClick={() => Router.push('/spaces')}>Assignment</Button>
                             <Link title='User profile' ><FontAwesomeIcon icon={faUser} size='xl' style={{marginLeft: '10%'}} onClick={() => Router.push('/profile')}/></Link>
                             <Link title='Log out' ><FontAwesomeIcon icon={faRightFromBracket} size='xl' style={{marginLeft: '5%'}} onClick={logout}/></Link>
                         </>

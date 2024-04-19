@@ -100,3 +100,59 @@ input[type="range"]::-webkit-slider-thumb {
     border-radius: 10px;
     padding: 15px;
   }
+
+
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  background-color: #f8f9fa; /* A light grey color */
+  transition: width 0.3s;
+  overflow-x: hidden; /* Prevent horizontal scroll */
+  z-index: 1000; /* Make sure it stays on top */
+  padding-top: 20px; /* Spacing from the top */
+}
+
+.toggleBtn {
+  position: absolute;
+  width: 100px;
+  color: black;
+  background-color: white;
+  top: 10px; /* Adjust as necessary */
+  right: -40px; /* Place outside the sidebar */
+  z-index: 1050; /* Above the sidebar */
+}
+
+.nav-link {
+  cursor: pointer;
+}
+
+.ms-3 {
+  margin-left: 1rem; /* Additional left margin for nested items */
+}
+
+.assignment-area{
+  height: 70vh;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  overflow-y: auto;
+  border: 4px dashed #000;
+  padding: 20px;
+  margin: 20px;
+}
+
+.assignment-new{
+  width: 30%;
+  height: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 1%;
+  overflow: auto;
+  border: 4px dashed #000;
+  padding: 20px;
+  cursor: pointer;
+}
