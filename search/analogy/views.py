@@ -17,7 +17,7 @@ index = 'sci_ranked'
 class SearchView(APIView):
     def get(self, request):
         # Initialize Elasticsearch client
-        es = Elasticsearch("http://localhost:9200")
+        es = Elasticsearch("http://128.174.136.29:9200")
 
         # Get all search results from the Elasticsearch index "sci_ranked"
         response = es.search(index="sci_ranked", body={"query": {"match_all": {}}}, size=100)
@@ -32,7 +32,7 @@ class SearchView(APIView):
         return Response({"docs": docs})
     def post(self, request):
         # Initialize Elasticsearch client
-        es = Elasticsearch("http://localhost:9200")
+        es = Elasticsearch("http://128.174.136.29:9200")
 
         # Get the search query from the request data
         data = request.data
@@ -121,7 +121,7 @@ class LikeView(APIView):
 class InitView(APIView):
     def get(self, request, format=None):
         # Elasticsearch instance hosted on a remote server
-        client = Elasticsearch("http://localhost:9200")
+        client = Elasticsearch("http://128.174.136.29:9200")
 
         # Index name
         index_name = "sci_ranked"
@@ -138,7 +138,7 @@ class InitView(APIView):
         data = pd.read_excel('/Users/phanidatta673/Downloads/analogy_search_gen_web/search/analogy/sci_ranked.xlsx')
 
         # Initialize Elasticsearch client
-        es = Elasticsearch("http://localhost:9200")
+        es = Elasticsearch("http://128.174.136.29:9200")
 
         # Define the Elasticsearch index name
         index_name = "sci_ranked"
@@ -171,7 +171,7 @@ class InitView(APIView):
         return Response({"message": "Data indexed into Elasticsearch successfully."})
     
     def delete(self, request, format=None):
-        es = Elasticsearch("http://localhost:9200")
+        es = Elasticsearch("http://128.174.136.29:9200")
         index_name = "sci_ranked"
 
         if es.indices.exists(index=index_name):
@@ -183,7 +183,7 @@ class InitView(APIView):
 class TestView(APIView):
     def get(self, request, format=None):
         # Get analogy from request parameters
-        es = Elasticsearch("http://localhost:9200")
+        es = Elasticsearch("http://128.174.136.29:9200")
         analogy = "New analogy"
 
         # Search for the document in Elasticsearch
@@ -196,7 +196,7 @@ class TestView(APIView):
             return Response({"error": str(e)}, status=500)
         
     def post(self, request):
-        es = Elasticsearch("http://localhost:9200")
+        es = Elasticsearch("http://128.174.136.29:9200")
         
         try:
             # Extract ID and updated analogy field from the request data
@@ -215,7 +215,7 @@ class TestView(APIView):
             return Response({"error": str(e)}, status=500)
         
     def delete(self, request, format=None):
-        es = Elasticsearch("http://localhost:9200")
+        es = Elasticsearch("http://128.174.136.29:9200")
         try:
             # Extract document ID from request body
             document_id = request.data.get('id')
