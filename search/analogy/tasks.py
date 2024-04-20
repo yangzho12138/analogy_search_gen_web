@@ -5,7 +5,7 @@ import redis
 import json
 
 r = redis.Redis(host='localhost', port=6379, db=1)
-es = Elasticsearch("http://localhost:9200")
+es = Elasticsearch("http://128.174.136.29:9200")
 index = 'sci_ranked'
 
 @app.task
