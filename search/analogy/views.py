@@ -108,7 +108,7 @@ class LikeView(APIView):
 
         try:
             # Perform the update operation in Elasticsearch
-            es = Elasticsearch("http://localhost:9200")
+            es = Elasticsearch("http://128.174.136.29:9200")
             es.update(index=index, id=id, body={
                 "doc": {
                     likeType: likeTimes + increase
