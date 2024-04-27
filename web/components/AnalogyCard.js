@@ -2,7 +2,7 @@ import React, { use } from 'react'
 import { Card, Row, Col, Form, Button, ListGroup } from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faThumbsUp, faThumbsDown, faFlag, faTemperatureThreeQuarters, faComment } from '@fortawesome/free-solid-svg-icons'
-import Modals from './Modal';
+import Modal from './Modal';
 import { useState } from 'react';
 import useRequest from '../hooks/use-request';
 import Comment from './Comment';
@@ -164,7 +164,7 @@ const AnalogyCard = ({searchResult, isCard, userInfo }) => {
 
     return (
         <>
-        <Modals isOpen={isModalOpen} onClose={closeModal}>
+        <Modal isOpen={isModalOpen} onClose={closeModal}>
             {isIssue === true ? (
                 <Form onSubmit={handleAnalogyReport} style={{margin: "5%"}}>
                     <Row><h3>Report An Issue</h3></Row>
@@ -239,7 +239,7 @@ const AnalogyCard = ({searchResult, isCard, userInfo }) => {
                     <br />
                 </>
             )}
-        </Modals>
+        </Modal>
         {isCard === true || isCard === 'true' ? (
             <Card style={{ width: '30%', height: '50%', display: 'inline-block', margin:'1%', overflow: 'auto' }}>
                 <Card.Body style={{height: '100%'}}>
