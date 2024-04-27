@@ -2,9 +2,12 @@ from search.celery import app
 from elasticsearch import Elasticsearch
 from elasticsearch.helpers import bulk
 import redis
+from redis.connection import ConnectionPool
+from redis import Redis
 import json
 
-r = redis.Redis(host='localhost', port=6379, db=1)
+pool = ConnectionPool(host='localhost', port=6379, db=1, max_connections=10)
+r = Redis(connection_pool=pool)
 es = Elasticsearch("http://localhost:9200")
 index = 'sci_ranked'
 

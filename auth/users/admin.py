@@ -3,11 +3,14 @@ from django.contrib import admin
 # Register your models here.
 from .models import CustomUser, GenLog, SearchLog, Issue, Comment
 import redis
+from redis import Redis
+from redis.connection import ConnectionPool
 import json
 
 from django.core.mail import send_mail
 
-r = redis.Redis(host='localhost', port=6379, db=1)
+# r = redis.Redis(host='localhost', port=6379, db=1)
+pool = ConnectionPool(host='localhost', port=6379, db=1, max_connections=10)
 
 class CustomUserAdmin(admin.ModelAdmin):
     list_display = ('username', 'email')
@@ -22,6 +25,7 @@ class SearchLogAdmin(admin.ModelAdmin):
     search_fields = ('user__email', 'user__username', 'created_at', 'query', 'prompt', 'temp')
 
 def delete_analogy(self, request, queryset):
+    r = Redis(connection_pool=pool)
     for obj in queryset:
         r.push('deleteAnalogy', json.dumps({
             'id': obj.id,
@@ -29,6 +33,7 @@ def delete_analogy(self, request, queryset):
         }))
 
 def update_analogy(self, request, queryset):
+    r = Redis(connection_pool=pool)
     for obj in queryset:
         r.push('updateAnalogy', json.dumps({
             'id': obj.id,
