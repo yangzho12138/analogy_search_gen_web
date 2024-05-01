@@ -121,8 +121,8 @@ const HomePage = () => {
             <br />
             <br />
             <br />
-            <h3 style={{font: 'italic 250% Georgia', marginBottom: '3%'}} id='disclaimer'>- Disclaimer  -</h3>
-            <p className="index-text">This website uses ChatGPT for generation of analogies. Please refer to their <a href="https://openai.com/policies/terms-of-use">Terms of Use</a> before usage.</p>
+            <h3 style={{font: 'italic 250% Georgia', marginBottom: '3%'}} id='disclaimer'>- Funding and Disclaimer  -</h3>
+            <p className="index-text">This material is based upon work supported by the National Science Foundation and the Institute of Education Sciences under Grant #2229612. Any opinions, findings, and conclusions or recommendations expressed in this material are those of the author(s) and do not necessarily reflect the views of National Science Foundation or the U.S. Department of Education. <br /> <br /> This website uses ChatGPT for generation of analogies. Please refer to their <a href="https://openai.com/policies/terms-of-use">Terms of Use</a> before usage.</p>
         </div>
     )
 }
