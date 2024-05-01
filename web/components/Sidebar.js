@@ -22,7 +22,7 @@ const Sidebar = () => {
                         <Nav.Link href="#features_profile_section">Profile</Nav.Link>
                     </Nav.Item>
                     <Nav.Link href="#research_section">Research & Overall Version</Nav.Link>
-                    <Nav.Link href="#disclaimer_section">Disclaimer</Nav.Link>
+                    <Nav.Link href="#disclaimer_section">Funding and Disclaimer</Nav.Link>
                 </Nav>
             )}
         </div>
