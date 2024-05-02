@@ -3,6 +3,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 import redis
+from redis import Redis
+from redis.connection import ConnectionPool
 from django.utils import timezone
 import json
 from .tasks import generate_log
@@ -12,6 +14,7 @@ from .models import CustomUser as User
 from .authentication import CookieJWTAuthentication
 
 # Create your views here.
+pool = ConnectionPool(host='localhost', port=6379, db=1, max_connections=10)
 
 def  get_response(prompt,temp,max_length,top_p,freq_penalty,pres_penalty,client):
     #print(prompt, flush=True)	
@@ -114,7 +117,8 @@ class GenerationView(APIView):
         prompt = prompt.replace('<src>',src)
 
         # store data into cache
-        r = redis.Redis(host='localhost', port=6379, db=1)
+        # r = redis.Redis(host='localhost', port=6379, db=1)
+        r = Redis(connection_pool=pool)
         generationAnalogy = {
             'username': request.user.username,
             'prompt': prompt,
