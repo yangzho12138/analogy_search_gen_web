@@ -7,6 +7,11 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'auth.settings')
 app = Celery('tasks',
              broker='amqps://vfkjnect:IrMSAhux-4FJP_d9S8z4X5UQWTTMgAqA@gull.rmq.cloudamqp.com/vfkjnect',
              backend='rpc://')
+app.conf.update(
+    task_serializer="pickle",
+    result_serializer="pickle",
+    accept_content=["pickle"]
+)
 
 app.conf.task_routes = {
     # 'auth.users.tasks.create_user': {'queue': 'user_created_queue'}
