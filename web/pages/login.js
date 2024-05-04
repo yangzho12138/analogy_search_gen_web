@@ -37,7 +37,7 @@ const LoginPage = () => {
             // const expiration = new Date(now.getTime() + 24 * 60 * 60 * 1000);
             // data.expiration = expiration.getTime();
             // localStorage.setItem('token', JSON.stringify(data));
-            Router.push('/');
+            Router.push('/search');
         }
     });
 
@@ -94,7 +94,7 @@ const LoginPage = () => {
 
     const handleTrySearch = (e) => {
         e.preventDefault();
-        Router.push('/');
+        Router.push('/search');
     }
 
     useEffect(() => {

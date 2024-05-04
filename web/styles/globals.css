@@ -1,41 +1,160 @@
-.index_background{
-    position: absolute;
-    height: 100vh;
-    width: 100vw;
-    background-image: url('https://bgsauiuc.files.wordpress.com/2020/07/763-1.jpg?w=736');
-    background-size: cover;
-    background-position: center;
-    filter: blur(8px);
-    z-index: -1;
+.index_background {
+  position: absolute;
+  height: 100vh;
+  width: 100vw;
+  background-image: url("https://bgsauiuc.files.wordpress.com/2020/07/763-1.jpg?w=736");
+  background-size: cover;
+  background-position: center;
+  filter: blur(8px);
+  z-index: -1;
 }
 
 @keyframes flyIn {
+  0% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0%);
+    opacity: 1;
+  }
+}
+
+.index-slogan {
+  animation: flyIn 3s ease-out forwards;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+  background: gray;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background: black;
+  cursor: pointer;
+  border: none;
+}
+
+/* .table-cell {
+    height: 10%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 0;
+  } */
+
+  .nameplate {
+    display: inline-block;
+    padding: 0.25rem; 
+    /* background: linear-gradient(145deg, #cfd9df, #e2ebf0); */
+    border: 1px solid #a1a1a1;
+    /* box-shadow: 0.3125rem 0.3125rem 0.9375rem rgba(0, 0, 0, 0.2),
+                -0.3125rem -0.3125rem 0.9375rem rgba(255, 255, 255, 0.5),
+                inset 0.3125rem 0.3125rem 0.9375rem rgba(255, 255, 255, 0.3),
+                inset -0.3125rem -0.3125rem 0.9375rem rgba(0, 0, 0, 0.1); */
+    border-radius: 0.625rem;
+  }
+  
+  .nameplate p {
+    font-family: 'Arial', sans-serif;
+    font-size: 1.0rem;
+    color: #333;
+    text-align: center;
+    margin: 0;
+  }
+
+  .index-text{
+    font-family: 'Arial', sans-serif;
+    font-size: 150%;
+    color: #333;
+    margin: 1%;
+  }
+
+  .index-example{
+    font-family: 'Arial', sans-serif;
+    font-style: italic;
+    font-size: 150%;
+    color: grey;
+    margin: 1%;
+  }
+  
+  @keyframes animated-border {
     0% {
-        transform: translateY(100%);
-        opacity: 0;
+      box-shadow: 0 0 0 0 black;
     }
     100% {
-        transform: translateY(0%);
-        opacity: 1;
+       box-shadow: 0 0 0 10px rgba(255,255,255,0);
     }
+  }
+  #box {
+    animation: animated-border 1.5s infinite;
+    font-family: Arial;
+    font-size: 18px;
+    line-height: 30px;
+    font-weight: bold;
+    color: black;
+    border: 2px solid;
+    border-radius: 10px;
+    padding: 15px;
+  }
+
+
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  background-color: #f8f9fa; /* A light grey color */
+  transition: width 0.3s;
+  overflow-x: hidden; /* Prevent horizontal scroll */
+  z-index: 1000; /* Make sure it stays on top */
+  padding-top: 20px; /* Spacing from the top */
 }
 
-.index-slogan{
-    animation: flyIn 3s ease-out forwards;
+.toggleBtn {
+  position: absolute;
+  width: 100px;
+  color: black;
+  background-color: white;
+  top: 10px; /* Adjust as necessary */
+  right: -40px; /* Place outside the sidebar */
+  z-index: 1050; /* Above the sidebar */
 }
 
-input[type='range']::-webkit-slider-runnable-track {
-    background: gray;
+.nav-link {
+  cursor: pointer;
 }
 
-input[type='range']::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 20px;
-    height: 20px;
-    background: black;
-    cursor: pointer;
-    border: none;
+.ms-3 {
+  margin-left: 1rem; /* Additional left margin for nested items */
+}
+
+.assignment-area{
+  height: 70vh;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  overflow-y: auto;
+  border: 4px dashed #000;
+  padding: 20px;
+  margin: 20px;
+}
+
+.assignment-new{
+  width: 30%;
+  height: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 1%;
+  overflow: auto;
+  border: 4px dashed #000;
+  padding: 20px;
+  cursor: pointer;
 }
 
 .table-cell {

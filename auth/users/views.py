@@ -6,7 +6,7 @@ from rest_framework import status
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 # from django.contrib.auth.models import User
-from .models import CustomUser as User, Issue
+from .models import CustomUser as User, Issue, Comment
 
 from .authentication import CookieJWTAuthentication
 
@@ -145,8 +145,24 @@ class InfoView(APIView):
                 'message': 'success',
                 'data': {
                     'username': user.username,
-                    'email': user.email
+                    'email': user.email,
+                    'notification': user.notification,
+                    'free_openai_api_key': user.free_openai_api_key,
+                    'role': user.role,
+                    'points': user.points
                 }
+            }
+        )
+    
+    # change notification status
+    def put(self, request):
+        user = request.user
+        user.notification = not user.notification
+        user.save()
+        return Response(
+            status=status.HTTP_200_OK,
+            data={
+                'message': 'success'
             }
         )
     
@@ -156,6 +172,7 @@ class GenLogView(APIView):
     def get(self, request):
         user = request.user
         logs = user.genlog_set.all()
+        logs = sorted(logs, key=lambda log: log.created_at, reverse=True)
         logs = [{
             'created_at': log.created_at.strftime("%Y-%m-%d %H:%M:%S"),
             'prompt': log.prompt,
@@ -185,10 +202,12 @@ class SearchLogView(APIView):
     def get(self, request):
         user = request.user
         logs = user.searchlog_set.all()
+        logs = sorted(logs, key=lambda log: log.created_at, reverse=True)
         logs = [{
             'created_at': log.created_at.strftime("%Y-%m-%d %H:%M:%S"),
             'query': log.query,
-            'analogies': log.analogies
+            'prompt': log.prompt,
+            'temp': log.temp
         } for log in logs]
         return Response(
             status=status.HTTP_200_OK,
@@ -205,30 +224,187 @@ class FlagAnalogyView(APIView):
         # generate check log for admin
         analogy = request.data.get("analogy", None)
         issue = request.data.get("issue", "").strip()
-        comment = request.data.get("comment", "").strip()
+        issueDetails = request.data.get("issueDetails", "").strip()
+        username = request.data.get("username", None)
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            user = None
         issue = Issue(
-            user = request.user,
+            user = user,
             issue=issue,
-            comment=comment,
-            pid = analogy.pid,
-            target = analogy.target,
-            prompt = analogy.prompt,
-            analogy = analogy.analogy
+            detail=issueDetails,
+            pid = analogy['pid'],
+            target = analogy['target'],
+            prompt = analogy['prompt'],
+            analogy = analogy['analogy']
         )
         issue.save()
         
         # send email to admin
-        send_mail(
-            'Analogy Issue Reported',  # subject
-            'There is an issue waiting for processing, id: ' + issue.id + ', issue: ' + issue.issue,  # message
-            'Analego',  # sender
-            admin_email,  # receiver
-            fail_silently=False,
-        )
+        # send_mail(
+        #     'Analogy Issue Reported',  # subject
+        #     'There is an issue waiting for processing, id: ' + str(issue.id) + ', issue: ' + issue.issue,  # message
+        #     'Analego',  # sender
+        #     admin_email,  # receiver
+        #     fail_silently=False,
+        # )
         return Response(
             status=status.HTTP_201_CREATED,
             data={
                 'message': 'success'
+            }
+        )
+
+class CommentAnalogyView(APIView):
+    def get(self, request):
+        pid = request.query_params.get('pid', '')
+        if pid == '':
+            return Response(
+                status=status.HTTP_400_BAD_REQUEST,
+                data={
+                    'errors': ['pid is required']
+                }
+            )
+        comments = Comment.objects.filter(pid=pid, admin_selected=True) 
+        return Response(
+            status=status.HTTP_200_OK,
+            data={
+                'message': 'success',
+                'data': {
+                    'comments': [{
+                        'id': comment.id,
+                        'username': comment.user.username if comment.user else 'anonymous',
+                        'created_at': comment.created_at.strftime("%Y-%m-%d %H:%M:%S"),
+                        'comment': comment.comment,
+                        'replyTo_username': comment.replyTo.user.username if comment.replyTo and comment.replyTo.user else "anonymous",
+                        'replyTo_comment': comment.replyTo.comment if comment.replyTo else None
+                    } for comment in comments]
+                }
+            }  
+        )
+
+    def post(self, request):
+        comment = request.data.get("comment", "").strip()
+        analogy = request.data.get("analogy", None)
+        replyTo = request.data.get("replyTo", None)
+        username = request.data.get("username", None)
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            user = None
+        print(analogy)
+        comment = Comment(
+            user = user,
+            comment = comment,
+            pid = analogy['pid'],
+            target = analogy['target'],
+            prompt = analogy['prompt'],
+            analogy = analogy['analogy'],
+            replyTo = Comment.objects.get(id=replyTo) if replyTo else None
+        )
+        comment.save()
+
+        if replyTo:
+            replyComment = Comment.objects.get(id=replyTo)
+            replyToUser = replyComment.user
+            if replyToUser and replyToUser.notification == True:
+                # send email
+                send_mail(
+                    'Your Comment Has Been Replied',  # subject
+                    'Your comment has been replied, please go to the user profile to see the detail. Thank you for the contribution to our community!',  # message
+                    'Analego',  # sender
+                    [replyToUser.email],  # receiver
+                    fail_silently=False,
+                )
+
+        return Response(
+            status=status.HTTP_201_CREATED,
+            data={
+                'message': 'success'
+            }
+        )
+
+class IssueLogView(APIView):
+    authentication_classes = (CookieJWTAuthentication,)
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        user = request.user
+        issues = Issue.objects.filter(user=user)
+        issues = [{
+            'id': issue.id,
+            'created_at': issue.created_at.strftime("%Y-%m-%d %H:%M:%S"),
+            'issue': issue.issue,
+            'detail': issue.detail,
+            'target': issue.target,
+            'prompt': issue.prompt,
+            'analogy': issue.analogy,
+            'solved': issue.solved,
+            'admin_comment': issue.admin_comment
+        } for issue in issues]
+        return Response(
+            status=status.HTTP_200_OK,
+            data={
+                'message': 'success',
+                'data': {
+                    'issues': issues
+                }
+            }
+        )
+    
+    def put(self, request):
+        user = request.user
+        issueId = request.data.get("issueId", "")
+        updatedIssue = request.data.get("issue", "").strip()
+        updatedIssueDetail = request.data.get("issueDetail", "").strip()
+        issue = Issue.objects.get(id=issueId, user=user, solved=False)
+        if not issue:
+            return Response(
+                status=status.HTTP_400_BAD_REQUEST,
+                data={
+                    'errors': ['the issue does not exist or has been solved']
+                }
+            )
+        issue.issue = updatedIssue
+        issue.detail = updatedIssueDetail
+        issue.save()
+        return Response(
+            status=status.HTTP_200_OK,
+            data={
+                'message': 'success'
+            }
+        )
+
+class CommentReplyInfoView(APIView):
+    authentication_classes = (CookieJWTAuthentication,)
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        user = request.user
+        comments = Comment.objects.filter(user=user)
+        all_replies = []
+
+        for comment in comments:
+            replies = comment.replies.filter(admin_selected=True).order_by('-created_at')
+            replies = [{
+                'id': reply.id,
+                'username': reply.user.username if reply.user else 'anonymous',
+                'created_at': reply.created_at.strftime("%Y-%m-%d %H:%M:%S"),
+                'pid': comment.pid,
+                'target': comment.target,
+                'prompt': comment.prompt,
+                'analogy': comment.analogy,
+                'comment_origin': comment.comment,
+                'comment_reply': reply.comment,
+            } for reply in replies]
+            all_replies.extend(replies)
+        # print(all_replies)
+        return Response(
+            status=status.HTTP_200_OK,
+            data={
+                'message': 'success',
+                'data': {
+                    'replies': all_replies
+                }
             }
         )
 

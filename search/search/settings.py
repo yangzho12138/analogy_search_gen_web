@@ -25,7 +25,7 @@ SECRET_KEY = "django-insecure-1e$fej96^ro5i94r&1!^#nc-2!va)pv77mrln202o1=&1av0qr
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '127.0.0.1','timan.cs.illinois.edu']
 
 
 # Application definition
@@ -37,11 +37,10 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "analogy",
-    "rest_framework",
-    "django_elasticsearch_dsl"
+    "django_celery_beat",
+    "analogy"
 ]
-
+CELERY_BROKER_URL = 'amqps://lhcyjupx:rKqBe890tVvjUWkMdnCwmUl0szi8FL-F@shark.rmq.cloudamqp.com/lhcyjupx?ssl=1&ssl_options={"ssl_verify_hostname": false}'
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -50,7 +49,14 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
 ]
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+]
+# allow cookies to be sent to the server
+CORS_ALLOW_CREDENTIALS = True
 
 ROOT_URLCONF = "search.urls"
 
@@ -84,10 +90,13 @@ DATABASES = {
     }
 }
 
-# Elasticsearch
-ELASTICSEARCH_DSL={
+CACHES = {
     'default': {
-        'hosts': 'http://0.0.0.0:9200',
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://127.0.0.1:6379/1',
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        }
     }
 }
 

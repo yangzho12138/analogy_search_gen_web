@@ -1,8 +1,5 @@
 from gen.celery import app
 # from django.contrib.auth.models import User
-from celery import shared_task
-import redis
-import json
 
 # @app.task(name='auth.users.tasks.create_user')
 # def sync_user(user_data):

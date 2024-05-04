@@ -1,5 +1,5 @@
 from auth.celery import app
-from .models import GenLog, CustomUser as User, Issue
+from .models import GenLog, CustomUser as User, Issue, SearchLog
 from celery.utils.log import get_task_logger
 
 logger = get_task_logger(__name__)
@@ -30,6 +30,20 @@ def generate_log(generation_log):
     )
     gen_log.save()
     return generation_log
+
+@app.task(name='search.analogy.tasks.search_log')
+def search_log(search_log):
+    logger.info('produce_search_log', search_log)
+    user = User.objects.get(username=search_log['username'])
+    search_log = SearchLog(
+        user=user,
+        created_at=search_log['created_at'],
+        query=search_log['query'],
+        prompt=search_log['prompt'],
+        temp=search_log['temp']
+    )
+    search_log.save()
+    return search_log
 
 @app.task(name='auth.users.tasks.analogy_issue')
 def analogy_issue(issue):

@@ -1,8 +1,3 @@
-*/node_modules
-*/.next
-*/__pycache__
-search/venv/
-search/elasticsearch-8.12.1/
-search/analogy/__pycache__/
-search/analogy/migrations/
-search/search/__pycache__/
+**/node_modules
+**/.next
+**/__pycache__/
