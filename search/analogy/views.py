@@ -100,18 +100,16 @@ class LikeView(APIView):
         data = request.data
         id = data.get('id')
         likeType = data.get('likeType')
-        likeTimes = int(data.get('likeTimes', 0))
-        cancel = data.get('cancel', False)
+        updateVal = data.get('updateVal')
 
-        # Determine the increase value based on 'cancel' flag
-        increase = -1 if cancel else 1
+        
 
         try:
             # Perform the update operation in Elasticsearch
             es = Elasticsearch("http://128.174.136.29:9200")
             es.update(index=index, id=id, body={
                 "doc": {
-                    likeType: likeTimes + increase
+                    likeType: updateVal
                 }
             })
             return Response({"success": True})
