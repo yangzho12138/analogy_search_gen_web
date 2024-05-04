@@ -48,8 +48,8 @@ const SearchPage = ({ userInfo, allAnalogies }) => {
         preSetQuery } = router.query;
 
     console.log(preSetPrompt, preSetTemp, preSetQuery, prompts.find(prompt => prompt.includes(preSetPrompt)));
-    const [query, setQuery] = useState(preSetQuery === undefined ? '' : preSetQuery)
-    const [prompt, setPrompt] = useState(preSetPrompt === undefined ? '' :  prompts.find(prompt => prompt.includes(preSetPrompt)))
+    const [query, setQuery] = useState(((preSetQuery === undefined)||(preSetQuery == '')) ? '' : preSetQuery)
+    const [prompt, setPrompt] = useState(((preSetPrompt === undefined)||(preSetPrompt == '')) ? '' :  prompts.find(prompt => prompt.includes(preSetPrompt)))
     const [temp, setTemp] = useState(preSetTemp === undefined ? '' : preSetTemp)
 
     const [isCard, setIsCard] = useState(false)
@@ -212,7 +212,7 @@ const SearchPage = ({ userInfo, allAnalogies }) => {
                                 {searchResults.map((result, index) => {
                                     return (
                                         <>
-                                            <AnalogyCard key={index} searchResult={result} isCard={isCard} userInfo={userInfo}/>
+                                            <AnalogyCard key={result.pid} searchResult={result} isCard={isCard} userInfo={userInfo}/>
                                             <br />
                                         </>
                                     )
