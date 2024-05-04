@@ -52,12 +52,21 @@ const GenPage = ({ userInfo }) => {
         preSetMax_length,
         preSetTop_p,
         preSetBest_of } = router.query;
+    
+    function retPrompt(){
+      var tempPrompt =  preSetPrompt.replace(preSetTarget,'<target>');
+      if (!((preSetSrc === undefined)||(preSetSrc == ''))){
 
+            tempPrompt = tempPrompt.replace(preSetSrc, '<src>');
+      }
+      console.log('edited prompt',preSetSrc,tempPrompt);
+      return tempPrompt;
+      }
 
     const [openAIKey, setOpenAIKey] = useState("");
     const [target, setTarget] = useState(preSetTarget === undefined ? "" : preSetTarget);
     const [src, setSrc] = useState(preSetSrc === undefined ? "" : preSetSrc);
-    const [prompt, setPrompt] = useState(preSetPrompt === undefined ? gen_prompts[0] : preSetPrompt);
+    const [prompt, setPrompt] = useState(preSetPrompt === undefined ? gen_prompts[0] : retPrompt());
     const [temp, setTemp] = useState(preSetTemp === undefined ? 0.0 : parseFloat(preSetTemp));
     const [max_length, setMaxLength] = useState(preSetMax_length === undefined ? 1 : parseInt(preSetMax_length));
     const [top_p, setTopP] = useState(preSetTop_p === undefined ? 1.0 : parseFloat(preSetTop_p));
