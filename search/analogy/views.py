@@ -40,6 +40,7 @@ class SearchView(APIView):
         prompt = data.get('prompt', '')
         temp = data.get('temp', '')
         username = data.get('username', '')
+        topic = data.get('topic', '')
 
         query_filter = []
         if(prompt != ''):
@@ -54,6 +55,23 @@ class SearchView(APIView):
         filtered_query = [w for w in word_tokens if not w in stop_words]
 
         # Prepare Elasticsearch query using the filtered query
+        # body = {
+        #     "query": {
+        #         "bool": {
+        #             "should": [
+        #                 {
+        #                     "multi_match": {
+        #                         "query": text,
+        #                         "fields": ["analogy"],
+        #                         "type": "phrase_prefix"
+        #                     }
+        #                 } for text in filtered_query
+        #             ],
+        #             "filter": query_filter,
+        #             "minimum_should_match": 1
+        #         }
+        #     }
+        # }
         body = {
             "query": {
                 "bool": {
@@ -62,10 +80,18 @@ class SearchView(APIView):
                             "multi_match": {
                                 "query": text,
                                 "fields": ["analogy"],
-                                "type": "phrase_prefix"
+                                "type": "phrase_prefix",
+                                "boost": 4
                             }
                         } for text in filtered_query
-                    ],
+                    ] + ([{
+                        "multi_match": {
+                            "query": topic,
+                            "fields": ["topic"],
+                            "type": "phrase_prefix",
+                            "boost": 1
+                        }
+                    }] if topic or topic != '' else []),
                     "filter": query_filter,
                     "minimum_should_match": 1
                 }
@@ -76,16 +102,16 @@ class SearchView(APIView):
         response = es.search(index="sci_ranked", body=body)
 
         # search log
-        searchLog = {
-            "username": username,
-            "query": query,
-            "created_at": timezone.now().strftime("%Y-%m-%d %H:%M:%S"),
-            "prompt": prompt,
-            "temp": temp
-        }
+        # searchLog = {
+        #     "username": username,
+        #     "query": query,
+        #     "created_at": timezone.now().strftime("%Y-%m-%d %H:%M:%S"),
+        #     "prompt": prompt,
+        #     "temp": temp
+        # }
 
-        # send search log to auth system
-        search_log.delay(searchLog)
+        # # send search log to auth system
+        # search_log.delay(searchLog)
 
         # Extract relevant information from the Elasticsearch response
         docs = []
