@@ -157,11 +157,13 @@ input[type="range"]::-webkit-slider-thumb {
   cursor: pointer;
 }
 
-.table-cell {
-    height: 10%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    max-width: 0;
-  }
-  
+.custom-tooltip .tooltip-inner {
+  background-color: rgba(0, 0, 0);
+  padding: 0;
+  border-radius: 0.25rem;
+}
+
+.custom-tooltip .arrow::before {
+  background-color: rgba(0, 0, 0);
+}
+
