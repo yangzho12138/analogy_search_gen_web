@@ -1,12 +1,14 @@
 import React, { use } from 'react'
 import { Card, Row, Col, Form, Button, ListGroup } from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faThumbsUp, faThumbsDown, faFlag, faTemperatureThreeQuarters, faComment } from '@fortawesome/free-solid-svg-icons'
+import { faThumbsUp, faThumbsDown, faFlag, faTemperatureThreeQuarters, faComment, faImages } from '@fortawesome/free-solid-svg-icons'
 import Modal from './Modal';
 import { useState } from 'react';
 import useRequest from '../hooks/use-request';
 import Comment from './Comment';
 import Link from '../components/Link';
+import axios from 'axios';
+import ImageTooltip from './ImageTooltip';
 
 const auth_url = process.env.NEXT_PUBLIC_AUTH_BASE_URL;
 const search_url = process.env.NEXT_PUBLIC_SEARCH_BASE_URL;
@@ -57,7 +59,7 @@ const AnalogyCard = ({searchResult, isCard, userInfo }) => {
         }
     });
 
-    const { doRequest: doRequestCommnet, errors: commentError } = useRequest({
+    const { doRequest: doRequestComment, errors: commentError } = useRequest({
         url: auth_url + '/api/users/comment',
         method: 'post',
         body: {
@@ -131,6 +133,11 @@ const AnalogyCard = ({searchResult, isCard, userInfo }) => {
         //         cancel: isRed,
         //     },
         // })
+        await axios.post(search_url + '/api/like', {
+            id: searchResult.pid,
+            likeType: isLike ? 'like' : 'dislike',
+            cancel: isRed,
+        })
     }
 
     const commnetAnlogy = async() => {
@@ -150,7 +157,7 @@ const AnalogyCard = ({searchResult, isCard, userInfo }) => {
         }
         if(window.confirm('Are you sure you want to comment this analogy?')){
             // api call
-            await doRequestCommnet();
+            await doRequestComment();
             // close modal
             closeModal();
         }
@@ -346,14 +353,16 @@ const AnalogyCard = ({searchResult, isCard, userInfo }) => {
                                 </Col>
                                 <Col md='1'>
                                     <Card.Subtitle className="mb-2 text-muted">
-                                        <FontAwesomeIcon icon={faTemperatureThreeQuarters} />{' ' + searchResult.temp}
+                                        <FontAwesomeIcon icon={faTemperatureThreeQuarters} />{searchResult.temp ? (' ' + searchResult.temp) : (' N/A')}
                                     </Card.Subtitle>
                                 </Col>
                             </Row>
                         </div>
                         <br />
                         <Card.Text>
-                            {searchResult.analogy}
+                            {searchResult.analogy} {searchResult.image && (
+                                <ImageTooltip image={searchResult.image}><FontAwesomeIcon icon={faImages} /></ImageTooltip>
+                            )}
                         </Card.Text>
                         <Row>
                             <Col md='2' onClick={(e) => likeAnalogy(true, e)} style={{ cursor: 'pointer' }}>
