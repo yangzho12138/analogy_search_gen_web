@@ -1,4 +1,4 @@
-import React, { use } from 'react'
+import React from 'react'
 import { Card, Row, Col, Form, Button, ListGroup } from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faThumbsUp, faThumbsDown, faFlag, faTemperatureThreeQuarters, faComment, faImages } from '@fortawesome/free-solid-svg-icons'
