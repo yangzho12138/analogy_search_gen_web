@@ -6,7 +6,7 @@ from datetime import timedelta
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'search.settings')
 
 app = Celery('tasks',
-             broker='amqps://vfkjnect:IrMSAhux-4FJP_d9S8z4X5UQWTTMgAqA@gull.rmq.cloudamqp.com/vfkjnect',
+             broker='pyamqp://admin:admin@localhost:5672//',
              backend='rpc://')
 app.conf.update(
     task_serializer="pickle",
