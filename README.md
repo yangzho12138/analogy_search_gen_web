@@ -13,11 +13,10 @@ Path: “/analogy_search_gen_web/gen/“
 Path: “/analogy_search_gen_web/auth/“  
 `pip install -r requirements.txt`  
 # Commands to run the applications:  
-Auth: Go to auth folder and run `./script.sh`  
-Gen: Go to gen folder and run `./script.sh`   
-Search: Go to search folder and run `./script.sh`    
+RabbitMQ:  
+pull the docker container: `docker pull rabbitmq:3.8.17-management`  
+run the container: `docker run -d --restart always --name rabbitmq -p 5672:5672 -p 15672:15672 -v `pwd`/data:/home/rabbitmq --hostname myRabbit -e RABBITMQ_DEFAULT_USER=admin -e RABBITMQ_DEFAULT_PASS=admin rabbitmq:3.8.17-management`  
 
-  
 Redis:  
   Path: “/analogy_search_gen_web/auth/redis-7.2.4“  
   Command to start the redis server:  
@@ -26,7 +25,7 @@ Redis:
 MySQL db:  
   Path: gen/Dockerfile  
   `docker build -t mydb .` (After navigating to the /gen folder)  
-  `docker run --restart always -d -p 3306:3306 --name mydb -e MYSQL_ROOT_PASSWORD=root_password -e MYSQL_USER=myuser -e MYSQL_PASSWORD=mypassword mysql:latest`  
+  `docker run -d --restart always -p 3306:3306 --name mydb -e MYSQL_ROOT_PASSWORD=root_password -e MYSQL_USER=myuser -e MYSQL_PASSWORD=mypassword mysql:latest`  
     
   After running docker, set priviliges and create database:  
     `docker exec -it mydb bash`  
@@ -35,3 +34,8 @@ MySQL db:
       `FLUSH PRIVILEGES;`  
       `CREATE DATABASE mydb;`  
       `SHOW DATABASES;`  
+
+Auth: Go to auth folder and run `./script.sh`  
+Gen: Go to gen folder and run `./script.sh`   
+Search: Go to search folder and run `./script.sh`    
+
