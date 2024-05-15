@@ -15,19 +15,23 @@ Path: “/analogy_search_gen_web/auth/“
 # Commands to run the applications:  
 Auth: Go to auth folder and run `./script.sh`  
 Gen: Go to gen folder and run `./script.sh`   
-Search: Go to search folder and run `./script.sh`     
+Search: Go to search folder and run `./script.sh`    
+
+  
 Redis:  
   Path: “/analogy_search_gen_web/auth/redis-7.2.4“  
   Command to start the redis server:  
   `redis-server`  
+    
 MySQL db:  
   Path: gen/Dockerfile  
   `docker build -t mydb .` (After navigating to the /gen folder)  
   `docker run --restart always -d -p 3306:3306 --name mydb -e MYSQL_ROOT_PASSWORD=root_password -e MYSQL_USER=myuser -e MYSQL_PASSWORD=mypassword mysql:latest`  
-  After running docker, set priviliges and create database:
-    `docker exec -it mydb bash`
-    `mysql -u root -p`
-      `GRANT ALL PRIVILEGES ON mydb.* TO 'myuser'@'%';`
-      `FLUSH PRIVILEGES;`
-      `CREATE DATABASE mydb;`
-      `SHOW DATABASES;`
+    
+  After running docker, set priviliges and create database:  
+    `docker exec -it mydb bash`  
+    `mysql -u root -p`  
+      `GRANT ALL PRIVILEGES ON mydb.* TO 'myuser'@'%';`  
+      `FLUSH PRIVILEGES;`  
+      `CREATE DATABASE mydb;`  
+      `SHOW DATABASES;`  
