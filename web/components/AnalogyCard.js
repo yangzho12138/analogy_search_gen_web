@@ -42,6 +42,8 @@ const AnalogyCard = ({searchResult, isCard, userInfo }) => {
     const [comments, setComments] = useState([]);
     const [showComments, setShowComments] = useState(false);
 
+    const [showImage, setShowImage] = useState(false);
+
     //const [like, setLike] = useState(searchResult.like);
     //const [dislike, setDislike] = useState(searchResult.dislike);
 
@@ -299,12 +301,24 @@ const AnalogyCard = ({searchResult, isCard, userInfo }) => {
                         </Col>
                         <Col md='2'>
                             <Card.Subtitle className="mb-2 text-muted">
-                                <FontAwesomeIcon icon={faTemperatureThreeQuarters} />{' ' + searchResult.temp}
+                                <FontAwesomeIcon icon={faTemperatureThreeQuarters} />{searchResult.temp ? (' ' + searchResult.temp) : (' N/A')}
                             </Card.Subtitle>
                         </Col>
                     </Row>
                     <Card.Text style={{maxHeight: '60%', overflowY: 'auto', border: '1px solid grey',  borderRadius: '10px', padding: '10px'}}>
-                        {searchResult.analogy}
+                            {searchResult.analogy} {searchResult.image && (
+                                // <ImageTooltip image={searchResult.image}><FontAwesomeIcon icon={faImages} /></ImageTooltip>
+                                <>
+                                    <Link title={"Click to view/hide image"}>
+                                        <FontAwesomeIcon onClick={() => setShowImage(!showImage)} icon={faImages} />
+                                    </Link>
+                                    {showImage && (
+                                        <div>
+                                            <img src={searchResult.image} style={{ width: '20vw', height: '20vh' }} />
+                                        </div>
+                                    )}
+                                </>
+                            )}
                     </Card.Text>
                     <Row>
                         <Col md='2' onClick={(e) => likeAnalogy(true, e)} style={{ cursor: 'pointer' }}>
@@ -373,7 +387,17 @@ const AnalogyCard = ({searchResult, isCard, userInfo }) => {
                         <br />
                         <Card.Text>
                             {searchResult.analogy} {searchResult.image && (
-                                <ImageTooltip image={searchResult.image}><FontAwesomeIcon icon={faImages} /></ImageTooltip>
+                                // <ImageTooltip image={searchResult.image}><FontAwesomeIcon icon={faImages} /></ImageTooltip>
+                                <>
+                                    <Link title={"Click to view/hide image"}>
+                                        <FontAwesomeIcon onClick={() => setShowImage(!showImage)} icon={faImages} />
+                                    </Link>
+                                    {showImage && (
+                                        <div>
+                                            <img src={searchResult.image} style={{ width: '20vw', height: '20vh' }} />
+                                        </div>
+                                    )}
+                                </>
                             )}
                         </Card.Text>
                         <Row>

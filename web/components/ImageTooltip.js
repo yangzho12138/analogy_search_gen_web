@@ -5,10 +5,10 @@ function ImageTooltip({ image, children }) {
 
     return (
         <OverlayTrigger
-            placement="top"
+            placement="bottom"
             overlay={
                 <Tooltip className="custom-tooltip">
-                    <img src={image} style={{ width: '30vw', height: '30vh' }} />
+                    <img src={image} style={{ width: '20vw', height: '20vh' }} />
                 </Tooltip>
             }
             style={{color: 'transparent'}}
