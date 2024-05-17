@@ -12,12 +12,37 @@ from nltk.tokenize import word_tokenize
 import pandas as pd
 from django.utils import timezone
 from .tasks import search_log
+import logging
+from logging.handlers import SocketHandler
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+
+
+file_handler = logging.FileHandler('/Users/yang/Downloads/filebeat-8.13.4-darwin-x86_64/logs/test.log')
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+file_handler.setFormatter(formatter)
+
+logger.addHandler(file_handler)
+
+def get_client_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
 
 index = 'sci_ranked'
 class SearchView(APIView):
     def get(self, request):
         # Initialize Elasticsearch client
-        es = Elasticsearch("http://128.174.136.29:9200")
+        # es = Elasticsearch("http://128.174.136.29:9200")
+
+        ip = get_client_ip(request)
+        logger.info(f'IP logged: {ip}')
+
+        es = Elasticsearch("http://localhost:9200")
 
         # Get all search results from the Elasticsearch index "sci_ranked"
         response = es.search(index="sci_ranked", body={"query": {"match_all": {}}}, size=100)
@@ -32,7 +57,8 @@ class SearchView(APIView):
         return Response({"docs": docs})
     def post(self, request):
         # Initialize Elasticsearch client
-        es = Elasticsearch("http://128.174.136.29:9200")
+        # es = Elasticsearch("http://128.174.136.29:9200")
+        es = Elasticsearch("http://localhost:9200")
 
         # Get the search query from the request data
         data = request.data
@@ -102,16 +128,16 @@ class SearchView(APIView):
         response = es.search(index="sci_ranked", body=body)
 
         # search log
-        # searchLog = {
-        #     "username": username,
-        #     "query": query,
-        #     "created_at": timezone.now().strftime("%Y-%m-%d %H:%M:%S"),
-        #     "prompt": prompt,
-        #     "temp": temp
-        # }
+        searchLog = {
+            "username": username,
+            "query": query,
+            "created_at": timezone.now().strftime("%Y-%m-%d %H:%M:%S"),
+            "prompt": prompt,
+            "temp": temp
+        }
 
         # # send search log to auth system
-        # search_log.delay(searchLog)
+        search_log.delay(searchLog)
 
         # Extract relevant information from the Elasticsearch response
         docs = []
