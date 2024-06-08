@@ -1,0 +1,42 @@
+{
+  "name": "analego-exploree",
+  "version": "0.1",
+  "manifest_version": 2,
+
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
+
+  "description": "This is a chrome extension that helps you to explore new concepts based on analogy, this extension is based on Analego API",
+  "icons": {
+    "16": "images/get_started32.png",
+    "32": "images/get_started32.png",
+    "48": "images/get_started32.png",
+    "128": "images/get_started128.png"
+  },
+
+  "browser_action": {
+    "default_icon": {
+      "16": "images/get_started32.png",
+      "32": "images/get_started32.png"
+    },
+    "default_title": "analego-explorer",
+    "default_popup": "popup.html"
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "css": ["content-script.css"],
+      "js": ["content-script.js"]
+    }
+  ],
+  "permissions": [
+    "activeTab",
+    "https://timan.cs.illinois.edu/*",
+    "clipboardWrite",
+    "storage",
+    "tabs"
+  ]
+}

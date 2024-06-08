@@ -1,0 +1,132 @@
+.search-panel {
+    max-width: 40vw;
+    overflow: scroll;
+    box-shadow: 1px 1px 8px 2px rgba(0, 0, 0, .2);
+    border-radius: 8px;
+    transform: scale(0.6);
+    z-index: 1000;
+    background: #fff;
+    position: absolute;
+    top: 10px;
+    opacity: 0;
+    transition: all .2s;
+}
+
+.search-panel.show {
+    transform: scale(1);
+    opacity: 1;
+}
+
+/* .search-panel header {
+    background: #eee;
+    padding: 10px;
+    font-size: 12px;
+    color: #666;
+    position: relative;
+    cursor: grab;
+} */
+
+.search-panel .custom-header {
+    background: #eee;
+    padding: 10px;
+    font-size: 12px;
+    color: #666;
+    position: relative;
+    cursor: grab;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+
+
+.search-panel .custom-header .close {
+    border: none;
+    cursor: pointer;
+    font-size: 12px;
+    color: #666;
+}
+
+
+.search-panel .custom-header header {
+    margin: 0;
+    padding: 0;
+    font-size: inherit;
+    color: inherit;
+}
+
+
+
+
+.search-panel header.dragging {
+    cursor: grabbing; 
+}
+
+.search-panel header .close {
+    position: absolute;
+    right: 10%;
+    cursor: pointer;
+}
+
+.search-panel main {
+    padding: 0 10px;
+    margin-bottom: 0;
+}
+
+.search-panel main .source {
+    border-bottom: 1px #eee solid;
+    padding-bottom: 10px;
+}
+
+.search-panel main .dest {
+    padding-bottom: 10px;
+}
+
+.search-panel .title,
+.search-panel .content {
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+}
+
+.search-panel .title {
+    font-size: 12px;
+    color: #888;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 10px;
+    margin: 0px;
+}
+
+.search-panel .content {
+    color: #666;
+    font-size: 13px;
+    max-height: 40vh;
+    overflow-y: scroll;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 10px;
+    margin: 0px;
+}
+
+/* .search-panel header .pin {
+    position: absolute;
+    left: 10px; 
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+    background-color: #ccc;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 20px;
+    cursor: pointer;
+} */
+
+/* .search-panel header .pin.pinned {
+    background-color: #666;
+} */
