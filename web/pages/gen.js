@@ -68,7 +68,7 @@ const GenPage = ({ userInfo }) => {
     const [src, setSrc] = useState(preSetSrc === undefined ? "" : preSetSrc);
     const [prompt, setPrompt] = useState(preSetPrompt === undefined ? gen_prompts[0] : retPrompt());
     const [temp, setTemp] = useState(preSetTemp === undefined ? 0.0 : parseFloat(preSetTemp));
-    const [max_length, setMaxLength] = useState(preSetMax_length === undefined ? 1 : parseInt(preSetMax_length));
+    const [max_length, setMaxLength] = useState(preSetMax_length === undefined ? 400 : parseInt(preSetMax_length));
     const [top_p, setTopP] = useState(preSetTop_p === undefined ? 1.0 : parseFloat(preSetTop_p));
     const [freq_penalty, setFreqPenalty] = useState(preSetFreq_penalty === undefined ? 0.0 : parseFloat(preSetFreq_penalty));
     const [pres_penalty, setPresPenalty] = useState(preSetPres_penalty === undefined ? 0.0 : parseFloat(preSetPres_penalty));
@@ -313,6 +313,7 @@ const GenPage = ({ userInfo }) => {
                                             onChange={(e) => {
                                                 setMaxLength(parseFloat(e.target.value));
                                             }}
+                                            defaultValue="400"
                                             min="1"
                                             max="4000"
                                             step="1"
