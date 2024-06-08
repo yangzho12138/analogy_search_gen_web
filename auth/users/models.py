@@ -76,7 +76,7 @@ class Comment(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     comment = models.CharField(max_length=1000)
-    admin_selected = models.BooleanField(default=False)
+    admin_selected = models.BooleanField(default=True)
     admin_comment = models.CharField(max_length=1000, blank=True)
     target = models.CharField(max_length=100)
     prompt = models.CharField(max_length=100)
