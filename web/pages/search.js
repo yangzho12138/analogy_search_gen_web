@@ -230,8 +230,11 @@ SearchPage.getInitialProps = async ( { req } ) => {
     // let userLoggedIn = false;
     let userInfo = null;
     let allAnalogies = [];
-
+    let clientip = ''; 
     let cookies = '';
+    if (req && req.headers['x-forwarded-for']) {
+       clientip = req.headers['x-forwarded-for']
+    }  
     if (req && req.headers.cookie) {
         cookies = req.headers.cookie;
     }
@@ -256,7 +259,7 @@ SearchPage.getInitialProps = async ( { req } ) => {
     try{
         const res = await axios.get( search_url + '/api/search', {
             headers: {
-                cookie: cookies
+                cookie: cookies, clientip:clientip
             },
             withCredentials: true,
         });
