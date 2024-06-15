@@ -71,7 +71,7 @@ const AnalogyCard = ({searchResult, isCard, userInfo }) => {
             username: userInfo ? userInfo.username : "anonymous",
         },
         onSuccess: (data) => {
-            alert('Thank you for your comment, if selected, it will be displayed.');
+            alert('Thank you for your comment!');
         },
     });
 

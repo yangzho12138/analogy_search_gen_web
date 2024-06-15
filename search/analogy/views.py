@@ -104,14 +104,33 @@ class SearchView(APIView):
                 "bool": {
                     "should": [
                         {
-                            "multi_match": {
-                                "query": text,
-                                "fields": ["analogy"],
-                                "type": "phrase_prefix",
+                            "function_score": {
+                                "query": {
+                                    "multi_match": {
+                                        "query": text,
+                                        "fields": ["target"],
+                                        "type": "phrase_prefix"
+                                    }
+                                },
+                                "boost": 4,
+                                "weight": 2  # Set weight to prioritize results in the target field
+                            }
+                        }for text in filtered_query
+                    ] + [
+                        {
+                            "function_score": {
+                                "query": {
+                                    "multi_match": {
+                                        "query": text,
+                                        "fields": ["prompt", "analogy"],
+                                        "type": "phrase_prefix"
+                                    }
+                                },
                                 "boost": 4
                             }
-                        } for text in filtered_query
-                    ] + ([{
+                        }for text in filtered_query
+                    ]
+                    + ([{
                         "multi_match": {
                             "query": topic,
                             "fields": ["topic"],
@@ -129,8 +148,10 @@ class SearchView(APIView):
         response = es.search(index="sci_ranked", body=body)
 
         # search log
+        ip = get_client_ip(request)
         searchLog = {
             "username": username,
+            "ip": ip,
             "query": query,
             "created_at": timezone.now().strftime("%Y-%m-%d %H:%M:%S"),
             "prompt": prompt,
@@ -138,7 +159,7 @@ class SearchView(APIView):
         }
 
         # # send search log to auth system
-        search_log.delay(searchLog)
+        # search_log.delay(searchLog)
 
         # Extract relevant information from the Elasticsearch response
         docs = []

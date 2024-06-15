@@ -45,6 +45,7 @@ class GenLog(models.Model):
 
 class SearchLog(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True)
+    ip = models.CharField(max_length=100, default=None)
     created_at = models.DateTimeField(auto_now_add=True)
     query = models.CharField(max_length=1000)
     # remove stop words - words used to do search in ES

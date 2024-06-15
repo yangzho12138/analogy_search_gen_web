@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Card, Form, Row, Col, Button, Tooltip, OverlayTrigger } from "react-bootstrap"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCircleQuestion, faUser, faRightFromBracket } from '@fortawesome/free-solid-svg-icons'
+import { faCircleQuestion, faUser, faRightFromBracket, faMap } from '@fortawesome/free-solid-svg-icons'
 import Link from '../components/Link'
 import Router from "next/router"
 import useRequest from '../hooks/use-request'
@@ -200,6 +200,7 @@ const GenPage = ({ userInfo }) => {
                         <Button variant="primary" onClick={() => Router.push('/search')}>Search Analogies</Button>
                         <Link title='User profile' ><FontAwesomeIcon icon={faUser} size='xl' style={{marginLeft: '10%'}} onClick={() => Router.push('/profile')}/></Link>
                         <Link title='Log out' ><FontAwesomeIcon icon={faRightFromBracket} size='xl' style={{marginLeft: '5%'}} onClick={logout}/></Link>
+                        <Link title='Know more about Analego' ><FontAwesomeIcon icon={faMap} style={{marginLeft: '3%'}} onClick={() => Router.push('/')}/></Link>
                     </Col>
                 </Row>
                 <Card style={{margin: '5%'}}>

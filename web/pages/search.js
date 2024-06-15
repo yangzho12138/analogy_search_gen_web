@@ -3,7 +3,7 @@ import { use, useEffect, useState } from "react"
 import Router from "next/router"
 import useRequest from "../hooks/use-request";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faMagnifyingGlass, faCircleQuestion, faUser, faRightFromBracket } from '@fortawesome/free-solid-svg-icons'
+import { faMagnifyingGlass, faCircleQuestion, faUser, faRightFromBracket, faMap } from '@fortawesome/free-solid-svg-icons'
 import Link from "../components/Link";
 import AnalogyCard from "../components/AnalogyCard";
 import axios, { all } from "axios";
@@ -174,15 +174,17 @@ const SearchPage = ({ userInfo, allAnalogies }) => {
                     {userInfo === null ? (
                         <>
                             <Button variant="primary" disabled style={{marginRight: '2%'}}>Generate</Button>
-                            <Button variant="primary" disabled>Assignment</Button>
+                            {/* <Button variant="primary" disabled>Assignment</Button> */}
                             <Link title='Subsribed user only, click to signin' ><FontAwesomeIcon icon={faCircleQuestion} style={{marginLeft: '3%'}} onClick={() => Router.push('/login')}/></Link>
+                            <Link title='Know more about Analego' ><FontAwesomeIcon icon={faMap} style={{marginLeft: '3%'}} onClick={() => Router.push('/')}/></Link>
                         </>
                     ) : (
                         <>
                             <Button variant="primary" onClick={() => Router.push('/gen')} style={{marginRight: '1%'}}>Generate</Button>
-                            <Button variant="primary" onClick={() => Router.push('/spaces')}>Assignment</Button>
+                            {/* <Button variant="primary" onClick={() => Router.push('/spaces')}>Assignment</Button> */}
                             <Link title='User profile' ><FontAwesomeIcon icon={faUser} size='xl' style={{marginLeft: '10%'}} onClick={() => Router.push('/profile')}/></Link>
                             <Link title='Log out' ><FontAwesomeIcon icon={faRightFromBracket} size='xl' style={{marginLeft: '5%'}} onClick={logout}/></Link>
+                            <Link title='Know more about Analego' ><FontAwesomeIcon icon={faMap} style={{marginLeft: '3%'}} onClick={() => Router.push('/')}/></Link>
                         </>
                     )}
                 </Col>

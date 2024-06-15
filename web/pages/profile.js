@@ -153,6 +153,16 @@ const ProfilePage = ({userInfo, searchLog, genLog, issueLog, commentReplyInfo}) 
         openModal();
     }
 
+    const { doRequest: doRequestChangePassword, errors: changePasswordError } = useRequest({
+        url: auth_url + '/api/users/signup',
+        method: 'put',
+        body: {
+            email: userInfo.email,
+            password: oldPassword,
+            newPassword: newPassword
+        }
+    });
+
     const submitPasswordChange = async (e) => {
         e.preventDefault();
         if(oldPassword === '' || newPassword === '' || confirmPassword === ''){
@@ -164,7 +174,7 @@ const ProfilePage = ({userInfo, searchLog, genLog, issueLog, commentReplyInfo}) 
             return;
         }
         // api call
-
+        await doRequestChangePassword();
     }
 
     const { doRequest: doRequestUpdateNotification, errors: updateNotificationError } = useRequest({
@@ -249,7 +259,7 @@ const ProfilePage = ({userInfo, searchLog, genLog, issueLog, commentReplyInfo}) 
                             <Card.Body style={{overflow: 'auto'}}>
                                 <Card.Title><h3>User Profile</h3></Card.Title>
                                 <br />
-                                <Form>
+                                {/* <Form>
                                 <div style={{ display: 'flex', alignItems: 'center' }}>
                                     <Form.Check // prettier-ignore
                                         type="switch"
@@ -260,15 +270,15 @@ const ProfilePage = ({userInfo, searchLog, genLog, issueLog, commentReplyInfo}) 
                                     />
                                     <Link title={"Turn on to receive notification when your reported issue status changed or someone replied to your comment"}><FontAwesomeIcon style={{marginLeft: '10px'}} icon={faCircleQuestion} /></Link>
                                 </div>
-                                </Form>
+                                </Form> */}
                                 <h6>Username: {userInfo.username}</h6>
                                 <h6>Email: {userInfo.email}</h6>
-                                <div style={{display: 'flex'}}>
+                                {/* <div style={{display: 'flex'}}>
                                     <h6>Role: {userInfo.role}</h6> <Link title={"Click the icon to see more about roles"}><FontAwesomeIcon onClick={roleDetail} style={{marginLeft: '10px'}} icon={faCircleQuestion} /></Link>
                                 </div>
                                 <div style={{display: 'flex'}}>
                                     <h6>Points: {userInfo.points}</h6> <Link title={"Click the icon to see more about points"}><FontAwesomeIcon onClick={pointsDetail} style={{marginLeft: '10px'}} icon={faCircleQuestion} /></Link>
-                                </div>
+                                </div> */}
                                 <h6>Free API Key Remaining Usage Time: {userInfo.free_openai_api_key}</h6>
                                 <a href="#" onClick={changePassword}>Change Password</a>
                             </Card.Body>
