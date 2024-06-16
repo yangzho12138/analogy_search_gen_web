@@ -159,7 +159,7 @@ class SearchView(APIView):
         }
 
         # # send search log to auth system
-        # search_log.delay(searchLog)
+        search_log.delay(searchLog)
 
         # Extract relevant information from the Elasticsearch response
         docs = []
