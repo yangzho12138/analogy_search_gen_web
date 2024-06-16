@@ -59,6 +59,8 @@ const SearchPage = ({ userInfo, allAnalogies }) => {
 
     const [isLoading, setIsLoading] = useState(false);
 
+    const [errors, setErrors] = useState(null);
+
     const { doRequest : doRequestLogOut, errors : logOutError } = useRequest({
         url: auth_url + '/api/users/logout',
         method: 'post',
@@ -66,6 +68,13 @@ const SearchPage = ({ userInfo, allAnalogies }) => {
             window.alert('Log Out Success');
         } 
     });
+
+    useEffect(() => {
+        if(logOutError){
+            setErrors(logOutError);
+        }
+    }, [logOutError]);
+
 
     const { doRequest : doRequestSearch, errors : searchError } = useRequest({
         url: search_url + '/api/search',
@@ -80,6 +89,12 @@ const SearchPage = ({ userInfo, allAnalogies }) => {
             setSearchResults(data.docs);
         }
     });
+
+    useEffect(() => {
+        if(searchError){
+            setErrors(searchError);
+        }
+    }, [searchError]);
     
     const doSearch = async(e) => {
         e.preventDefault();
@@ -111,6 +126,13 @@ const SearchPage = ({ userInfo, allAnalogies }) => {
     return (
         <div style={{marginTop: "3%"}}>
              <LoadingSpinner isLoading={isLoading} />
+             {errors && (
+                    <Modal isOpen={true} onClose={() => {
+                        setErrors(null);
+                    }}>
+                        {errors}
+                    </Modal>
+            )}
             <Row>
                 <Col md={3} className="text-center">
                     <span style={{font: 'italic 5em Georgia', color: 'orange'}}>A</span>
@@ -207,7 +229,7 @@ const SearchPage = ({ userInfo, allAnalogies }) => {
                         {searchResults === null || searchResults.length === 0 ? (
                             <div style={{height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: 'grey', marginLeft: '30%'}}>
                                 <h1>Oops, No Analogy Found ...</h1>
-                                <h3>Search Again or Generate Analogy</h3>
+                                <h3>Try to Refresh Page, Search Again or Generate Analogy</h3>
                             </div>
                         ) : (
                             <>

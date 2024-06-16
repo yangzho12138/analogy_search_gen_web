@@ -135,6 +135,8 @@ const ProfilePage = ({userInfo, searchLog, genLog, issueLog, commentReplyInfo}) 
 
     const [modalInfo, setModalInfo] = useState("changePassword");
 
+    const [errors, setErrors] = useState(null);
+
     const openModal = () => setIsModalOpen(true);
     const closeModal = () => setIsModalOpen(false);
 
@@ -163,6 +165,12 @@ const ProfilePage = ({userInfo, searchLog, genLog, issueLog, commentReplyInfo}) 
         }
     });
 
+    useEffect(() => {
+        if(changePasswordError){
+            setErrors(changePasswordError);
+        }
+    }, [changePasswordError]);
+
     const submitPasswordChange = async (e) => {
         e.preventDefault();
         if(oldPassword === '' || newPassword === '' || confirmPassword === ''){
@@ -186,9 +194,22 @@ const ProfilePage = ({userInfo, searchLog, genLog, issueLog, commentReplyInfo}) 
         await doRequestUpdateNotification();
     }
 
+    useEffect(() => {
+        if(updateNotificationError){
+            setErrors(updateNotificationError);
+        }
+    }, [updateNotificationError]);
+
 
     return (
         <div style={{margin: "3%"}}>
+            {errors && (
+                    <Modal isOpen={true} onClose={() => {
+                        setErrors(null);
+                    }}>
+                        {errors}
+                    </Modal>
+            )}
             <Modal isOpen={isModalOpen} onClose={closeModal}>
                 {modalInfo === "changePassword" && (
                     <>
