@@ -5,6 +5,7 @@ import useRequest from "../hooks/use-request";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMagnifyingGlass, faCircleQuestion, faUser, faRightFromBracket, faMap } from '@fortawesome/free-solid-svg-icons'
 import Link from "../components/Link";
+import Modal from "../components/Modal";
 import AnalogyCard from "../components/AnalogyCard";
 import axios, { all } from "axios";
 import { useRouter } from "next/router";
