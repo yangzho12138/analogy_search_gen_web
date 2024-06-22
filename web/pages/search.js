@@ -10,7 +10,6 @@ import AnalogyCard from "../components/AnalogyCard";
 import axios, { all } from "axios";
 import { useRouter } from "next/router";
 import LoadingSpinner from "../components/LoadingSpinner";
-import Modal from "../components/Modal";
 
 const prompts = [
     'P1: Explain <target> using an analogy.',
