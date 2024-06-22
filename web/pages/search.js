@@ -10,6 +10,7 @@ import AnalogyCard from "../components/AnalogyCard";
 import axios, { all } from "axios";
 import { useRouter } from "next/router";
 import LoadingSpinner from "../components/LoadingSpinner";
+import Modal from "../components/Modal";
 
 const prompts = [
     'P1: Explain <target> using an analogy.',
@@ -172,7 +173,7 @@ const SearchPage = ({ userInfo, allAnalogies }) => {
                                     value={prompt}
                                     onChange={(e) => setPrompt(e.target.value)}
                                 >
-                                    <option>Prompt...</option>
+                                    <option key={-1} value=''>All Prompt</option>
                                     {prompts.map((prompt, index) => {
                                         return <option key={index} value={prompt}>{prompt}</option>
                                     })}
@@ -184,7 +185,7 @@ const SearchPage = ({ userInfo, allAnalogies }) => {
                                     value={temp}
                                     onChange={(e) => setTemp(e.target.value)}
                                 >
-                                    <option>Randomness...</option>
+                                    <option key={-1} value=''>All Randomness</option>
                                     {temps.map((temp, index) => {
                                         return <option key={index} value={temp}>{temp}</option>
                                     })}

@@ -301,7 +301,7 @@ const AnalogyCard = ({searchResult, isCard, userInfo }) => {
                         </Col>
                         <Col md='2'>
                             <Card.Subtitle className="mb-2 text-muted">
-                                <FontAwesomeIcon icon={faTemperatureThreeQuarters} />{searchResult.temp ? (' ' + searchResult.temp) : (' N/A')}
+                                <FontAwesomeIcon icon={faTemperatureThreeQuarters} />{searchResult.temp ? (searchResult.temp === 'high temperature' ? (' 0.8') : (searchResult.temp === 'low temperature' ? (' 0.0') : ' ' + searchResult.temp)) : (' N/A')}
                             </Card.Subtitle>
                         </Col>
                     </Row>
