@@ -20,6 +20,11 @@ const issueOptions = [
     'Other'
 ]
 
+const link_title = {
+    "prompt": "Prompt for analogy ",
+    "temp": "Loweing results in less ramdom completions. As randomness approaches zero, the model will become deterministic and repetitive",
+}
+
 const AnalogyCard = ({searchResult, isCard, userInfo }) => {
     // console.log(isCard)
     // console.log(userInfo)
@@ -297,11 +302,17 @@ const AnalogyCard = ({searchResult, isCard, userInfo }) => {
                     </Card.Title>
                     <Row>
                         <Col md='10'>
-                            <Card.Subtitle className="mb-2 text-muted">{searchResult.prompt}</Card.Subtitle>
+                            <Link title={link_title['prompt']}>
+                                <Card.Subtitle className="mb-2 text-muted">{searchResult.prompt}</Card.Subtitle>
+                            </Link>
                         </Col>
                         <Col md='2'>
                             <Card.Subtitle className="mb-2 text-muted">
-                                <FontAwesomeIcon icon={faTemperatureThreeQuarters} />{searchResult.temp ? (searchResult.temp === 'high temperature' ? (' 0.8') : (searchResult.temp === 'low temperature' ? (' 0.0') : ' ' + searchResult.temp)) : (' N/A')}
+                            <Link title={link_title['temp']}>
+                                <div>
+                                    <FontAwesomeIcon icon={faTemperatureThreeQuarters} />{searchResult.temp ? (searchResult.temp === 'high temperature' ? (' 0.8') : (searchResult.temp === 'low temperature' ? (' 0.0') : ' ' + searchResult.temp)) : (' 0.3')}
+                                </div>
+                            </Link>
                             </Card.Subtitle>
                         </Col>
                     </Row>
@@ -375,11 +386,17 @@ const AnalogyCard = ({searchResult, isCard, userInfo }) => {
 
                             <Row>
                                 <Col md='11'>
-                                    <Card.Subtitle className="mb-2 text-muted">{searchResult.prompt}</Card.Subtitle>
+                                    <Link title={link_title['prompt']}>
+                                        <Card.Subtitle className="mb-2 text-muted">{searchResult.prompt}</Card.Subtitle>
+                                    </Link>
                                 </Col>
                                 <Col md='1'>
                                     <Card.Subtitle className="mb-2 text-muted">
-                                        <FontAwesomeIcon icon={faTemperatureThreeQuarters} />{searchResult.temp ? (' ' + searchResult.temp) : (' N/A')}
+                                    <Link title={link_title['temp']}>
+                                        <div>
+                                            <FontAwesomeIcon icon={faTemperatureThreeQuarters} />{searchResult.temp ? (searchResult.temp === 'high temperature' ? (' 0.8') : (searchResult.temp === 'low temperature' ? (' 0.0') : ' ' + searchResult.temp)) : (' 0.3')}
+                                        </div>
+                                    </Link>
                                     </Card.Subtitle>
                                 </Col>
                             </Row>

@@ -3,7 +3,7 @@ import { use, useEffect, useState } from "react"
 import Router from "next/router"
 import useRequest from "../hooks/use-request";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faMagnifyingGlass, faCircleQuestion, faUser, faRightFromBracket, faMap } from '@fortawesome/free-solid-svg-icons'
+import { faMagnifyingGlass, faCircleQuestion, faUser, faRightFromBracket, faMap, faCaretRight, faCaretDown } from '@fortawesome/free-solid-svg-icons'
 import Link from "../components/Link";
 import Modal from "../components/Modal";
 import AnalogyCard from "../components/AnalogyCard";
@@ -36,6 +36,7 @@ const temps = [
 const link_title = {
     "prompt": "Select the prompt or instruction given to the model for generating the analogy ",
     "temp": "Loweing results in less ramdom completions. As randomness approaches zero, the model will become deterministic and repetitive",
+    "img": "Search for analogies with images"
 }
 
 const auth_url = process.env.NEXT_PUBLIC_AUTH_BASE_URL;
@@ -54,6 +55,9 @@ const SearchPage = ({ userInfo, allAnalogies }) => {
     const [temp, setTemp] = useState(preSetTemp === undefined ? '' : preSetTemp)
 
     const [isCard, setIsCard] = useState(false)
+
+    const [advancedFiltersOpen, setAdvancedFiltersOpen] = useState(false);
+    const [imgFilter, setImgFilter] = useState(false);
 
     // const [searchResults, setSearchResults] = useState(allAnalogies);
     const [searchResults, setSearchResults] = useState(allAnalogies);
@@ -84,7 +88,8 @@ const SearchPage = ({ userInfo, allAnalogies }) => {
             username: userInfo === null ? '' : userInfo.username,
             query,
             prompt,
-            temp
+            temp,
+            imgFilter: imgFilter
         },
         onSuccess: (data) => {
             setSearchResults(data.docs);
@@ -165,32 +170,59 @@ const SearchPage = ({ userInfo, allAnalogies }) => {
                             </Col>
                         </Row>
                         <br />
-                        <Row className="align-items-center">
-                            <Col md="1" className="d-flex justify-content-center"><Link title={link_title['prompt']}><FontAwesomeIcon icon={faCircleQuestion} /></Link></Col>
-                            <Col md="4">
-                                <Form.Select
-                                    value={prompt}
-                                    onChange={(e) => setPrompt(e.target.value)}
-                                >
-                                    <option key={-1} value=''>All Prompt</option>
-                                    {prompts.map((prompt, index) => {
-                                        return <option key={index} value={prompt}>{prompt}</option>
-                                    })}
-                                </Form.Select>
-                            </Col>
-                            <Col md="1"className="d-flex justify-content-center" ><Link title={link_title['temp']}><FontAwesomeIcon icon={faCircleQuestion} /></Link></Col>
-                            <Col md="4">
-                                <Form.Select
-                                    value={temp}
-                                    onChange={(e) => setTemp(e.target.value)}
-                                >
-                                    <option key={-1} value=''>All Randomness</option>
-                                    {temps.map((temp, index) => {
-                                        return <option key={index} value={temp}>{temp}</option>
-                                    })}
-                                </Form.Select>
-                            </Col>
+                        <Row>
+                            <div onClick={() => setAdvancedFiltersOpen(!advancedFiltersOpen)}>
+                                {advancedFiltersOpen ? <FontAwesomeIcon icon={faCaretDown} /> : <FontAwesomeIcon icon={faCaretRight} />}
+                                {" "}Advanced Filters
+                            </div>
                         </Row>
+                        {advancedFiltersOpen && (
+                            <div style={{border: '2px solid grey', padding: '10px'}}>
+                            <Row>
+                                <Col md='4'>
+                                    Prompt{" "}<Link title={link_title['prompt']}><FontAwesomeIcon icon={faCircleQuestion} /></Link>
+                                </Col>
+                                <Col md='4'>
+                                    Randomness{" "}<Link title={link_title['temp']}><FontAwesomeIcon icon={faCircleQuestion} /></Link>
+                                </Col>
+                                <Col md='4'>
+                                    Image{" "}<Link title={link_title['img']}><FontAwesomeIcon icon={faCircleQuestion} /></Link>
+                                </Col>
+                            </Row>
+                            <Row className="align-items-center">
+                                <Col md="4">
+                                    <Form.Select
+                                        value={prompt}
+                                        onChange={(e) => setPrompt(e.target.value)}
+                                    >
+                                        <option key={-1} value=''>All Prompt</option>
+                                        {prompts.map((prompt, index) => {
+                                            return <option key={index} value={prompt}>{prompt}</option>
+                                        })}
+                                    </Form.Select>
+                                </Col>
+                                <Col md="4">
+                                    <Form.Select
+                                        value={temp}
+                                        onChange={(e) => setTemp(e.target.value)}
+                                    >
+                                        <option key={-1} value=''>All Randomness</option>
+                                        {temps.map((temp, index) => {
+                                            return <option key={index} value={temp}>{temp}</option>
+                                        })}
+                                    </Form.Select>
+                                </Col>
+                                <Col md="4">
+                                    <Form.Check
+                                        type="switch"
+                                        value={imgFilter}
+                                        onChange={() => setImgFilter(!imgFilter)}
+                                    />
+                                </Col>
+                            </Row>
+                            </div>
+                        )}
+                        
                     </Form>
                 </Col>
                 <Col md={3}>

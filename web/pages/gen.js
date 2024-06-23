@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Card, Form, Row, Col, Button, Tooltip, OverlayTrigger } from "react-bootstrap"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCircleQuestion, faUser, faRightFromBracket, faMap } from '@fortawesome/free-solid-svg-icons'
+import { faCircleQuestion, faUser, faRightFromBracket, faMap, faCaretDown, faCaretRight} from '@fortawesome/free-solid-svg-icons'
 import Link from '../components/Link'
 import Router from "next/router"
 import useRequest from '../hooks/use-request'
@@ -67,12 +67,14 @@ const GenPage = ({ userInfo }) => {
     const [target, setTarget] = useState(preSetTarget === undefined ? "" : preSetTarget);
     const [src, setSrc] = useState(preSetSrc === undefined ? "" : preSetSrc);
     const [prompt, setPrompt] = useState(preSetPrompt === undefined ? gen_prompts[0] : retPrompt());
-    const [temp, setTemp] = useState(preSetTemp === undefined ? 0.0 : parseFloat(preSetTemp));
+    const [temp, setTemp] = useState(preSetTemp === undefined ? 1.0 : parseFloat(preSetTemp));
     const [max_length, setMaxLength] = useState(preSetMax_length === undefined ? 400 : parseInt(preSetMax_length));
     const [top_p, setTopP] = useState(preSetTop_p === undefined ? 1.0 : parseFloat(preSetTop_p));
     const [freq_penalty, setFreqPenalty] = useState(preSetFreq_penalty === undefined ? 0.0 : parseFloat(preSetFreq_penalty));
     const [pres_penalty, setPresPenalty] = useState(preSetPres_penalty === undefined ? 0.0 : parseFloat(preSetPres_penalty));
     const [best_of, setBestOf] = useState(preSetBest_of === undefined ? 1 : parseInt(preSetBest_of));
+
+    const [advancedConfig, setAdvancedConfig] = useState(false);
 
     const [generateResult, setGenerateResult] = useState(null);
 
@@ -207,20 +209,6 @@ const GenPage = ({ userInfo }) => {
                     <Card.Body>
                         <Form onSubmit={generate}>
                             <Row>
-                                <Form.Group as={Row} md="8" controlId="openAIKey">
-                                    <Form.Label column sm='6'>OpenAI API Key <Link title={link_title['openAIKey']}><FontAwesomeIcon icon={faCircleQuestion} /></Link></Form.Label>
-                                    <Col sm='6'>
-                                        <Form.Control
-                                            type="text"
-                                            // placeholder="Leave blank if you don't have one, we will provide one for you."
-                                            value = {openAIKey}
-                                            onChange={(e) => setOpenAIKey(e.target.value)}
-                                        />
-                                    </Col>
-                                </Form.Group>
-                            </Row>
-                            <br />
-                            <Row>
                                 <Form.Group as={Row} md="8" controlId="target">
                                     <Form.Label column sm='6'>Target Concept <Link title={link_title['target']}><FontAwesomeIcon icon={faCircleQuestion} /></Link></Form.Label>
                                     <Col sm='6'>
@@ -247,232 +235,257 @@ const GenPage = ({ userInfo }) => {
                             </Row>
                             <br />
                             <Row>
-                                <Form.Group as={Row} md="8" controlId="prompt">
-                                    <Form.Label column sm='6'>Prompt <Link title={link_title['prompt']}><FontAwesomeIcon icon={faCircleQuestion} /></Link></Form.Label>
-                                    <Col sm='6'>
-                                        <Form.Control
-                                            type="text" 
-                                            placeholder="Search prompt..."
-                                            value={searchQuery} 
-                                            onChange={(e) => setSearchQuery(e.target.value)} 
-                                            style={{marginBottom: "1%"}}
-                                        />
-                                        <Form.Select
-                                            value={prompt}
-                                            onChange={(e) => setPrompt(e.target.value)}
-                                        >
-                                            {filteredOptions.map(option => (
-                                                <option key={option} value={option}>{option}</option>
-                                            ))}
-                                        </Form.Select>
-                                    </Col>
-                                </Form.Group>
+                                <div onClick={() => setAdvancedConfig(!advancedConfig)}>
+                                    {advancedConfig? <FontAwesomeIcon icon={faCaretDown} /> : <FontAwesomeIcon icon={faCaretRight} />}
+                                    {" "}Advanced Configuration
+                                </div>
                             </Row>
                             <br />
-                            <Row>
-                                <Form.Group as={Row} md="8" controlId="temp">
-                                    <Form.Label column sm='6'>Randomness <Link title={link_title['temp']}><FontAwesomeIcon icon={faCircleQuestion} /></Link></Form.Label>
-                                    <Col sm='4'>
-                                        <Form.Control
-                                            style={{ border: 'none' }}
-                                            type="range"
-                                            value={temp}
-                                            onChange={(e) => {
-                                                setTemp(parseFloat(e.target.value));
-                                            }}
-                                            min="0"
-                                            max="1"
-                                            step="0.1"
-                                        />
-                                    </Col>
-                                    <Col sm='2'>
-                                        <Form.Control
-                                            type="number"
-                                            value={temp}
-                                            onChange={(e) => {
-                                                const val = parseFloat(e.target.value);
-                                                if (val >= 0.0 && val <= 1.0) {
-                                                    setTemp(val);
-                                                }
-                                            }}
-                                            min="0"
-                                            max="1"
-                                            step="0.1"
-                                        />
-                                    </Col>
-                                </Form.Group>
-                            </Row>
-                            <br />
-                            <Row>
-                                <Form.Group as={Row} md="8" controlId="max_length">
-                                    <Form.Label column sm='6'>Maxium Length <Link title={link_title['max_length']}><FontAwesomeIcon icon={faCircleQuestion} /></Link></Form.Label>
-                                    <Col sm='4'>
-                                        <Form.Control
-                                            style={{ border: 'none' }}
-                                            type="range"
-                                            value={max_length}
-                                            onChange={(e) => {
-                                                setMaxLength(parseFloat(e.target.value));
-                                            }}
-                                            defaultValue="400"
-                                            min="1"
-                                            max="4000"
-                                            step="1"
-                                        />
-                                    </Col>
-                                    <Col sm='2'>
-                                        <Form.Control
-                                            type="number"
-                                            value={max_length}
-                                            onChange={(e) => {
-                                                const val = parseFloat(e.target.value);
-                                                if (val >= 0.0 && val <= 4000.0) {
-                                                    setMaxLength(val);
-                                                }
-                                            }}
-                                            min="0"
-                                            max="4000"
-                                            step="1"
-                                        />
-                                    </Col>
-                                </Form.Group>
-                            </Row>
-                            <br />
-                            <Row>
-                                <Form.Group as={Row} md="8" controlId="top_p">
-                                    <Form.Label column sm='6'>Top P <Link title={link_title['top_p']}><FontAwesomeIcon icon={faCircleQuestion} /></Link></Form.Label>
-                                    <Col sm='4'>
-                                        <Form.Control
-                                            style={{ border: 'none' }}
-                                            type="range"
-                                            value={top_p}
-                                            onChange={(e) => {
-                                                setTopP(parseFloat(e.target.value));
-                                            }}
-                                            min="0"
-                                            max="1"
-                                            step="0.1"
-                                        />
-                                    </Col>
-                                    <Col sm='2'>
-                                        <Form.Control
-                                            type="number"
-                                            value={top_p}
-                                            onChange={(e) => {
-                                                const val = parseFloat(e.target.value);
-                                                if (val >= 0.0 && val <= 1.0) {
-                                                    setTopP(val);
-                                                }
-                                            }}
-                                            min="0"
-                                            max="1"
-                                            step="0.1"
-                                        />
-                                    </Col>
-                                </Form.Group>
-                            </Row>
-                            <br />
-                            <Row>
-                                <Form.Group as={Row} md="8" controlId="freq_penalty">
-                                    <Form.Label column sm='6'>Frequency Penalty <Link title={link_title['freq_penalty']}><FontAwesomeIcon icon={faCircleQuestion} /></Link></Form.Label>
-                                    <Col sm='4'>
-                                        <Form.Control
-                                            style={{ border: 'none' }}
-                                            type="range"
-                                            value={freq_penalty}
-                                            onChange={(e) => {
-                                                setFreqPenalty(parseFloat(e.target.value));
-                                            }}
-                                            min="0"
-                                            max="1"
-                                            step="0.1"
-                                        />
-                                    </Col>
-                                    <Col sm='2'>
-                                        <Form.Control
-                                            type="number"
-                                            value={freq_penalty}
-                                            onChange={(e) => {
-                                                const val = parseFloat(e.target.value);
-                                                if (val >= 0.0 && val <= 1.0) {
-                                                    setFreqPenalty(val);
-                                                }
-                                            }}
-                                            min="0"
-                                            max="1"
-                                            step="0.1"
-                                        />
-                                    </Col>
-                                </Form.Group>
-                            </Row>
-                            <br />
-                            <Row>
-                                <Form.Group as={Row} md="8" controlId="pres_penalty">
-                                    <Form.Label column sm='6'>Presence Penalty  <Link title={link_title['pres_penalty']}><FontAwesomeIcon icon={faCircleQuestion} /></Link></Form.Label>
-                                    <Col sm='4'>
-                                        <Form.Control
-                                            style={{ border: 'none' }}
-                                            type="range"
-                                            value={pres_penalty}
-                                            onChange={(e) => {
-                                                setPresPenalty(parseFloat(e.target.value));
-                                            }}
-                                            min="0"
-                                            max="1"
-                                            step="0.1"
-                                        />
-                                    </Col>
-                                    <Col sm='2'>
-                                        <Form.Control
-                                            type="number"
-                                            value={pres_penalty}
-                                            onChange={(e) => {
-                                                const val = parseFloat(e.target.value);
-                                                if (val >= 0.0 && val <= 1.0) {
-                                                    setPresPenalty(val);
-                                                }
-                                            }}
-                                            min="0"
-                                            max="1"
-                                            step="0.1"
-                                        />
-                                    </Col>
-                                </Form.Group>
-                            </Row>
-                            <br />
-                            <Row>
-                                <Form.Group as={Row} md="8" controlId="best_of">
-                                    <Form.Label column sm='6'>Best Of  <Link title={link_title['best_of']}><FontAwesomeIcon icon={faCircleQuestion} /></Link></Form.Label>
-                                    <Col sm='4'>
-                                        <Form.Control
-                                            style={{ border: 'none' }}
-                                            type="range"
-                                            value={best_of}
-                                            onChange={(e) => {
-                                                setBestOf(parseFloat(e.target.value));
-                                            }}
-                                            min="1"
-                                            max="20"
-                                            step="1"
-                                        />
-                                    </Col>
-                                    <Col sm='2'>
-                                        <Form.Control
-                                            type="number"
-                                            value={best_of}
-                                            onChange={(e) => {
-                                                const val = parseFloat(e.target.value);
-                                                if (val >= 0.0 && val <= 1.0) {
-                                                    setBestOf(val);
-                                                }
-                                            }}
-                                            min="1"
-                                            max="20"
-                                            step="1"
-                                        />
-                                    </Col>
-                                </Form.Group>
-                            </Row>
+                            {advancedConfig && (
+                                <>
+                                    <Row>
+                                        <Form.Group as={Row} md="8" controlId="openAIKey">
+                                            <Form.Label column sm='6'>OpenAI API Key <Link title={link_title['openAIKey']}><FontAwesomeIcon icon={faCircleQuestion} /></Link></Form.Label>
+                                            <Col sm='6'>
+                                                <Form.Control
+                                                    type="text"
+                                                    // placeholder="Leave blank if you don't have one, we will provide one for you."
+                                                    value = {openAIKey}
+                                                    onChange={(e) => setOpenAIKey(e.target.value)}
+                                                />
+                                            </Col>
+                                        </Form.Group>
+                                    </Row>
+                                    <br />
+                                    <Row>
+                                        <Form.Group as={Row} md="8" controlId="prompt">
+                                            <Form.Label column sm='6'>Prompt <Link title={link_title['prompt']}><FontAwesomeIcon icon={faCircleQuestion} /></Link></Form.Label>
+                                            <Col sm='6'>
+                                                <Form.Control
+                                                    type="text" 
+                                                    placeholder="Search prompt..."
+                                                    value={searchQuery} 
+                                                    onChange={(e) => setSearchQuery(e.target.value)} 
+                                                    style={{marginBottom: "1%"}}
+                                                />
+                                                <Form.Select
+                                                    value={prompt}
+                                                    onChange={(e) => setPrompt(e.target.value)}
+                                                >
+                                                    {filteredOptions.map(option => (
+                                                        <option key={option} value={option}>{option}</option>
+                                                    ))}
+                                                </Form.Select>
+                                            </Col>
+                                        </Form.Group>
+                                    </Row>
+                                    <br />
+                                    <Row>
+                                        <Form.Group as={Row} md="8" controlId="temp">
+                                            <Form.Label column sm='6'>Randomness <Link title={link_title['temp']}><FontAwesomeIcon icon={faCircleQuestion} /></Link></Form.Label>
+                                            <Col sm='4'>
+                                                <Form.Control
+                                                    style={{ border: 'none' }}
+                                                    type="range"
+                                                    value={temp}
+                                                    onChange={(e) => {
+                                                        setTemp(parseFloat(e.target.value));
+                                                    }}
+                                                    min="0"
+                                                    max="2"
+                                                    step="0.1"
+                                                />
+                                            </Col>
+                                            <Col sm='2'>
+                                                <Form.Control
+                                                    type="number"
+                                                    value={temp}
+                                                    onChange={(e) => {
+                                                        const val = parseFloat(e.target.value);
+                                                        if (val >= 0.0 && val <= 1.0) {
+                                                            setTemp(val);
+                                                        }
+                                                    }}
+                                                    min="0"
+                                                    max="1"
+                                                    step="0.1"
+                                                />
+                                            </Col>
+                                        </Form.Group>
+                                    </Row>
+                                    <br />
+                                    <Row>
+                                        <Form.Group as={Row} md="8" controlId="max_length">
+                                            <Form.Label column sm='6'>Maxium Length <Link title={link_title['max_length']}><FontAwesomeIcon icon={faCircleQuestion} /></Link></Form.Label>
+                                            <Col sm='4'>
+                                                <Form.Control
+                                                    style={{ border: 'none' }}
+                                                    type="range"
+                                                    value={max_length}
+                                                    onChange={(e) => {
+                                                        setMaxLength(parseFloat(e.target.value));
+                                                    }}
+                                                    defaultValue="400"
+                                                    min="1"
+                                                    max="4000"
+                                                    step="1"
+                                                />
+                                            </Col>
+                                            <Col sm='2'>
+                                                <Form.Control
+                                                    type="number"
+                                                    value={max_length}
+                                                    onChange={(e) => {
+                                                        const val = parseFloat(e.target.value);
+                                                        if (val >= 0.0 && val <= 4000.0) {
+                                                            setMaxLength(val);
+                                                        }
+                                                    }}
+                                                    min="0"
+                                                    max="4000"
+                                                    step="1"
+                                                />
+                                            </Col>
+                                        </Form.Group>
+                                    </Row>
+                                    <br />
+                                    <Row>
+                                        <Form.Group as={Row} md="8" controlId="top_p">
+                                            <Form.Label column sm='6'>Top P <Link title={link_title['top_p']}><FontAwesomeIcon icon={faCircleQuestion} /></Link></Form.Label>
+                                            <Col sm='4'>
+                                                <Form.Control
+                                                    style={{ border: 'none' }}
+                                                    type="range"
+                                                    value={top_p}
+                                                    onChange={(e) => {
+                                                        setTopP(parseFloat(e.target.value));
+                                                    }}
+                                                    min="0"
+                                                    max="1"
+                                                    step="0.1"
+                                                />
+                                            </Col>
+                                            <Col sm='2'>
+                                                <Form.Control
+                                                    type="number"
+                                                    value={top_p}
+                                                    onChange={(e) => {
+                                                        const val = parseFloat(e.target.value);
+                                                        if (val >= 0.0 && val <= 1.0) {
+                                                            setTopP(val);
+                                                        }
+                                                    }}
+                                                    min="0"
+                                                    max="1"
+                                                    step="0.1"
+                                                />
+                                            </Col>
+                                        </Form.Group>
+                                    </Row>
+                                    <br />
+                                    <Row>
+                                        <Form.Group as={Row} md="8" controlId="freq_penalty">
+                                            <Form.Label column sm='6'>Frequency Penalty <Link title={link_title['freq_penalty']}><FontAwesomeIcon icon={faCircleQuestion} /></Link></Form.Label>
+                                            <Col sm='4'>
+                                                <Form.Control
+                                                    style={{ border: 'none' }}
+                                                    type="range"
+                                                    value={freq_penalty}
+                                                    onChange={(e) => {
+                                                        setFreqPenalty(parseFloat(e.target.value));
+                                                    }}
+                                                    min="0"
+                                                    max="1"
+                                                    step="0.1"
+                                                />
+                                            </Col>
+                                            <Col sm='2'>
+                                                <Form.Control
+                                                    type="number"
+                                                    value={freq_penalty}
+                                                    onChange={(e) => {
+                                                        const val = parseFloat(e.target.value);
+                                                        if (val >= 0.0 && val <= 1.0) {
+                                                            setFreqPenalty(val);
+                                                        }
+                                                    }}
+                                                    min="0"
+                                                    max="1"
+                                                    step="0.1"
+                                                />
+                                            </Col>
+                                        </Form.Group>
+                                    </Row>
+                                    <br />
+                                    <Row>
+                                        <Form.Group as={Row} md="8" controlId="pres_penalty">
+                                            <Form.Label column sm='6'>Presence Penalty  <Link title={link_title['pres_penalty']}><FontAwesomeIcon icon={faCircleQuestion} /></Link></Form.Label>
+                                            <Col sm='4'>
+                                                <Form.Control
+                                                    style={{ border: 'none' }}
+                                                    type="range"
+                                                    value={pres_penalty}
+                                                    onChange={(e) => {
+                                                        setPresPenalty(parseFloat(e.target.value));
+                                                    }}
+                                                    min="0"
+                                                    max="1"
+                                                    step="0.1"
+                                                />
+                                            </Col>
+                                            <Col sm='2'>
+                                                <Form.Control
+                                                    type="number"
+                                                    value={pres_penalty}
+                                                    onChange={(e) => {
+                                                        const val = parseFloat(e.target.value);
+                                                        if (val >= 0.0 && val <= 1.0) {
+                                                            setPresPenalty(val);
+                                                        }
+                                                    }}
+                                                    min="0"
+                                                    max="1"
+                                                    step="0.1"
+                                                />
+                                            </Col>
+                                        </Form.Group>
+                                    </Row>
+                                    <br />
+                                    <Row>
+                                        <Form.Group as={Row} md="8" controlId="best_of">
+                                            <Form.Label column sm='6'>Best Of  <Link title={link_title['best_of']}><FontAwesomeIcon icon={faCircleQuestion} /></Link></Form.Label>
+                                            <Col sm='4'>
+                                                <Form.Control
+                                                    style={{ border: 'none' }}
+                                                    type="range"
+                                                    value={best_of}
+                                                    onChange={(e) => {
+                                                        setBestOf(parseFloat(e.target.value));
+                                                    }}
+                                                    min="1"
+                                                    max="20"
+                                                    step="1"
+                                                />
+                                            </Col>
+                                            <Col sm='2'>
+                                                <Form.Control
+                                                    type="number"
+                                                    value={best_of}
+                                                    onChange={(e) => {
+                                                        const val = parseFloat(e.target.value);
+                                                        if (val >= 0.0 && val <= 1.0) {
+                                                            setBestOf(val);
+                                                        }
+                                                    }}
+                                                    min="1"
+                                                    max="20"
+                                                    step="1"
+                                                />
+                                            </Col>
+                                        </Form.Group>
+                                    </Row>
+                                </>
+                            )}
                             <br />
                             <Row className="justify-content-center">
                                 <Button type="submit" variant="primary" style={{width: '10vw'}}>Generate</Button>

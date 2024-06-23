@@ -68,6 +68,7 @@ class SearchView(APIView):
         temp = data.get('temp', '')
         username = data.get('username', '')
         topic = data.get('topic', '')
+        imgFilter = data.get('imgFilter', False)
 
         query_filter = []
         if(prompt != ''):
@@ -165,7 +166,11 @@ class SearchView(APIView):
         docs = []
         for doc in response['hits']['hits']:
             doc['_source']['pid'] = doc['_id']
-            docs.append(doc['_source'])
+            if imgFilter:
+                if 'image' in doc['_source'] and doc['_source']['image'] is not None and doc['_source']['image'] != '':
+                    docs.append(doc['_source'])
+            else:
+                docs.append(doc['_source'])
 
         return Response({"docs": docs})
 class LikeView(APIView):
