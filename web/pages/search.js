@@ -42,7 +42,7 @@ const link_title = {
 const auth_url = process.env.NEXT_PUBLIC_AUTH_BASE_URL;
 const search_url = process.env.NEXT_PUBLIC_SEARCH_BASE_URL;
 
-const SearchPage = ({ userInfo, allAnalogies }) => {
+const SearchPage = ({ userInfo, allAnalogies, clientip }) => {
     // const [token, setToken] = useState(null)
     const router = useRouter();
     const { preSetPrompt,
@@ -89,7 +89,8 @@ const SearchPage = ({ userInfo, allAnalogies }) => {
             query,
             prompt,
             temp,
-            imgFilter: imgFilter
+            imgFilter: imgFilter,
+            clientip: clientip
         },
         onSuccess: (data) => {
             setSearchResults(data.docs);
@@ -333,6 +334,7 @@ SearchPage.getInitialProps = async ( { req } ) => {
         // userLoggedIn,
         userInfo,
         allAnalogies,
+        clientip
     }
 }
 
