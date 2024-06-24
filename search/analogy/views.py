@@ -69,7 +69,7 @@ class SearchView(APIView):
         username = data.get('username', '')
         topic = data.get('topic', '')
         imgFilter = data.get('imgFilter', False)
-
+        clientip = data.get('clientip', '')
         query_filter = []
         if(prompt != ''):
             query_filter.append({ "terms": { "pid.keyword": [prompt] } })
@@ -149,10 +149,10 @@ class SearchView(APIView):
         response = es.search(index="sci_ranked", body=body)
 
         # search log
-        ip = get_client_ip(request)
+       
         searchLog = {
             "username": username,
-            "ip": ip,
+            "ip": clientip,
             "query": query,
             "created_at": timezone.now().strftime("%Y-%m-%d %H:%M:%S"),
             "prompt": prompt,
