@@ -40,7 +40,8 @@ def search_log(search_log):
         created_at=search_log['created_at'],
         query=search_log['query'],
         prompt=search_log['prompt'],
-        temp=search_log['temp']
+        temp=search_log['temp'],
+        ip=search_log['ip']
     )
     search_log.save()
     return search_log
