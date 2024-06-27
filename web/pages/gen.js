@@ -77,6 +77,7 @@ const GenPage = ({ userInfo }) => {
     const [advancedConfig, setAdvancedConfig] = useState(false);
 
     const [generateResult, setGenerateResult] = useState(null);
+    const [generateConfig, setGenerateConfig] = useState(null);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [errors, setErrors] = useState(null);
@@ -109,24 +110,25 @@ const GenPage = ({ userInfo }) => {
         onSuccess: (data) => {
             window.alert('Generate Success');
             setGenerateResult(data.resp);
+            setGenerateConfig({
+                target,
+                src,
+                prompt,
+                temp,
+                max_length,
+                top_p,
+                freq_penalty,
+                pres_penalty,
+                best_of,
+                analogy: data.resp
+            })
         } 
     });
 
     const { doRequest : doRequestSave, errors : saveError } = useRequest({
         url: gen_url + '/api/generation',
         method: 'put',
-        body: {
-            target,
-            src,
-            prompt,
-            temp,
-            max_length,
-            top_p,
-            freq_penalty,
-            pres_penalty,
-            best_of,
-            analogy: generateResult
-        },
+        body: generateConfig,
         onSuccess: (data) => {
             window.alert('Save Success');
         } 
@@ -302,12 +304,12 @@ const GenPage = ({ userInfo }) => {
                                                     value={temp}
                                                     onChange={(e) => {
                                                         const val = parseFloat(e.target.value);
-                                                        if (val >= 0.0 && val <= 1.0) {
+                                                        if (val >= 0.0 && val <= 2.0) {
                                                             setTemp(val);
                                                         }
                                                     }}
                                                     min="0"
-                                                    max="1"
+                                                    max="2"
                                                     step="0.1"
                                                 />
                                             </Col>

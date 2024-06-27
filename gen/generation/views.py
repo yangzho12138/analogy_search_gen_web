@@ -39,7 +39,7 @@ class GenerationView(APIView):
         print(user.free_openai_api_key)
         api_key = request.data.get('api_key', '')
         if api_key == '' and user.free_openai_api_key > 0:
-            client = OpenAI(api_key='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')
+            client = OpenAI(api_key='DEFAULT API KEY') 
         prompt = request.data.get('prompt', '')
         target = request.data.get('target', '')
         #print(target, flush=True)
@@ -103,6 +103,7 @@ class GenerationView(APIView):
     # add new generation
     def put(self, request):
         prompt = request.data.get('prompt', '')
+        pid = prompt
         target = request.data.get('target', '')
         src = request.data.get('src', '')
         temp = float(request.data.get('temp', 0))
@@ -122,6 +123,7 @@ class GenerationView(APIView):
         generationAnalogy = {
             'username': request.user.username,
             'prompt': prompt,
+            'pid': pid,
             'target': target,
             'src': src,
             'temp': temp,

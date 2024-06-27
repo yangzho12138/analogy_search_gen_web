@@ -216,7 +216,7 @@ const SearchPage = ({ userInfo, allAnalogies, clientip }) => {
                                 <Col md="4">
                                     <Form.Check
                                         type="switch"
-                                        value={imgFilter}
+                                        checked={imgFilter}
                                         onChange={() => setImgFilter(!imgFilter)}
                                     />
                                 </Col>
