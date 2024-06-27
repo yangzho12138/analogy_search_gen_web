@@ -310,7 +310,7 @@ const AnalogyCard = ({searchResult, isCard, userInfo }) => {
                             <Card.Subtitle className="mb-2 text-muted">
                             <Link title={link_title['temp']}>
                                 <div>
-                                    <FontAwesomeIcon icon={faTemperatureThreeQuarters} />{searchResult.temp ? (searchResult.temp === 'high temperature' ? (' 0.8') : (searchResult.temp === 'low temperature' ? (' 0.0') : ' ' + searchResult.temp)) : (' 0.3')}
+                                    <FontAwesomeIcon icon={faTemperatureThreeQuarters} />{searchResult.temp ? ((searchResult.temp).toLowerCase() === 'high temperature' ? (' 0.8') : ((searchResult.temp).toLowerCase() === 'low temperature' ? (' 0.0') : ' ' + searchResult.temp)) : (' 0.3')}
                                 </div>
                             </Link>
                             </Card.Subtitle>
@@ -394,7 +394,7 @@ const AnalogyCard = ({searchResult, isCard, userInfo }) => {
                                     <Card.Subtitle className="mb-2 text-muted">
                                     <Link title={link_title['temp']}>
                                         <div>
-                                            <FontAwesomeIcon icon={faTemperatureThreeQuarters} />{searchResult.temp ? (searchResult.temp === 'high temperature' ? (' 0.8') : (searchResult.temp === 'low temperature' ? (' 0.0') : ' ' + searchResult.temp)) : (' 0.3')}
+                                            <FontAwesomeIcon icon={faTemperatureThreeQuarters} />{searchResult.temp ? ((searchResult.temp).toLowerCase() === 'high temperature' ? (' 0.8') : ((searchResult.temp).toLowerCase() === 'low temperature' ? (' 0.0') : ' ' + searchResult.temp)) : (' 0.3')}
                                         </div>
                                     </Link>
                                     </Card.Subtitle>
