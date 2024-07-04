@@ -30,6 +30,7 @@ const gen_prompts = [
 
 const link_title = {
     "openAIKey": "If you don't have one, you can leave it blank and we will provide one for you. (You have 50 free requests)",
+    "model": "choose the model you used to generate the analogy",
     "target": "The concept that you would like to generate an analogy for (e.g. cell).",
     "src": "The topic area that you would like the analogy to be about",
     "prompt": "Select the prompt or instruction given to the model for generating the analogy ",
@@ -40,6 +41,13 @@ const link_title = {
     "pres_penalty": "How much to penalize new tokens based on whether they appear in the text so far. Increases the likelihood to talk about new topics",
     "best_of": "Returns the 'best' (the one with the highest log probability per token)"
 }
+
+const modelOptions = [
+    "gpt-3",
+    "gpt-3.5",
+    "gpt-4",
+    "gpt-4o",
+]
 
 const GenPage = ({ userInfo }) => {
     const router = useRouter();
@@ -64,6 +72,7 @@ const GenPage = ({ userInfo }) => {
       }
 
     const [openAIKey, setOpenAIKey] = useState("");
+    const [model, setModel] = useState("gpt-3");
     const [target, setTarget] = useState(preSetTarget === undefined ? "" : preSetTarget);
     const [src, setSrc] = useState(preSetSrc === undefined ? "" : preSetSrc);
     const [prompt, setPrompt] = useState(preSetPrompt === undefined ? gen_prompts[0] : retPrompt());
@@ -73,6 +82,14 @@ const GenPage = ({ userInfo }) => {
     const [freq_penalty, setFreqPenalty] = useState(preSetFreq_penalty === undefined ? 0.0 : parseFloat(preSetFreq_penalty));
     const [pres_penalty, setPresPenalty] = useState(preSetPres_penalty === undefined ? 0.0 : parseFloat(preSetPres_penalty));
     const [best_of, setBestOf] = useState(preSetBest_of === undefined ? 1 : parseInt(preSetBest_of));
+
+    useEffect(() => {
+        if(src !== ""){
+            setPrompt(gen_prompts[5]);
+        }else{
+            setPrompt(gen_prompts[0]);
+        }
+    },[src]);
 
     const [advancedConfig, setAdvancedConfig] = useState(false);
 
@@ -99,6 +116,7 @@ const GenPage = ({ userInfo }) => {
             api_key: openAIKey,
             target,
             src,
+            model,
             prompt,
             temp,
             max_length,
@@ -114,13 +132,15 @@ const GenPage = ({ userInfo }) => {
                 target,
                 src,
                 prompt,
+                model,
                 temp,
                 max_length,
                 top_p,
                 freq_penalty,
                 pres_penalty,
                 best_of,
-                analogy: data.resp
+                analogy: data.resp,
+                role: userInfo.role
             })
         } 
     });
@@ -255,6 +275,22 @@ const GenPage = ({ userInfo }) => {
                                                     value = {openAIKey}
                                                     onChange={(e) => setOpenAIKey(e.target.value)}
                                                 />
+                                            </Col>
+                                        </Form.Group>
+                                    </Row>
+                                    <br />
+                                    <Row>
+                                        <Form.Group as={Row} md="8" controlId="model">
+                                            <Form.Label column sm='6'>Model Name <Link title={link_title['model']}><FontAwesomeIcon icon={faCircleQuestion} /></Link></Form.Label>
+                                            <Col sm='6'>
+                                                <Form.Select
+                                                    value={model}
+                                                    onChange={(e) => setModel(e.target.value)}
+                                                >
+                                                    {modelOptions.map(option => (
+                                                        <option key={option} value={option}>{option}</option>
+                                                    ))}
+                                                </Form.Select>
                                             </Col>
                                         </Form.Group>
                                     </Row>

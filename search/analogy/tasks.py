@@ -24,17 +24,19 @@ def get_data_from_redis():
                 "analogy": "",
                 "target": "",
                 "prompt": "",
+                "model": "gpt-3",
                 "temp": "", #temp is float
                 "src": "",
                 "pid": "",
                 "pid_esc": "",
-                "len": 0,
-                "topp": 0.0,
-                "freq": 0.0,
-                "pres": 0.0,
-                "bo": 0,
-                "like": 0,
-                "dislike": 0
+                "max_length": 0,
+                "top_p": 0.0,
+                "freq_penalty": 0.0,
+                "pres_penalty": 0.0,
+                "best_of": 0,
+                "like": [0, 0, 0],
+                "dislike": [0, 0, 0],
+                "generatorRole": ""
             }
             
             analogy = {**default_values, **gen_analogy}

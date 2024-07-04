@@ -41,6 +41,7 @@ class GenerationView(APIView):
         if api_key == '' and user.free_openai_api_key > 0:
             client = OpenAI(api_key='DEFAULT API KEY') 
         prompt = request.data.get('prompt', '')
+        model = request.data.get('model', 'gpt-3')
         target = request.data.get('target', '')
         #print(target, flush=True)
         src = request.data.get('src', '')
@@ -79,6 +80,7 @@ class GenerationView(APIView):
             'username': request.user.username,
             'created_at': timezone.now().strftime("%Y-%m-%d %H:%M:%S"),
             'prompt': prompt,
+            'model': model,
             'target': target,
             'src': src,
             'temp': temp,
@@ -103,6 +105,7 @@ class GenerationView(APIView):
     # add new generation
     def put(self, request):
         prompt = request.data.get('prompt', '')
+        model = request.data.get('model', 'gpt-3')
         pid = prompt
         target = request.data.get('target', '')
         src = request.data.get('src', '')
@@ -113,6 +116,7 @@ class GenerationView(APIView):
         top_p = float(request.data.get('top_p', 1))
         best_of = int(request.data.get('best_of', 1))
         analogy = request.data.get('analogy', '')
+        role = request.data.get('role', 'STUDENT')
 
         prompt = prompt.replace('<target>',target)
         prompt = prompt.replace('<src>',src)
@@ -123,6 +127,7 @@ class GenerationView(APIView):
         generationAnalogy = {
             'username': request.user.username,
             'prompt': prompt,
+            'model': model,
             'pid': pid,
             'target': target,
             'src': src,
@@ -132,7 +137,8 @@ class GenerationView(APIView):
             'max_length': max_length,
             'top_p': top_p,
             'best_of': best_of,
-            'analogy': analogy
+            'analogy': analogy,
+            'generatorRole': role
         }
         r.rpush('generationAnalogy', json.dumps(generationAnalogy))
         return Response(

@@ -42,6 +42,7 @@ const genFields = [
     "prompt",
     "target",
     "src",
+    "model",
     "temp",
     "freq_penalty",
     "pres_penalty",
@@ -294,10 +295,10 @@ const ProfilePage = ({userInfo, searchLog, genLog, issueLog, commentReplyInfo}) 
                                 </Form> */}
                                 <h6>Username: {userInfo.username}</h6>
                                 <h6>Email: {userInfo.email}</h6>
-                                {/* <div style={{display: 'flex'}}>
+                                <div style={{display: 'flex'}}>
                                     <h6>Role: {userInfo.role}</h6> <Link title={"Click the icon to see more about roles"}><FontAwesomeIcon onClick={roleDetail} style={{marginLeft: '10px'}} icon={faCircleQuestion} /></Link>
                                 </div>
-                                <div style={{display: 'flex'}}>
+                                {/* <div style={{display: 'flex'}}>
                                     <h6>Points: {userInfo.points}</h6> <Link title={"Click the icon to see more about points"}><FontAwesomeIcon onClick={pointsDetail} style={{marginLeft: '10px'}} icon={faCircleQuestion} /></Link>
                                 </div> */}
                                 <h6>Free API Key Remaining Usage Time: {userInfo.free_openai_api_key}</h6>

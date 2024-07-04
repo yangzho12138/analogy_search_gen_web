@@ -12,11 +12,18 @@ import { useRouter } from "next/router";
 import LoadingSpinner from "../components/LoadingSpinner";
 
 const prompts = [
-    'P1: Explain <target> using an analogy.',
-    'P2: Create an analogy to explain <target>.',
-    'P3: Using an analogy, explain <target>.',
-    'P4: What analogy is used to explain <target>?',
-    'P5: Use an analogy to explain <target>.'
+    'Explain <target> using an analogy.',
+    'Create an analogy to explain <target>.',
+    'Using an analogy, explain <target>.',
+    'What analogy is used to explain <target>?',
+    'Use an analogy to explain <target>.',
+    'Explain <target> using an analogy involving <src>.',
+    'Explain how <target> is analogous to <src>.',
+    'Explain how <target> is like <src>.',
+    'Explain how <target> is similar to <src>.',
+    'How is <target> analogous to <src>?',
+    'How is <target> like <src>?',
+    'How is <target> similar to <src>?',
 ]
 
 const temps = [

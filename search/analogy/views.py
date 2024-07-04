@@ -72,7 +72,7 @@ class SearchView(APIView):
 
         query_filter = []
         if(prompt != ''):
-            query_filter.append({ "terms": { "pid.keyword": [prompt] } })
+            query_filter.append({ "wildcard": { "pid.keyword": f"*{prompt}*" } })
         if(temp != ''):
              query_filter.append({ "terms": { "temp.keyword": [temp] } })
         
@@ -142,7 +142,8 @@ class SearchView(APIView):
                     "filter": query_filter,
                     "minimum_should_match": 1
                 }
-            }
+            },
+            "size": 100
         }
 
         # Search Elasticsearch index "sci_ranked" with the filtered query
@@ -160,7 +161,7 @@ class SearchView(APIView):
         }
 
         # # send search log to auth system
-        search_log.delay(searchLog)
+        # search_log.delay(searchLog)
 
         # Extract relevant information from the Elasticsearch response
         docs = []
@@ -179,21 +180,45 @@ class LikeView(APIView):
         data = request.data
         id = data.get('id')
         likeType = data.get('likeType')
-        updateVal = data.get('updateVal')
+        cancel = data.get('cancel')
+        role = data.get('role')
+        print(id, likeType, cancel, role)
 
-        
+        num = 1
+        if cancel:
+            num = -1
 
         try:
             # Perform the update operation in Elasticsearch
-            es = Elasticsearch("http://128.174.136.29:9200")
+            es = Elasticsearch("http://localhost:9200")
+            response = es.get(index=index, id=id)
+            array = response['_source'].get(likeType, [0, 0, 0])
+            if role == "STUDENT":
+                array[0] = max(array[0] + num, 0)
+            elif role == "TEACHER":
+                array[1] = max(array[1] + num, 0)
+            elif role == "EXPERT":
+                array[2] = max(array[2] + num, 0)
+            print(array)
             es.update(index=index, id=id, body={
                 "doc": {
-                    likeType: updateVal
+                    likeType: array
                 }
             })
-            return Response({"success": True})
+            return Response(
+                status=status.HTTP_200_OK,
+                data={
+                    'message': 'success'
+                }
+            )
         except Exception as e:
-            return Response({"success": False, "error": str(e)})
+            return Response(
+                status=status.HTTP_400_BAD_REQUEST,
+                data={
+                    'message': 'failed',
+                    'errors': [str(e)]
+                }
+            )
 
 class InitView(APIView):
     def get(self, request, format=None):
