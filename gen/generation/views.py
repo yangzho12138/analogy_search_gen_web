@@ -16,10 +16,10 @@ from .authentication import CookieJWTAuthentication
 # Create your views here.
 pool = ConnectionPool(host='localhost', port=6379, db=1, max_connections=10)
 
-def  get_response(prompt,temp,max_length,top_p,freq_penalty,pres_penalty,client):
+def  get_response(prompt,temp,max_length,top_p,freq_penalty,pres_penalty,client,model):
     #print(prompt, flush=True)	
     completion = client.chat.completions.create(
-        model='gpt-3.5-turbo',
+        model=model,
         messages=[{"role": "user", "content": prompt}],
         temperature=temp,
         max_tokens=max_length,
@@ -64,7 +64,7 @@ class GenerationView(APIView):
         prompt = prompt.replace('<src>',src)
 
         try:
-            resp = get_response(prompt,temp,max_length,top_p,freq_penalty,pres_penalty,client).strip()
+            resp = get_response(prompt,temp,max_length,top_p,freq_penalty,pres_penalty,client,model).strip()
         except Exception as e:
             return Response(
                 status=status.HTTP_400_BAD_REQUEST,
