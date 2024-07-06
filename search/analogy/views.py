@@ -77,74 +77,66 @@ class SearchView(APIView):
              query_filter.append({ "terms": { "temp.keyword": [temp] } })
         
 
-        # Preprocess the query by removing stop words
-        stop_words = set(stopwords.words('english'))
-        word_tokens = word_tokenize(query)
-        filtered_query = [w for w in word_tokens if not w in stop_words]
+        if query != '':
+            # Preprocess the query by removing stop words
+            stop_words = set(stopwords.words('english'))
+            word_tokens = word_tokenize(query)
+            filtered_query = [w for w in word_tokens if not w in stop_words]
 
-        # Prepare Elasticsearch query using the filtered query
-        # body = {
-        #     "query": {
-        #         "bool": {
-        #             "should": [
-        #                 {
-        #                     "multi_match": {
-        #                         "query": text,
-        #                         "fields": ["analogy"],
-        #                         "type": "phrase_prefix"
-        #                     }
-        #                 } for text in filtered_query
-        #             ],
-        #             "filter": query_filter,
-        #             "minimum_should_match": 1
-        #         }
-        #     }
-        # }
-        body = {
-            "query": {
-                "bool": {
-                    "should": [
-                        {
-                            "function_score": {
-                                "query": {
-                                    "multi_match": {
-                                        "query": text,
-                                        "fields": ["target"],
-                                        "type": "phrase_prefix"
-                                    }
-                                },
-                                "boost": 4,
-                                "weight": 2  # Set weight to prioritize results in the target field
+            body = {
+                "query": {
+                    "bool": {
+                        "should": [
+                            {
+                                "function_score": {
+                                    "query": {
+                                        "multi_match": {
+                                            "query": text,
+                                            "fields": ["target"],
+                                            "type": "phrase_prefix"
+                                        }
+                                    },
+                                    "boost": 4,
+                                    "weight": 2  # Set weight to prioritize results in the target field
+                                }
+                            }for text in filtered_query
+                        ] + [
+                            {
+                                "function_score": {
+                                    "query": {
+                                        "multi_match": {
+                                            "query": text,
+                                            "fields": ["prompt", "analogy"],
+                                            "type": "phrase_prefix"
+                                        }
+                                    },
+                                    "boost": 4
+                                }
+                            }for text in filtered_query
+                        ]
+                        + ([{
+                            "multi_match": {
+                                "query": topic,
+                                "fields": ["topic"],
+                                "type": "phrase_prefix",
+                                "boost": 1
                             }
-                        }for text in filtered_query
-                    ] + [
-                        {
-                            "function_score": {
-                                "query": {
-                                    "multi_match": {
-                                        "query": text,
-                                        "fields": ["prompt", "analogy"],
-                                        "type": "phrase_prefix"
-                                    }
-                                },
-                                "boost": 4
-                            }
-                        }for text in filtered_query
-                    ]
-                    + ([{
-                        "multi_match": {
-                            "query": topic,
-                            "fields": ["topic"],
-                            "type": "phrase_prefix",
-                            "boost": 1
-                        }
-                    }] if topic or topic != '' else []),
-                    "filter": query_filter,
-                    "minimum_should_match": 1
-                }
-            },
-            "size": 100
-        }
+                        }] if topic or topic != '' else []),
+                        "filter": query_filter,
+                        "minimum_should_match": 1
+                    }
+                },
+                "size": 100
+            }
+        else:
+            body = {
+                "query": {
+                    "bool": {
+                        "filter": query_filter,
+                    }
+                },
+                "size": 100
+            }
 
         # Search Elasticsearch index "sci_ranked" with the filtered query
         response = es.search(index="sci_ranked", body=body)

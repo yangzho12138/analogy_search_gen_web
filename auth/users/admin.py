@@ -13,8 +13,9 @@ from django.core.mail import send_mail
 pool = ConnectionPool(host='localhost', port=6379, db=1, max_connections=10)
 
 class CustomUserAdmin(admin.ModelAdmin):
-    list_display = ('username', 'email')
-    search_fields = ('username', 'email')
+    list_display = ('username', 'email', 'role')
+    search_fields = ('username', 'email', 'role')
+    list_editable = ('role',)
 
 class GenLogAdmin(admin.ModelAdmin):
     list_display = ('user', 'created_at', 'prompt', 'target', 'src', 'temp', 'freq_penalty', 'pres_penalty', 'max_length', 'top_p', 'best_of', 'analogy')

@@ -167,7 +167,6 @@ const SearchPage = ({ userInfo, allAnalogies, clientip }) => {
                                             type="text"
                                             placeholder="Search your analogy ..."
                                             aria-describedby="inputGroupPrepend"
-                                            required
                                             value = {query}
                                             onChange={(e) => setQuery(e.target.value)}
                                     />

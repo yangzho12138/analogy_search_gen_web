@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faGithub } from '@fortawesome/free-brands-svg-icons'
 import { faMagnifyingGlass, faPaperPlane, faComment, faPaperclip, faStar } from '@fortawesome/free-solid-svg-icons'
 import Sidebar from "../components/Sidebar"
+import Link from "../components/Link"
 
 
 const HomePage = () => {
@@ -25,8 +26,8 @@ const HomePage = () => {
             <Row>
                 <Col md={12} style={{display: 'flex'}}>
                     <Button variant="primary" size="lg" style={{marginRight: '1%'}} onClick={() => Router.push("/search")}>Get Started!</Button>
-                    <Button variant="success" size="lg" style={{marginRight: '1%'}}>Download Extension</Button>
-                    <Button variant="link" size="lg" style={{marginRight: '1%'}}><FontAwesomeIcon icon={faGithub} style={{marginRight: '1%'}}/>Github</Button>
+                    <Button variant="success" size="lg" style={{marginRight: '1%'}} disabled>Extension Coming Soon</Button>
+                    <Button variant="link" size="lg" style={{marginRight: '1%'}} onClick={() => Router.push("https://github.com/yangzho12138/analogy_search_gen_web")}><FontAwesomeIcon icon={faGithub} style={{marginRight: '1%'}}/>Github</Button>
                 </Col>
             </Row>
             <br />
