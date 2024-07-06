@@ -272,7 +272,7 @@ const LoginPage = () => {
                 </Col>
                 <Col md="6">
                     <div style={{margin: '10%', marginTop: "20%", color: 'white'}} className="index-slogan">
-                        <h1>Ananogy</h1>
+                        <h1>Analogy</h1>
                         <br />
                         <h3>a comparison between two things, typically for the purpose of explanation or clarification</h3>
                         <br />
