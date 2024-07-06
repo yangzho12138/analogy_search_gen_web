@@ -43,7 +43,6 @@ const link_title = {
 }
 
 const modelOptions = [
-    "gpt-3",
     "gpt-3.5-turbo",
     "gpt-4",
     "gpt-4o",
