@@ -296,7 +296,8 @@ const ProfilePage = ({userInfo, searchLog, genLog, issueLog, commentReplyInfo}) 
                                 <h6>Username: {userInfo.username}</h6>
                                 <h6>Email: {userInfo.email}</h6>
                                 <div style={{display: 'flex'}}>
-                                    <h6>Role: {userInfo.role}</h6> <Link title={"Click the icon to see more about roles"}><FontAwesomeIcon onClick={roleDetail} style={{marginLeft: '10px'}} icon={faCircleQuestion} /></Link>
+                                    <h6>Role: {userInfo.role}</h6> 
+                                    {/* <Link title={"Click the icon to see more about roles"}><FontAwesomeIcon onClick={roleDetail} style={{marginLeft: '10px'}} icon={faCircleQuestion} /></Link> */}
                                 </div>
                                 {/* <div style={{display: 'flex'}}>
                                     <h6>Points: {userInfo.points}</h6> <Link title={"Click the icon to see more about points"}><FontAwesomeIcon onClick={pointsDetail} style={{marginLeft: '10px'}} icon={faCircleQuestion} /></Link>

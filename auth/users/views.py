@@ -20,6 +20,7 @@ class SignUpView(APIView):
         email = request.data.get("email", "").strip()
         password = request.data.get("password", "").strip()
         confirmedPassword = request.data.get("confirmedPassword", "").strip()
+        role = request.data.get("role", "STUDENT")
         errors = []
         if not username or not password or not confirmedPassword or not email:
             errors.append('please fill all the fields')
@@ -37,7 +38,7 @@ class SignUpView(APIView):
                     'errors': errors
                 }
             )
-        user = User(username=username, email=email)
+        user = User(username=username, email=email, role=role)
         user.set_password(password)
         user.save()
 

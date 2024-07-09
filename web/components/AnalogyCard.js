@@ -136,7 +136,7 @@ const AnalogyCard = ({searchResult, isCard, userInfo }) => {
             if(isLike){
                 span.textContent = ' '+String(prevVal-1);
                 updateVal = prevVal-1;
-                if(userInfo.role === "STUDENT"){
+                if(!userInfo || userInfo.role === "STUDENT"){
                     setSLike(Math.max(sLike - 1, 0))
                 }else if(userInfo.role === "TEACHER"){
                     setTLike(Math.max(tLike - 1, 0))
@@ -146,7 +146,7 @@ const AnalogyCard = ({searchResult, isCard, userInfo }) => {
             } else {
                 span.textContent = ' '+String(prevVal-1);
                 updateVal = prevVal-1;
-                if(userInfo.role === "STUDENT"){
+                if(!userInfo || userInfo.role === "STUDENT"){
                     setSDisLike(Math.max(sDisLike - 1, 0))
                 }else if(userInfo.role === "TEACHER"){
                     setTDisLike(Math.max(tDisLike - 1, 0))
@@ -159,7 +159,7 @@ const AnalogyCard = ({searchResult, isCard, userInfo }) => {
             if(isLike){
                 span.textContent = ' '+String(prevVal+1);
                 updateVal = prevVal+1;
-                if(userInfo.role === "STUDENT"){
+                if(!userInfo || userInfo.role === "STUDENT"){
                     setSLike(sLike + 1)
                 }else if(userInfo.role === "TEACHER"){
                     setTLike(tLike + 1)
@@ -169,7 +169,7 @@ const AnalogyCard = ({searchResult, isCard, userInfo }) => {
             } else {
                 span.textContent = ' '+String(prevVal+1);
                 updateVal = prevVal+1;
-                if(userInfo.role === "STUDENT"){
+                if(!userInfo || userInfo.role === "STUDENT"){
                     setSDisLike(sDisLike + 1)
                 }else if(userInfo.role === "TEACHER"){
                     setTDisLike(tDisLike + 1)
@@ -183,7 +183,7 @@ const AnalogyCard = ({searchResult, isCard, userInfo }) => {
             id: searchResult.pid,
             likeType: isLike ? 'like' : 'dislike',
             cancel: isRed,
-            role: userInfo.role
+            role: userInfo ? userInfo.role : "STUDENT",
         })
     }
 

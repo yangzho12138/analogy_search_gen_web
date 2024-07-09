@@ -128,12 +128,28 @@ class SearchView(APIView):
                 },
                 "size": 100
             }
-        else:
+        elif query_filter != []:
             body = {
                 "query": {
                     "bool": {
                         "filter": query_filter,
                     }
+                },
+                "size": 100
+            }
+        elif imgFilter:
+            body = {
+                "query": {
+                    "exists": {
+                    "field": "image"
+                    }
+                },
+                "size": 100
+            }
+        else:
+            body = {
+                "query": {
+                    "match_all": {}
                 },
                 "size": 100
             }
@@ -153,7 +169,7 @@ class SearchView(APIView):
         }
 
         # # send search log to auth system
-        # search_log.delay(searchLog)
+        search_log.delay(searchLog)
 
         # Extract relevant information from the Elasticsearch response
         docs = []

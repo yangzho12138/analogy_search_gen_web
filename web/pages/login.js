@@ -11,12 +11,13 @@ const LoginPage = () => {
     const [password, setPassword] = useState('');
     const [confirmedPassword, setConfirmedPassword] = useState('');
     const [username, setUsername] = useState('');
+    const [role, setRole] = useState('STUDENT');
 
     const { doRequest : doRequestSignUp, errors : signUpError } = useRequest({
         url: auth_url + '/api/users/signup',
         method: 'post',
         body: {
-            email, password, confirmedPassword, username
+            email, password, confirmedPassword, username, role
         },
         onSuccess: (data) => {
             window.alert('Sign Up Success');
@@ -256,6 +257,17 @@ const LoginPage = () => {
                                                 />
                                             </Form.Group>
                                         </Col>
+                                    </Row>
+                                    <br />
+                                    <Row>
+                                        <Form.Group as={Col} controlId="role">
+                                            <Form.Label>Role</Form.Label>
+                                            <Form.Control as="select" value={role} onChange={(e) => setRole(e.target.value)}>
+                                                <option value='STUDENT'>STUDENT</option>
+                                                <option value='TEACHER'>TEACHER</option>
+                                                <option value='EXPERT'>EXPERT</option>
+                                            </Form.Control>
+                                        </Form.Group>
                                     </Row>
                                     <br />
                                     <Button type="submit" variant="primary">Sign Up</Button>

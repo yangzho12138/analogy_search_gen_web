@@ -38,7 +38,8 @@ class GenLog(models.Model):
     max_length = models.IntegerField()
     top_p = models.FloatField()
     best_of = models.IntegerField()
-    analogy = models.CharField(max_length=1000)
+    analogy = models.TextField()
+    model = models.CharField(max_length=100, default='gpt-3')
 
     def __str__(self):
         return self.analogy
@@ -64,7 +65,7 @@ class Issue(models.Model):
     detail = models.CharField(max_length=1000)
     target = models.CharField(max_length=100)
     prompt = models.CharField(max_length=100)
-    analogy = models.CharField(max_length=10000)
+    analogy = models.TextField()
     pid = models.CharField(max_length=100)
     solved = models.BooleanField(default=False)
     admin_comment = models.CharField(max_length=1000, blank=True)
@@ -81,7 +82,7 @@ class Comment(models.Model):
     admin_comment = models.CharField(max_length=1000, blank=True)
     target = models.CharField(max_length=100)
     prompt = models.CharField(max_length=100)
-    analogy = models.CharField(max_length=10000)
+    analogy = models.TextField()
     pid = models.CharField(max_length=100)
     replyTo = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='replies')
     
