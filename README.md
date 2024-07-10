@@ -1,18 +1,19 @@
+# Installation instructions
 Create a virtual environment in /auth, /gen and /search folders  
 `python3 -m venv <venv name>`  
-# Search:  
+## Search:  
 Path: “/analogy_search_gen_web/search/“  
 `pip install -r requirements.txt`  
 `pip install numpy==1.24.4`  
 `pip install django-cors-headers`  
 `pip install django-redis`  
-# Gen:  
+## Gen:  
 Path: “/analogy_search_gen_web/gen/“  
 `pip install -r requirements.txt`  
-# Auth:  
+## Auth:  
 Path: “/analogy_search_gen_web/auth/“  
 `pip install -r requirements.txt`  
-# Commands to run the applications:  
+## Commands to run the applications:  
 RabbitMQ:  
 pull the docker container: `docker pull rabbitmq:3.8.17-management`  
 run the container: `docker run -d --restart always --name rabbitmq -p 5672:5672 -p 15672:15672 -v `pwd`/data:/home/rabbitmq --hostname myRabbit -e RABBITMQ_DEFAULT_USER=admin -e RABBITMQ_DEFAULT_PASS=admin rabbitmq:3.8.17-management`  
