@@ -180,6 +180,7 @@ class GenLogView(APIView):
             'target': log.target,
             'src': log.src,
             'temp': log.temp,
+            'model' : log.model,
             'freq_penalty': log.freq_penalty,
             'pres_penalty': log.pres_penalty,
             'max_length': log.max_length,
