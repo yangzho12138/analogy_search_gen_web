@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Card, Form, Row, Col, Button, Tooltip, OverlayTrigger } from "react-bootstrap"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCircleQuestion, faUser, faRightFromBracket, faMap, faCaretDown, faCaretRight} from '@fortawesome/free-solid-svg-icons'
+import { faCircleQuestion, faUser, faRightFromBracket, faMap, faCaretDown, faCaretRight, faFileContract} from '@fortawesome/free-solid-svg-icons'
 import Link from '../components/Link'
 import Router from "next/router"
 import useRequest from '../hooks/use-request'
@@ -223,7 +223,8 @@ const GenPage = ({ userInfo }) => {
                         <Button variant="primary" onClick={() => Router.push('/search')}>Search Analogies</Button>
                         <Link title='User profile' ><FontAwesomeIcon icon={faUser} size='xl' style={{marginLeft: '10%'}} onClick={() => Router.push('/profile')}/></Link>
                         <Link title='Log out' ><FontAwesomeIcon icon={faRightFromBracket} size='xl' style={{marginLeft: '5%'}} onClick={logout}/></Link>
-                        <Link title='Know more about Analego' ><FontAwesomeIcon icon={faMap} style={{marginLeft: '3%'}} onClick={() => Router.push('/')}/></Link>
+                        <Link title='Know more about Analego' ><FontAwesomeIcon icon={faMap} size='xl' style={{marginLeft: '3%'}} onClick={() => Router.push('/')}/></Link>
+                        <Link title='Give us your feedback' ><FontAwesomeIcon icon={faFileContract} size='xl' style={{marginLeft: '3%'}} onClick={() => Router.push('https://forms.gle/DufHWwxRxn74MFtNA')}/></Link>
                     </Col>
                 </Row>
                 <Card style={{margin: '5%'}}>
@@ -529,9 +530,18 @@ const GenPage = ({ userInfo }) => {
                             </Row>
                         </Form>
                         <br />
-                        {generateResult &&(
+                        {generateResult !== null &&(
                                 <>
-                                    <textarea value={generateResult} readOnly={true} style={{width: "100%", height: "100px"}}></textarea>
+                                    <textarea value={generateResult} onChange={
+                                        (e) => {
+                                            setGenerateResult(e.target.value)
+                                            setGenerateConfig({
+                                                ...generateConfig,
+                                                analogy: e.target.value
+                                            })
+                                        }
+                                    
+                                    } style={{width: "100%", height: "100px"}}></textarea>
                                     <br />
                                     <Row className="justify-content-center">
                                         <Button variant="primary" onClick={saveAnalogy} style={{width: '10vw'}}>Save</Button>
