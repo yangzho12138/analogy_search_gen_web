@@ -224,7 +224,7 @@ const GenPage = ({ userInfo }) => {
                         <Link title='User profile' ><FontAwesomeIcon icon={faUser} size='xl' style={{marginLeft: '10%'}} onClick={() => Router.push('/profile')}/></Link>
                         <Link title='Log out' ><FontAwesomeIcon icon={faRightFromBracket} size='xl' style={{marginLeft: '5%'}} onClick={logout}/></Link>
                         <Link title='Know more about Analego' ><FontAwesomeIcon icon={faMap} size='xl' style={{marginLeft: '3%'}} onClick={() => Router.push('/')}/></Link>
-                        <Link title='Give us your feedback' ><FontAwesomeIcon icon={faFileContract} size='xl' style={{marginLeft: '3%'}} onClick={() => Router.push('https://forms.gle/DufHWwxRxn74MFtNA')}/></Link>
+                        <Link title='Give us your feedback' ><FontAwesomeIcon icon={faFileContract} size='xl' style={{marginLeft: '3%'}} onClick={() => window.open('https://forms.gle/DufHWwxRxn74MFtNA', '_blank')}/></Link>
                     </Col>
                 </Row>
                 <Card style={{margin: '5%'}}>
