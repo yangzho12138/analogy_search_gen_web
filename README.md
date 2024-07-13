@@ -3,12 +3,12 @@
 Analego is being developed mainly by a team of CS researchers and developers at the University of Illinois, Urbana-Champaign.
 
 *Bhavya:* Project lead -- Analego is mainly the culimation of her PhD thesis work   
-*Yang Zhou:* Lead Website Developer & Architect -- Current website is mostly architected and developed by him
-*Shradha Sehgal:* Researcher -- Proposed & studied multi-modal analogies as part of her Master's thesis  
-*Krishna Phani:* Website Developer (Backend) & Researcher 
+*Yang Zhou:* Lead Website Developer & Architect -- Current website is mostly architected and developed by him  
+*Shradha Sehgal:* Researcher -- Proposed & studied multi-modal analogies as part of her Master's thesis    
+*Krishna Phani:* Website Developer (Backend) & Researcher   
 *Chris Palaguachi:* Researcher (Education Psychology)  
-*Prof. Suma Bhat:* Project Supervisor  
-*Prof. ChengXiang Zhai:* Project Supervisor & Bhavya's Thesis Advisor -- He has been instrumental in shaping the vision of Analego 
+*Suma Bhat:* Project Supervisor  
+*ChengXiang Zhai:* Project Supervisor & Bhavya's Thesis Advisor -- He has been instrumental in shaping the vision of Analego 
 
 *Past Contributors:* Aditi Mallavarapu (Researcher, NC State), Jinjun Xiong (Project Supervisor, University at Buffalo)  
 
