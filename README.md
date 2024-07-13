@@ -1,3 +1,17 @@
+# Our Team
+
+Analego is being developed mainly by a team of CS researchers and developers at the University of Illinois, Urbana-Champaign.
+
+*Bhavya:* Project lead -- Analego is mainly the culimation of her PhD thesis work   
+*Yang Zhou:* Lead Website Developer & Architect  
+*Shradha Sehgal:* Researcher -- Proposed & studied multi-modal analogies as part of her Master's thesis  
+*Krishna Phani:* Website Developer & Researcher  
+*Chris Palaguachi:* Researcher (Education Psychology)  
+*Prof. Suma Bhat:* Project Supervisor  
+*Prof. ChengXiang Zhai:* Project Supervisor & Bhavya's Thesis Advisor  
+
+*Past Contributors:* Aditi Mallavarapu (Researcher, NC State), Jinjun Xiong (Project Supervisor, University at Buffalo)  
+
 # Installation instructions
 Create a virtual environment in /auth, /gen and /search folders  
 `python3 -m venv <venv name>`  
