@@ -178,7 +178,7 @@ const SearchPage = ({ userInfo, allAnalogies, clientip }) => {
                         </Row>
                         <br />
                         <Row>
-                            <div onClick={() => setAdvancedFiltersOpen(!advancedFiltersOpen)}>
+                            <div onClick={() => setAdvancedFiltersOpen(!advancedFiltersOpen)} style={{cursor: 'pointer', width: 'auto'}}>
                                 {advancedFiltersOpen ? <FontAwesomeIcon icon={faCaretDown} /> : <FontAwesomeIcon icon={faCaretRight} />}
                                 {" "}Advanced Filters
                             </div>
@@ -253,6 +253,19 @@ const SearchPage = ({ userInfo, allAnalogies, clientip }) => {
             </Row>
             <br />
             <Row>
+                <Row style={{marginLeft: '1%'}}>
+                    <div className="color-text" style={{
+                        display: 'inline-block',
+                        width: 'auto',
+                        cursor: 'pointer',
+                        fontWeight: 'bold',
+                        fontSize: '1em',
+                    }} onClick={(e) => {
+                        setImgFilter(true);
+                        doSearch(e);
+                    }}>New: Browse all analogies with images</div>
+                </Row>
+                <br />
                 <Row style={{marginLeft: '1%'}}>
                     <Col md={3}>
                         <Form.Select

@@ -330,14 +330,16 @@ const AnalogyCard = ({searchResult, isCard, userInfo }) => {
                     </Card.Title>
                     <Row>
                         <Col md='10'>
+                            <div style={{display: 'inline-block', width: 'auto', cursor: 'pointer'}}>
                             <Link title={link_title['prompt']}>
                                 <Card.Subtitle className="mb-2 text-muted">{searchResult.prompt}</Card.Subtitle>
                             </Link>
+                            </div>
                         </Col>
                         <Col md='2'>
                             <Card.Subtitle className="mb-2 text-muted">
                             <Link title={link_title['temp']}>
-                                <div>
+                                <div style={{display: 'inline-block', width: 'auto', cursor: 'pointer'}}>
                                     <FontAwesomeIcon icon={faTemperatureThreeQuarters} />{searchResult.temp}
                                 </div>
                             </Link>
@@ -360,25 +362,29 @@ const AnalogyCard = ({searchResult, isCard, userInfo }) => {
                             )}
                     </Card.Text>
                     <Row>
-                        <Col md='2' onClick={(e) => likeAnalogy(true, e)} style={{ cursor: 'pointer' }}>
+                        <Col md='2' onClick={(e) => likeAnalogy(true, e)}>
                             <Link title={"Student: " + sLike + "; Teacher: " + tLike + "; Expert: " + eLike}>
-                                <div>
+                                <div style={{display: 'inline-block', width: 'auto', cursor: 'pointer'}}>
                                     <FontAwesomeIcon icon={faThumbsUp} /> <span>{' '+ (sLike + tLike + eLike)}</span>
                                 </div>
                             </Link>
                         </Col>
-                        <Col md='2' onClick={(e) => likeAnalogy(false, e)} style={{ cursor: 'pointer' }}>
+                        <Col md='2' onClick={(e) => likeAnalogy(false, e)}>
                             <Link title={"Student: " + sDisLike + "; Teacher: " + tDisLike + "; Expert: " + eDisLike}>
-                                <div>
+                                <div style={{display: 'inline-block', width: 'auto', cursor: 'pointer'}}>
                                     <FontAwesomeIcon icon={faThumbsDown} /> <span> {' ' + (sDisLike + tDisLike + eDisLike)}</span>
                                 </div>
                             </Link>
                         </Col>
-                        <Col md='4' onClick={reportAnlogy} style={{ cursor: 'pointer' }}>
-                            <FontAwesomeIcon icon={faFlag} style={{color: 'red'}}/> {' Report'}
+                        <Col md='4' onClick={reportAnlogy}>
+                            <div style={{display: 'inline-block', width: 'auto', cursor: 'pointer'}}>
+                                <FontAwesomeIcon icon={faFlag} style={{color: 'red'}}/> {' Report'}
+                            </div>
                         </Col>
-                        <Col md='4' onClick={() => commnetAnlogy(searchResult.pid)} style={{ cursor: 'pointer' }}>
-                            <FontAwesomeIcon icon={faComment} /> {' Comment'}
+                        <Col md='4' onClick={() => commnetAnlogy(searchResult.pid)}>
+                            <div style={{display: 'inline-block', width: 'auto', cursor: 'pointer'}}>
+                                <FontAwesomeIcon icon={faComment} /> {' Comment'}
+                            </div>
                         </Col>
                     </Row>
                 </Card.Body>
@@ -420,14 +426,16 @@ const AnalogyCard = ({searchResult, isCard, userInfo }) => {
 
                             <Row>
                                 <Col md='11'>
-                                    <Link title={link_title['prompt']}>
-                                        <Card.Subtitle className="mb-2 text-muted">{searchResult.prompt}</Card.Subtitle>
-                                    </Link>
+                                    <div style={{display: 'inline-block', width: 'auto', cursor: 'pointer'}}>
+                                        <Link title={link_title['prompt']}>
+                                            <Card.Subtitle className="mb-2 text-muted">{searchResult.prompt}</Card.Subtitle>
+                                        </Link>
+                                    </div>
                                 </Col>
                                 <Col md='1'>
                                     <Card.Subtitle className="mb-2 text-muted">
                                     <Link title={link_title['temp']}>
-                                        <div>
+                                        <div style={{display: 'inline-block', width: 'auto', cursor: 'pointer'}}>
                                             <FontAwesomeIcon icon={faTemperatureThreeQuarters} />{searchResult.temp}
                                         </div>
                                     </Link>
@@ -452,26 +460,30 @@ const AnalogyCard = ({searchResult, isCard, userInfo }) => {
                             )}
                         </Card.Text>
                         <Row>
-                            <Col md='2' onClick={(e) => likeAnalogy(true, e)} style={{ cursor: 'pointer' }}>
+                            <Col md='2' onClick={(e) => likeAnalogy(true, e)}>
                                 <Link title={"Student: " + sLike + "; Teacher: " + tLike + "; Expert: " + eLike}>
-                                    <div>
+                                    <div style={{display: 'inline-block', width: 'auto', cursor: 'pointer'}}>
                                         <FontAwesomeIcon icon={faThumbsUp} /> <span>{' '+ (sLike + tLike + eLike)}</span>
                                     </div>
                                 </Link>
                             </Col>
-                            <Col md='2' onClick={(e) => likeAnalogy(false, e)} style={{ cursor: 'pointer' }}>
+                            <Col md='2' onClick={(e) => likeAnalogy(false, e)}>
                                 <Link title={"Student: " + sDisLike + "; Teacher: " + tDisLike + "; Expert: " + eDisLike}>
-                                    <div>
+                                    <div style={{display: 'inline-block', width: 'auto', cursor: 'pointer'}}>
                                         <FontAwesomeIcon icon={faThumbsDown} /> <span> {' ' + (sDisLike + tDisLike + eDisLike)}</span>
                                     </div>
                                 </Link>
                             </Col>
-                            <Col md='4' onClick={reportAnlogy} style={{ cursor: 'pointer' }}>
-                                <FontAwesomeIcon icon={faFlag} style={{color: 'red'}}/> {' Report'}
+                            <Col md='4' onClick={reportAnlogy}>
+                                <div style={{display: 'inline-block', width: 'auto', cursor: 'pointer'}}>
+                                    <FontAwesomeIcon icon={faFlag} style={{color: 'red'}}/> {' Report'}
+                                </div>
                             </Col>
-                            <Col md='4' onClick={() => commnetAnlogy(searchResult.pid)} style={{ cursor: 'pointer' }}>
-                            <FontAwesomeIcon icon={faComment} /> {' Comment'}
-                        </Col>
+                            <Col md='4' onClick={() => commnetAnlogy(searchResult.pid)}>
+                                <div style={{display: 'inline-block', width: 'auto', cursor: 'pointer'}}>
+                                    <FontAwesomeIcon icon={faComment} /> {' Comment'}
+                                </div>
+                            </Col>
                         </Row>
                     </Card.Body>
                 </Card>

@@ -16,8 +16,7 @@ export default ({ url, method, body, onSuccess }) => {
             }
             return response.data;
         }catch(err){
-            console.log(err);
-            if(err.response.data.errors){
+            if(err && err.response && err.response.data && err.response.data.errors){
                 setErrors(
                     <div className="alert alert-danger">
                         <h4>Oops...</h4>
@@ -32,6 +31,7 @@ export default ({ url, method, body, onSuccess }) => {
                 setErrors(
                     <div className="alert alert-danger">
                         <h4>Oops... Something went wrong</h4>
+                        <h4>please contact the admin: analego2023@gmail.com</h4>
                     </div>
                 );
             }

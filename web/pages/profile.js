@@ -8,6 +8,7 @@ import Link from '../components/Link';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleQuestion } from '@fortawesome/free-solid-svg-icons';
 import useRequest from '../hooks/use-request';
+import { useRouter } from "next/router";
 
 const auth_url = process.env.NEXT_PUBLIC_AUTH_BASE_URL;
 
@@ -129,6 +130,7 @@ const commentReplySearchFields = [
 
 
 const ProfilePage = ({userInfo, searchLog, genLog, issueLog, commentReplyInfo}) => {
+    const router = useRouter();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [oldPassword, setOldPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
@@ -271,7 +273,7 @@ const ProfilePage = ({userInfo, searchLog, genLog, issueLog, commentReplyInfo}) 
                 )}
             </Modal>
             <Row>
-                <a href="/search">Back</a>
+                <a href="/search" style={{display: 'inline-block', width: 'auto', cursor: 'pointer'}}>Back</a>
             </Row>
             <br />
             <Row style={{height: '90vh'}}>
