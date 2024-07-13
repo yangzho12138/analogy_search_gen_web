@@ -137,6 +137,28 @@ const SearchPage = ({ userInfo, allAnalogies, clientip }) => {
     //     }
     // }, [])
 
+    const { doRequest : doRequestSearchImg, errors : searchImgError } = useRequest({
+        url: search_url + '/api/search',
+        method: 'post',
+        body: {
+            username: userInfo === null ? '' : userInfo.username,
+            query: '',
+            prompt: '',
+            temp: '',
+            imgFilter: true,
+            clientip: clientip
+        },
+        onSuccess: (data) => {
+            setSearchResults(data.docs);
+        }
+    });
+
+    useEffect(() => {
+        if(searchImgError){
+            setErrors(searchImgError);
+        }
+    }, [searchImgError]);
+
     return (
         <div style={{marginTop: "3%"}}>
              <LoadingSpinner isLoading={isLoading} />
@@ -261,8 +283,7 @@ const SearchPage = ({ userInfo, allAnalogies, clientip }) => {
                         fontWeight: 'bold',
                         fontSize: '1em',
                     }} onClick={(e) => {
-                        setImgFilter(true);
-                        doSearch(e);
+                        doRequestSearchImg();
                     }}>New: Browse all analogies with images</div>
                 </Row>
                 <br />
