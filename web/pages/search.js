@@ -276,8 +276,9 @@ const SearchPage = ({ userInfo, allAnalogies, clientip }) => {
             <br />
             <Row>
                 <Row style={{marginLeft: '1%'}}>
-                    <div className="color-text" style={{
+                    <div style={{
                         display: 'inline-block',
+                        color: 'red',
                         width: 'auto',
                         cursor: 'pointer',
                         fontWeight: 'bold',
