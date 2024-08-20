@@ -14,6 +14,14 @@ admin_email = []
 
 # Create your views here.
 class SignUpView(APIView):  
+    def get(self, request):
+        return Response(
+            status=status.HTTP_200_OK,
+            data={
+                'message': 'success',
+                'users': User.objects.all().values()
+            }
+        )
     # sign up
     def post(self, request):
         username = request.data.get("username", "").strip()

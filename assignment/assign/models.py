@@ -1,33 +1,24 @@
-from django.db import models
+from mongoengine import Document, StringField, EmailField, ListField, IntField
 
-# Create your models here.
-class User(models.Model):
-    email = models.EmailField(max_length=254, unique=True)
-    collected_analogies = models.ArrayField(
-        model_container=int,
-    )
-    generated_questions = models.ArrayField(
-        model_container=int,
-    )
-    generated_questionnaires = models.ArrayField(
-        model_container=int,
-    )
+class User(Document):
+    email = EmailField(max_length=254, unique=True)
+    collected_analogies = ListField(IntField(), default=list)
+    generated_questions = ListField(IntField(), default=list)
+    generated_questionnaires = ListField(IntField(), default=list)
 
-class Analogy(models.Model):
-    target = models.CharField(max_length=100)
-    prompt = models.CharField(max_length=1000)
-    analogy = models.TextField()
-    id = models.CharField(max_length=100)
-    temp = models.CharField(max_length=10)
+class Analogy(Document):
+    target = StringField(max_length=100)
+    prompt = StringField(max_length=1000)
+    analogy = StringField()
+    id = StringField(max_length=10, primary_key=True)
+    temp = StringField(max_length=10)
+    src = StringField(max_length=100)
+    model = StringField(max_length=20)
+    generatorRole = StringField(max_length=10)
 
-class Question(models.Model):
-    title = models.TextField()
-    choices = models.ArrayField(
-        model_container=str,
-    )
+class Question(Document):
+    title = StringField()
+    choices = ListField(StringField(), default=list)
 
-class Questionnaire(models.Model):
-    questions = models.ArrayField(
-        model_container=int,
-    )
-
+class Questionnaire(Document):
+    questions = ListField(IntField(), default=list)
