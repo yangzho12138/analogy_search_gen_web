@@ -37,7 +37,9 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "assign"
+    "assign",
+    "scripts",
+    # 'django_mongoengine',
 ]
 CELERY_BROKER_URL = 'amqps://lhcyjupx:rKqBe890tVvjUWkMdnCwmUl0szi8FL-F@shark.rmq.cloudamqp.com/lhcyjupx?ssl=1&ssl_options={"ssl_verify_hostname": false}'
 MIDDLEWARE = [
@@ -81,18 +83,31 @@ WSGI_APPLICATION = "assignment.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        'ENGINE': 'djongo',
-        'CLIENT': {
-            'name': 'Cluster0',
-            'host': 'mongodb+srv://yangzhou12138:hQuuUiF6ZePWvCbM@cluster0.i5mthdh.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0',
-            'username': 'yangzhou12138',
-            'password': 'hQuuUiF6ZePWvCbM',
-            'authMechanism': 'SCRAM-SHA-1',
-        }
-    }
-}
+# DATABASES = {
+#     "default": {
+#         'ENGINE': 'djongo',
+#         'CLIENT': {
+#             'name': 'Cluster0',
+#             'host': 'mongodb+srv://yangzhou12138:hQuuUiF6ZePWvCbM@cluster0.i5mthdh.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0',
+#             'username': 'yangzhou12138',
+#             'password': 'hQuuUiF6ZePWvCbM',
+#             'authMechanism': 'SCRAM-SHA-1',
+#         }
+#         'NAME': 'assignment',
+#         'ENFORCE_SCHEMA': False,
+#         'CLIENT': {
+#             'host': 'mongodb://localhost:27017',
+#         }
+#     }
+# }
+
+from mongoengine import connect
+
+connect(
+    db='assignment',
+    host='localhost', 
+    port=27017  
+)
 
 
 # Password validation
