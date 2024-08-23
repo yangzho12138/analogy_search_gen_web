@@ -48,8 +48,9 @@ const link_title = {
 
 const auth_url = process.env.NEXT_PUBLIC_AUTH_BASE_URL;
 const search_url = process.env.NEXT_PUBLIC_SEARCH_BASE_URL;
+const assignment_url = process.env.NEXT_PUBLIC_ASSIGNMENT_BASE_URL;
 
-const SearchPage = ({ userInfo, allAnalogies, clientip }) => {
+const SearchPage = ({ userInfo, allAnalogies, clientip, collectedAnalogies }) => {
     // const [token, setToken] = useState(null)
     const router = useRouter();
     const { preSetPrompt,
@@ -170,14 +171,8 @@ const SearchPage = ({ userInfo, allAnalogies, clientip }) => {
                     </Modal>
             )}
             <Row>
-                <Col md={3} className="text-center">
-                    <span style={{font: 'italic 5em Georgia', color: 'orange'}}>A</span>
-                    <span style={{font: 'italic 3em Georgia', color: 'blue'}}>n</span>
-                    <span style={{font: 'italic 3em Georgia', color: 'green'}}>a</span>
-                    <span style={{font: 'italic 3em Georgia', color: 'red'}}>l</span>
-                    <span style={{font: 'italic 3em Georgia', color: 'purple'}}>e</span>
-                    <span style={{font: 'italic 3em Georgia', color: 'grey'}}>g</span>
-                    <span style={{font: 'italic 5em Georgia', color: 'orange'}}>o</span>
+                <Col md={3}>
+                    <img src="/images/logo.png" style={{maxHeight: '15vh', width: '100%'}}/>
                 </Col>
                 <Col md={6}>
                     <Form onSubmit={doSearch}>
@@ -274,6 +269,7 @@ const SearchPage = ({ userInfo, allAnalogies, clientip }) => {
                 </Col>
             </Row>
             <br />
+            <br />
             <Row>
                 <Row style={{marginLeft: '1%'}}>
                     <div className="color-text" style={{
@@ -310,7 +306,7 @@ const SearchPage = ({ userInfo, allAnalogies, clientip }) => {
                                 {searchResults.map((result, index) => {
                                     return (
                                         <>
-                                            <AnalogyCard key={result.pid} searchResult={result} isCard={isCard} userInfo={userInfo}/>
+                                            <AnalogyCard key={result.pid} searchResult={result} isCard={isCard} userInfo={userInfo} isCollected={collectedAnalogies.includes(result.pid)}/>
                                             <br />
                                         </>
                                     )
@@ -328,6 +324,7 @@ SearchPage.getInitialProps = async ( { req } ) => {
     // let userLoggedIn = false;
     let userInfo = null;
     let allAnalogies = [];
+    let collectedAnalogies = [];
     let clientip = ''; 
     let cookies = '';
     if (req && req.headers['x-forwarded-for']) {
@@ -344,7 +341,7 @@ SearchPage.getInitialProps = async ( { req } ) => {
             },
             withCredentials: true,
         });
-        console.log(res);
+        // console.log(res);
         if(res.status == 200){
             // userLoggedIn = true;
             console.log(res.data.data);
@@ -361,20 +358,38 @@ SearchPage.getInitialProps = async ( { req } ) => {
             },
             withCredentials: true,
         });
-        console.log(res);
+        // console.log(res);
         if(res.status == 200){
             allAnalogies = res.data.docs;
-            console.log("test123 ", allAnalogies);
         }
     } catch(err){
         console.log(err);
     }
 
+    try{
+        const res = await axios.get( assignment_url + '/api/assignment/analogy', {
+            headers: {
+                cookie: cookies
+            },
+            withCredentials: true,
+        });
+        // console.log("testpoint0", res);
+        if(res.status == 200){
+            // console.log("testpoint1", res.data.analogies);
+            collectedAnalogies = res.data.analogies.map(analogy => analogy._id);
+        }
+    } catch(err){
+        console.log(err);
+    }
+
+    // console.log(collectedAnalogies);
+
     return {
         // userLoggedIn,
         userInfo,
         allAnalogies,
-        clientip
+        clientip,
+        collectedAnalogies
     }
 }
 

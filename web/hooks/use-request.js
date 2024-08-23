@@ -7,9 +7,19 @@ export default ({ url, method, body, onSuccess }) => {
     const doRequest = async() => {
         try{
             setErrors(null);
-            const response = await axios[method](url, body, {
-                withCredentials: true
-            });
+            let response;
+
+            if(method === 'get' || method === 'delete'){
+                response = await axios[method](url, {
+                    params: body, // For GET requests, use params
+                    data: body,   // For DELETE requests, need to include body in the data field
+                    withCredentials: true
+                });
+            }else{
+                response = await axios[method](url, body, {
+                    withCredentials: true
+                });
+            }
             console.log(response);
             if(onSuccess){
                 onSuccess(response.data);

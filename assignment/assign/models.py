@@ -1,24 +1,16 @@
-from mongoengine import Document, StringField, EmailField, ListField, IntField
+from django.db import models
+from django.contrib.auth.models import AbstractUser
 
-class User(Document):
-    email = EmailField(max_length=254, unique=True)
-    collected_analogies = ListField(IntField(), default=list)
-    generated_questions = ListField(IntField(), default=list)
-    generated_questionnaires = ListField(IntField(), default=list)
-
-class Analogy(Document):
-    target = StringField(max_length=100)
-    prompt = StringField(max_length=1000)
-    analogy = StringField()
-    id = StringField(max_length=10, primary_key=True)
-    temp = StringField(max_length=10)
-    src = StringField(max_length=100)
-    model = StringField(max_length=20)
-    generatorRole = StringField(max_length=10)
-
-class Question(Document):
-    title = StringField()
-    choices = ListField(StringField(), default=list)
-
-class Questionnaire(Document):
-    questions = ListField(IntField(), default=list)
+# mysql database for auth.
+class CustomUser(AbstractUser):
+    username = models.CharField(max_length=50, unique=True)
+    email = models.EmailField(max_length=254, unique=True)
+    password = models.CharField(max_length=100)
+    free_openai_api_key = models.IntegerField(default=50)
+    notification = models.BooleanField(default=False)
+    
+    def __str__(self):
+        return self.email
+    
+    class Meta:
+        db_table = 'auth_customer'

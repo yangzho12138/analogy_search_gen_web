@@ -8,7 +8,9 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'assignment.settings')
 django.setup()
 
-from assign.models import User
+# print(sys.path)
+
+from assign.mongo_models import User
 
 def setup_mongo_app():
     connect(
@@ -31,15 +33,15 @@ def migrate_users():
     for user in users:
         try:
             mongo_user = User(
-                email=user['email'],
+                username=user["username"],
                 collected_analogies=[], 
                 generated_questions=[], 
                 generated_questionnaires=[]
             )
             mongo_user.save()
-            print(f'Migrated {user["email"]} to MongoDB')
+            print(f'Migrated {user["username"]} to MongoDB')
         except Exception as e:       
-            print(f'Error migrating {user["email"]}: {e}')
+            print(f'Error migrating {user["username"]}: {e}')
 
 if __name__ == "__main__":
     migrate_users()
