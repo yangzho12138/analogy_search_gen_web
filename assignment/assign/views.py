@@ -1,9 +1,10 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .models import User, Analogy, Question, Questionnaire
+from .mongo_models import User, Analogy, Question, Questionnaire
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from .authentication import CookieJWTAuthentication
+import json
 
 # Create your views here.
 class AnalogyView(APIView):
@@ -11,55 +12,50 @@ class AnalogyView(APIView):
     permission_classes = [IsAuthenticated]
     # get all collected analogies for a user
     def get(self, request):
-        email = request.data.get("email", "").strip()
-        if not User.objects.filter(email=email).exists():
-            return Response(
-                status=status.HTTP_404_NOT_FOUND,
-                data={
-                    'message': 'User not found'
-                }
-            )
-        analogies_ids = User.objects.get(email=email).collected_analogies
+        analogies_ids = User.objects.get(username=request.user.username).collected_analogies
         analogies = Analogy.objects.filter(id__in=analogies_ids)
+        
+        analogies_json = analogies.to_json()  
+        analogies_list = json.loads(analogies_json)
+
         return Response(
             status=status.HTTP_200_OK,
             data={
-                'analogies': analogies
+                'analogies': analogies_list
             }
         )
     # user collect an analogy
     def put(self, request):
-        email = request.data.get("email", "").strip()
-        if not User.objects.filter(email=email).exists():
+        analogy_id = request.data.get("analogy_id", "").strip()
+        user = User.objects.get(username=request.user.username)
+        if analogy_id in user.collected_analogies:
             return Response(
-                status=status.HTTP_404_NOT_FOUND,
+                status=status.HTTP_400_BAD_REQUEST,
                 data={
-                    'message': 'User not found'
+                    'errors': ['Analogies already collected']
                 }
             )
-        analogy_id = request.data.get("analogy_id", "").strip()
-        user = User.objects.get(email=email)
         user.collected_analogies.append(analogy_id)
         user.save()
         return Response(
             status=status.HTTP_200_OK,
             data={
-                'message': 'Analogies updated successfully'
+                'message': 'Analogies collected successfully'
             }
         )
     # user remove an collected analogy
     def delete(self, request):
-        email = request.data.get("email", "").strip()
-        if not User.objects.filter(email=email).exists():
+        analogy_id = request.data.get("analogy_id", "").strip()
+        user = User.objects.get(username=request.user.username)
+        try:
+            user.collected_analogies.remove(analogy_id)
+        except ValueError:
             return Response(
-                status=status.HTTP_404_NOT_FOUND,
+                status=status.HTTP_400_BAD_REQUEST,
                 data={
-                    'message': 'User not found'
+                    'errors': ['Analogy is not in your collection']
                 }
             )
-        analogy_id = request.data.get("analogy_id", "").strip()
-        user = User.objects.get(email=email)
-        user.collected_analogies.remove(analogy_id)
         user.save()
         return Response(
             status=status.HTTP_200_OK,
@@ -91,14 +87,7 @@ class QuestionView(APIView):
         )
     # user generate a question
     def put(self, request):
-        email = request.data.get("email", "").strip()
-        if not User.objects.filter(email=email).exists():
-            return Response(
-                status=status.HTTP_404_NOT_FOUND,
-                data={
-                    'message': 'User not found'
-                }
-            )
+        
         question = Question.objects.create(
             title=request.data.get("title", ""),
             choices=request.data.get("choices", [])

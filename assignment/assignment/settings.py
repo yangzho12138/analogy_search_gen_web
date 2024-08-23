@@ -20,7 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-8gt8_-xw@_6aeh6)sztj)%jgnp)#t+uh#*a#-muynveei%ck#-"
+SECRET_KEY = "django-insecure-qd&*=0wkjcrq%*jxt#zvx7=+m$c&z1%%20u5+&rimnwcfg&i)j"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "assign",
     "scripts",
-    # 'django_mongoengine',
+    "corsheaders",
 ]
 CELERY_BROKER_URL = 'amqps://lhcyjupx:rKqBe890tVvjUWkMdnCwmUl0szi8FL-F@shark.rmq.cloudamqp.com/lhcyjupx?ssl=1&ssl_options={"ssl_verify_hostname": false}'
 MIDDLEWARE = [
@@ -83,23 +83,16 @@ WSGI_APPLICATION = "assignment.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-# DATABASES = {
-#     "default": {
-#         'ENGINE': 'djongo',
-#         'CLIENT': {
-#             'name': 'Cluster0',
-#             'host': 'mongodb+srv://yangzhou12138:hQuuUiF6ZePWvCbM@cluster0.i5mthdh.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0',
-#             'username': 'yangzhou12138',
-#             'password': 'hQuuUiF6ZePWvCbM',
-#             'authMechanism': 'SCRAM-SHA-1',
-#         }
-#         'NAME': 'assignment',
-#         'ENFORCE_SCHEMA': False,
-#         'CLIENT': {
-#             'host': 'mongodb://localhost:27017',
-#         }
-#     }
-# }
+DATABASES = {
+    "default": {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'mydb',
+        'USER': 'myuser',
+        'PASSWORD': 'mypassword',
+        'HOST': 'localhost',        
+        'PORT': '3306',
+    }
+}
 
 from mongoengine import connect
 
@@ -121,6 +114,15 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",},
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",},
 ]
+
+AUTH_USER_MODEL = "assign.CustomUser"
+
+# JWT settings
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ]
+}
 
 
 # Internationalization

@@ -8,14 +8,15 @@ from .models import CustomUser as User
 class CookieJWTAuthentication(BaseAuthentication):
     def authenticate(self, request):
         token = request.COOKIES.get('access_token')
-        # print(token)
+        print("token",token)
         if not token:
             return None
 
         try:
             decoded_data = token_backend.decode(token, verify=True)
+            print("decoded_data",decoded_data)
             username = decoded_data.get('username')
-            # print(username)
+            print("username", username)
             if not username:
                 raise exceptions.AuthenticationFailed('Invalid token - username missing')
             user = User.objects.get(username=username)

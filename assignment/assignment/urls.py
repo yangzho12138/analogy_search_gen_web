@@ -1,8 +1,7 @@
-"""
-URL configuration for assignment project.
+"""search URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/4.2/topics/http/urls/
+    https://docs.djangoproject.com/en/4.1/topics/http/urls/
 Examples:
 Function views
     1. Add an import:  from my_app import views
@@ -16,7 +15,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.urls import include
+from django.urls import re_path as url
+from django.utils.translation import gettext as _
+
+
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
+    url(r"^", include("assign.urls")),
+    # path("admin/", admin.site.urls),
 ]
