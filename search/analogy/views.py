@@ -5,6 +5,7 @@ from rest_framework import status
 import nltk
 import os
 import json
+import markdown
 nltk.download('stopwords')
 nltk.download('punkt')
 from nltk.corpus import stopwords
@@ -52,6 +53,7 @@ class SearchView(APIView):
         docs = []
         for doc in response['hits']['hits']:
             doc['_source']['pid'] = doc['_id']
+            doc['_source']['analogy'] = markdown.markdown(doc['_source']['analogy']).replace('<h3>','<h5>').replace('</h3>','</h5>').replace('<ol>','<ul>').replace('</ol>','</ul>')
             docs.append(doc['_source'])
 
         # return Response({"docs": docs})
@@ -175,11 +177,13 @@ class SearchView(APIView):
         docs = []
         for doc in response['hits']['hits']:
             doc['_source']['pid'] = doc['_id']
+            ndoc = doc['_source']
+            ndoc['analogy'] = markdown.markdown(ndoc['analogy']).replace('<h3>','<h5>').replace('</h3>','</h5>').replace('<ol>','<ul>').replace('</ol>','</ul>')
             if imgFilter:
                 if 'image' in doc['_source'] and doc['_source']['image'] is not None and doc['_source']['image'] != '':
-                    docs.append(doc['_source'])
+                    docs.append(ndoc)
             else:
-                docs.append(doc['_source'])
+                docs.append(ndoc)
 
         return Response({"docs": docs})
 class LikeView(APIView):
