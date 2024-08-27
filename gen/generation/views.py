@@ -16,11 +16,12 @@ from .authentication import CookieJWTAuthentication
 # Create your views here.
 pool = ConnectionPool(host='localhost', port=6379, db=1, max_connections=10)
 
-def  get_response(prompt,temp,max_length,top_p,freq_penalty,pres_penalty,client,model):
+def  get_response(prompt,temp,max_length,top_p,freq_penalty,pres_penalty,client,model,grade):
     #print(prompt, flush=True)	
+    system = "You are a helpful and knowledgeable tutor who helps {}students understand concepts.".format(grade+' ')
     completion = client.chat.completions.create(
         model=model,
-        messages=[{"role": "user", "content": prompt}],
+        messages=[{"role": "system", "content": system},{"role": "user", "content": prompt}],
         temperature=temp,
         max_tokens=max_length,
         top_p=top_p,
@@ -51,6 +52,7 @@ class GenerationView(APIView):
         max_length = int(request.data.get('max_length', 800))
         top_p = float(request.data.get('top_p', 1))
         best_of = int(request.data.get('best_of', 1))
+        grade = request.data.get('grade', '')
 
         if api_key == '' and target == '':
             return Response(
@@ -89,7 +91,8 @@ class GenerationView(APIView):
             'max_length': max_length,
             'top_p': top_p,
             'best_of': best_of,
-            'analogy': resp
+            'analogy': resp,
+            'grade': grade
         }
 
         # send generation log to auth system
@@ -117,6 +120,7 @@ class GenerationView(APIView):
         best_of = int(request.data.get('best_of', 1))
         analogy = request.data.get('analogy', '')
         role = request.data.get('role', 'STUDENT')
+        grade = request.data.get('grade', '')
 
         prompt = prompt.replace('<target>',target)
         prompt = prompt.replace('<src>',src)
@@ -138,7 +142,8 @@ class GenerationView(APIView):
             'top_p': top_p,
             'best_of': best_of,
             'analogy': analogy,
-            'generatorRole': role
+            'generatorRole': role,
+            'grade': grade
         }
         r.rpush('generationAnalogy', json.dumps(generationAnalogy))
         return Response(
