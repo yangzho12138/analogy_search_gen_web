@@ -43,6 +43,7 @@ const genFields = [
     "prompt",
     "target",
     "src",
+    "grade",
     "model",
     "temp",
     "freq_penalty",
@@ -51,7 +52,7 @@ const genFields = [
     "top_p",
     "best_of",
     "analogy",
-    "grade"
+    
 ]
 // fields shown in the list
 const genListFields = [
