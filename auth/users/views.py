@@ -186,7 +186,8 @@ class GenLogView(APIView):
             'max_length': log.max_length,
             'top_p': log.top_p,
             'best_of': log.best_of,
-            'analogy': log.analogy
+            'analogy': log.analogy,
+            'grade': log.grade
         } for log in logs]
         return Response(
             status=status.HTTP_200_OK,
