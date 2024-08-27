@@ -26,7 +26,8 @@ def generate_log(generation_log):
         max_length=generation_log['max_length'],
         top_p=generation_log['top_p'],
         best_of=generation_log['best_of'],
-        analogy=generation_log['analogy']
+        analogy=generation_log['analogy'],
+        grade=generation_log['grade']
     )
     gen_log.save()
     return generation_log
