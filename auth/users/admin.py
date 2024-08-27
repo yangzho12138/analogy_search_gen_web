@@ -18,8 +18,8 @@ class CustomUserAdmin(admin.ModelAdmin):
     list_editable = ('role',)
 
 class GenLogAdmin(admin.ModelAdmin):
-    list_display = ('user', 'created_at', 'prompt', 'target', 'src', 'temp', 'freq_penalty', 'pres_penalty', 'max_length', 'top_p', 'best_of', 'analogy')
-    search_fields = ('user__email', 'user__username', 'created_at', 'prompt', 'target', 'src', 'temp', 'freq_penalty', 'pres_penalty', 'max_length', 'top_p', 'best_of', 'analogy')
+    list_display = ('user', 'created_at', 'prompt', 'target', 'src', 'temp', 'grade', 'freq_penalty', 'pres_penalty', 'max_length', 'top_p', 'best_of', 'analogy')
+    search_fields = ('user__email', 'user__username', 'created_at', 'prompt', 'target', 'src', 'temp', 'grade', 'freq_penalty', 'pres_penalty', 'max_length', 'top_p', 'best_of', 'analogy')
 
 class SearchLogAdmin(admin.ModelAdmin):
     list_display = ('user', 'created_at', 'query', 'prompt', 'temp')
