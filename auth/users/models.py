@@ -40,7 +40,7 @@ class GenLog(models.Model):
     best_of = models.IntegerField()
     analogy = models.TextField()
     model = models.CharField(max_length=100, default='gpt-3')
-    grade = models.CharField(max_length=100)
+    grade = models.CharField(max_length=100, default="")
 
     def __str__(self):
         return self.analogy
