@@ -36,7 +36,8 @@ def get_data_from_redis():
                 "best_of": 0,
                 "like": [0, 0, 0],
                 "dislike": [0, 0, 0],
-                "generatorRole": ""
+                "generatorRole": "",
+                "grade": ""
             }
             
             analogy = {**default_values, **gen_analogy}
