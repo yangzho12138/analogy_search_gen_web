@@ -50,7 +50,8 @@ const genFields = [
     "max_length",
     "top_p",
     "best_of",
-    "analogy"
+    "analogy",
+    "grade"
 ]
 // fields shown in the list
 const genListFields = [
