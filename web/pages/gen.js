@@ -48,6 +48,39 @@ const modelOptions = [
     "gpt-4o",
 ]
 
+const gradeOptions = [
+    "K-12",
+    "Pre-K",
+"Kindergarten",
+"1st grade",
+"2nd grade",
+"3rd grade",
+"4th grade",
+"5th grade",
+"6th grade",
+"7th grade",
+"8th grade",
+"9th grade",
+"10th grade",
+"11th grade",
+"12th grade",
+"University",
+"Professional Staff",
+"Year 1",
+"Year 2",
+"Year 3",
+"Year 4",
+"Year 5",
+"Year 6",
+"Year 7",
+"Year 8",
+"Year 9",
+"Year 10",
+"Year 11",
+"Year 12",
+"Year 13"
+]
+
 const GenPage = ({ userInfo }) => {
     const router = useRouter();
     const { preSetPrompt,
@@ -58,7 +91,7 @@ const GenPage = ({ userInfo }) => {
         preSetPres_penalty,
         preSetMax_length,
         preSetTop_p,
-        preSetBest_of } = router.query;
+        preSetBest_of, preSetGrade  } = router.query;
     
     function retPrompt(){
       var tempPrompt =  preSetPrompt.replace(preSetTarget,'<target>');
@@ -81,6 +114,7 @@ const GenPage = ({ userInfo }) => {
     const [freq_penalty, setFreqPenalty] = useState(preSetFreq_penalty === undefined ? 0.0 : parseFloat(preSetFreq_penalty));
     const [pres_penalty, setPresPenalty] = useState(preSetPres_penalty === undefined ? 0.0 : parseFloat(preSetPres_penalty));
     const [best_of, setBestOf] = useState(preSetBest_of === undefined ? 1 : parseInt(preSetBest_of));
+    const [grade, setGrade] = useState(preSetGrade === undefined ? "K-12" : preSetGrade);
 
     useEffect(() => {
         if(src !== ""){
@@ -122,7 +156,8 @@ const GenPage = ({ userInfo }) => {
             top_p,
             freq_penalty,
             pres_penalty,
-            best_of
+            best_of,
+            grade
         },
         onSuccess: (data) => {
             window.alert('Generate Success');
@@ -139,7 +174,8 @@ const GenPage = ({ userInfo }) => {
                 pres_penalty,
                 best_of,
                 analogy: data.resp,
-                role: userInfo.role
+                role: userInfo.role,
+                grade
             })
         } 
     });
@@ -265,20 +301,23 @@ const GenPage = ({ userInfo }) => {
                             <br />
                             {advancedConfig && (
                                 <>
-                                    <Row>
-                                        <Form.Group as={Row} md="8" controlId="openAIKey">
-                                            <Form.Label column sm='6'>OpenAI API Key <Link title={link_title['openAIKey']}><FontAwesomeIcon icon={faCircleQuestion} /></Link></Form.Label>
+                                        <Row>
+                                        <Form.Group as={Row} md="8" controlId="grade">
+                                            <Form.Label column sm='6'>Grade<Link title={link_title['grade']}><FontAwesomeIcon icon={faCircleQuestion} /></Link></Form.Label>
                                             <Col sm='6'>
-                                                <Form.Control
-                                                    type="text"
-                                                    // placeholder="Leave blank if you don't have one, we will provide one for you."
-                                                    value = {openAIKey}
-                                                    onChange={(e) => setOpenAIKey(e.target.value)}
-                                                />
+                                                <Form.Select
+                                                    value={grade}
+                                                    onChange={(e) => setModel(e.target.value)}
+                                                >
+                                                    {gradeOptions.map(option => (
+                                                        <option key={option} value={option}>{option}</option>
+                                                    ))}
+                                                </Form.Select>
                                             </Col>
                                         </Form.Group>
                                     </Row>
                                     <br />
+                                   
                                     <Row>
                                         <Form.Group as={Row} md="8" controlId="model">
                                             <Form.Label column sm='6'>Model Name <Link title={link_title['model']}><FontAwesomeIcon icon={faCircleQuestion} /></Link></Form.Label>
@@ -382,6 +421,20 @@ const GenPage = ({ userInfo }) => {
                                                     min="0"
                                                     max="4000"
                                                     step="1"
+                                                />
+                                            </Col>
+                                        </Form.Group>
+                                    </Row>
+                                    <br />
+                                                         <Row>
+                                        <Form.Group as={Row} md="8" controlId="openAIKey">
+                                            <Form.Label column sm='6'>OpenAI API Key <Link title={link_title['openAIKey']}><FontAwesomeIcon icon={faCircleQuestion} /></Link></Form.Label>
+                                            <Col sm='6'>
+                                                <Form.Control
+                                                    type="text"
+                                                    // placeholder="Leave blank if you don't have one, we will provide one for you."
+                                                    value = {openAIKey}
+                                                    onChange={(e) => setOpenAIKey(e.target.value)}
                                                 />
                                             </Col>
                                         </Form.Group>
