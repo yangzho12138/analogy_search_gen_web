@@ -192,6 +192,7 @@ const LogList = ({ logs, fields, searchFields, listFields, userInfo, type }) => 
                                         preSetMax_length: logDetail?.max_length,
                                         preSetTop_p: logDetail?.top_p,
                                         preSetBest_of: logDetail?.best_of,
+                                        preSetGrade: logDetail?.grade,
                                     }
                                 })
                             }}>Generate again based on these parameters</Button>
