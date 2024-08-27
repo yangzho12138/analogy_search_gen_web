@@ -324,7 +324,7 @@ const GenPage = ({ userInfo }) => {
                                             <Col sm='6'>
                                                 <Form.Select
                                                     value={model}
-                                                    onChange={(e) => setModel(e.target.value)}
+                                                    onChange={(e) => setGrade(e.target.value)}
                                                 >
                                                     {modelOptions.map(option => (
                                                         <option key={option} value={option}>{option}</option>
