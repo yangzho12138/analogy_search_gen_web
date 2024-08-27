@@ -303,7 +303,7 @@ const GenPage = ({ userInfo }) => {
                                 <>
                                         <Row>
                                         <Form.Group as={Row} md="8" controlId="grade">
-                                            <Form.Label column sm='6'>Grade<Link title={link_title['grade']}><FontAwesomeIcon icon={faCircleQuestion} /></Link></Form.Label>
+                                            <Form.Label column sm='6'>Grade <Link title={link_title['grade']}><FontAwesomeIcon icon={faCircleQuestion} /></Link></Form.Label>
                                             <Col sm='6'>
                                                 <Form.Select
                                                     value={grade}
