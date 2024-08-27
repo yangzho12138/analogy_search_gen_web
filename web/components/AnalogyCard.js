@@ -9,6 +9,7 @@ import Comment from './Comment';
 import Link from '../components/Link';
 import axios from 'axios';
 import ImageTooltip from './ImageTooltip';
+import DOMPurify from 'isomorphic-dompurify';
 
 const auth_url = process.env.NEXT_PUBLIC_AUTH_BASE_URL;
 const search_url = process.env.NEXT_PUBLIC_SEARCH_BASE_URL;
@@ -347,7 +348,7 @@ const AnalogyCard = ({searchResult, isCard, userInfo }) => {
                         </Col>
                     </Row>
                     <Card.Text style={{maxHeight: '60%', overflowY: 'auto', border: '1px solid grey',  borderRadius: '10px', padding: '10px'}}>
-                            {searchResult.analogy} {searchResult.image && (
+                            {<div dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(searchResult.analogy)}} />}  {searchResult.image && (
                                 // <ImageTooltip image={searchResult.image}><FontAwesomeIcon icon={faImages} /></ImageTooltip>
                                 <>
                                     <Link title={"Click to view/hide image"}>
@@ -445,7 +446,7 @@ const AnalogyCard = ({searchResult, isCard, userInfo }) => {
                         </div>
                         <br />
                         <Card.Text>
-                            {searchResult.analogy} {searchResult.image && (
+                             { <div dangerouslySetInnerHTML={{__html:  DOMPurify.sanitize(searchResult.analogy)}} />}  {searchResult.image && (
                                 // <ImageTooltip image={searchResult.image}><FontAwesomeIcon icon={faImages} /></ImageTooltip>
                                 <>
                                     <Link title={"Click to view/hide image"}>
