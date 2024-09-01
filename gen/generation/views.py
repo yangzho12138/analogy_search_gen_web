@@ -18,12 +18,12 @@ pool = ConnectionPool(host='localhost', port=6379, db=1, max_connections=10)
 
 def  get_response(prompt,temp,max_length,top_p,freq_penalty,pres_penalty,client,model,grade):
     #print(prompt, flush=True)	
-    system = "You are a helpful and knowledgeable tutor who helps {}students understand concepts.".format(grade+' ')
+    system = "You are a helpful and knowledgeable tutor who helps {}students understand concepts. Your response should be written in {}".format(grade+' ',max_length)
     completion = client.chat.completions.create(
         model=model,
         messages=[{"role": "system", "content": system},{"role": "user", "content": prompt}],
         temperature=temp,
-        max_tokens=max_length,
+        max_tokens=3000,
         top_p=top_p,
         frequency_penalty=freq_penalty,
         presence_penalty=pres_penalty
@@ -49,7 +49,7 @@ class GenerationView(APIView):
         temp = float(request.data.get('temp', 0))
         freq_penalty = float(request.data.get('freq_penalty', 0))
         pres_penalty = float(request.data.get('pres_penalty', 0))
-        max_length = int(request.data.get('max_length', 800))
+        max_length = request.data.get('max_length', 'a few sentences')
         top_p = float(request.data.get('top_p', 1))
         best_of = int(request.data.get('best_of', 1))
         grade = request.data.get('grade', '')
@@ -115,7 +115,7 @@ class GenerationView(APIView):
         temp = float(request.data.get('temp', 0))
         freq_penalty = float(request.data.get('freq_penalty', 0))
         pres_penalty = float(request.data.get('pres_penalty', 0))
-        max_length = int(request.data.get('max_length', 800))
+        max_length = request.data.get('max_length', 'a few sentences')
         top_p = float(request.data.get('top_p', 1))
         best_of = int(request.data.get('best_of', 1))
         analogy = request.data.get('analogy', '')
