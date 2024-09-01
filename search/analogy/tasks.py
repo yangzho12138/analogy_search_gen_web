@@ -29,7 +29,7 @@ def get_data_from_redis():
                 "src": "",
                 "pid": "",
                 "pid_esc": "",
-                "max_length": 0,
+                "max_length": 'a few sentences',
                 "top_p": 0.0,
                 "freq_penalty": 0.0,
                 "pres_penalty": 0.0,
