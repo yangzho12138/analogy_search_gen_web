@@ -34,7 +34,7 @@ const link_title = {
     "src": "The topic area that you would like the analogy to be about",
     "prompt": "Select the prompt or instruction given to the model for generating the analogy ",
     "temp": "Loweing results in less ramdom completions. As randomness approaches zero, the model will become deterministic and repetitive",
-    "max_length": "The maximum number of tokens to generate shared between the prompt and the completion",
+    "max_length": "The length of generated analogy.",
     "top_p": "Controls diversity vai nucleus sampling: 0.5 means half of all likelihood-weighted options are considered",
     "freq_penalty": "How much to penalize new tokens based on their frequency in the text so far. Decreases the likelihood to repeat the same line verbatim",
     "pres_penalty": "How much to penalize new tokens based on whether they appear in the text so far. Increases the likelihood to talk about new topics",
