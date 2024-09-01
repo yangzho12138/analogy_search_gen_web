@@ -35,7 +35,7 @@ class GenLog(models.Model):
     temp = models.FloatField()
     freq_penalty = models.FloatField()
     pres_penalty = models.FloatField()
-    max_length = models.IntegerField()
+    max_length = models.CharField(max_length=100)
     top_p = models.FloatField()
     best_of = models.IntegerField()
     analogy = models.TextField()
