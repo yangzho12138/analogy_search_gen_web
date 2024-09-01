@@ -13,12 +13,11 @@ import { useRouter } from 'next/router';
 const auth_url = process.env.NEXT_PUBLIC_AUTH_BASE_URL;
 const gen_url = process.env.NEXT_PUBLIC_GEN_BASE_URL;
 
-const gen_prompts = [
-    'What analogy is used to explain <target>?',
-    'Use an analogy to explain <target>.',
-    'Create an analogy to explain <target>.',
+const gen_prompts = ['Use an analogy to explain <target>.',
+'Create an analogy to explain <target>.',
     'Explain <target> using an analogy.',
     'Using an analogy, explain <target>.',
+    'What analogy is used to explain <target>?',
     'Explain <target> using an analogy involving <src>.',
     'Explain how <target> is analogous to <src>.',
     'Explain how <target> is like <src>.',
@@ -80,7 +79,7 @@ const gradeOptions = [
 "Year 12",
 "Year 13"
 ]
-
+const lengthOptions = ["a few sentences", "a few paragraphs", "a few bullets"]
 const GenPage = ({ userInfo }) => {
     const router = useRouter();
     const { preSetPrompt,
@@ -109,7 +108,7 @@ const GenPage = ({ userInfo }) => {
     const [src, setSrc] = useState(preSetSrc === undefined ? "" : preSetSrc);
     const [prompt, setPrompt] = useState(preSetPrompt === undefined ? gen_prompts[0] : retPrompt());
     const [temp, setTemp] = useState(preSetTemp === undefined ? 1.0 : parseFloat(preSetTemp));
-    const [max_length, setMaxLength] = useState(preSetMax_length === undefined ? 400 : parseInt(preSetMax_length));
+    const [max_length, setMaxLength] = useState(preSetMax_length === undefined ? lengthOptions[0] : preSetMax_length);
     const [top_p, setTopP] = useState(preSetTop_p === undefined ? 1.0 : parseFloat(preSetTop_p));
     const [freq_penalty, setFreqPenalty] = useState(preSetFreq_penalty === undefined ? 0.0 : parseFloat(preSetFreq_penalty));
     const [pres_penalty, setPresPenalty] = useState(preSetPres_penalty === undefined ? 0.0 : parseFloat(preSetPres_penalty));
@@ -317,7 +316,22 @@ const GenPage = ({ userInfo }) => {
                                         </Form.Group>
                                     </Row>
                                     <br />
-                                   
+                                   <Row>
+                                        <Form.Group as={Row} md="8" controlId="grade">
+                                            <Form.Label column sm='6'>Length <Link title={link_title['max_length']}><FontAwesomeIcon icon={faCircleQuestion} /></Link></Form.Label>
+                                            <Col sm='6'>
+                                                <Form.Select
+                                                    value={max_length}
+                                                    onChange={(e) => setMaxLength(e.target.value)}
+                                                >
+                                                    {lengthOptions.map(option => (
+                                                        <option key={option} value={option}>{option}</option>
+                                                    ))}
+                                                </Form.Select>
+                                            </Col>
+                                        </Form.Group>
+                                    </Row>
+                                    <br />
                                     <Row>
                                         <Form.Group as={Row} md="8" controlId="model">
                                             <Form.Label column sm='6'>Model Name <Link title={link_title['model']}><FontAwesomeIcon icon={faCircleQuestion} /></Link></Form.Label>
@@ -391,41 +405,8 @@ const GenPage = ({ userInfo }) => {
                                         </Form.Group>
                                     </Row>
                                     <br />
-                                    <Row>
-                                        <Form.Group as={Row} md="8" controlId="max_length">
-                                            <Form.Label column sm='6'>Maxium Length <Link title={link_title['max_length']}><FontAwesomeIcon icon={faCircleQuestion} /></Link></Form.Label>
-                                            <Col sm='4'>
-                                                <Form.Control
-                                                    style={{ border: 'none' }}
-                                                    type="range"
-                                                    value={max_length}
-                                                    onChange={(e) => {
-                                                        setMaxLength(parseFloat(e.target.value));
-                                                    }}
-                                                    defaultValue="400"
-                                                    min="1"
-                                                    max="4000"
-                                                    step="1"
-                                                />
-                                            </Col>
-                                            <Col sm='2'>
-                                                <Form.Control
-                                                    type="number"
-                                                    value={max_length}
-                                                    onChange={(e) => {
-                                                        const val = parseFloat(e.target.value);
-                                                        if (val >= 0.0 && val <= 4000.0) {
-                                                            setMaxLength(val);
-                                                        }
-                                                    }}
-                                                    min="0"
-                                                    max="4000"
-                                                    step="1"
-                                                />
-                                            </Col>
-                                        </Form.Group>
-                                    </Row>
-                                    <br />
+                                    
+                                          
                                                          <Row>
                                         <Form.Group as={Row} md="8" controlId="openAIKey">
                                             <Form.Label column sm='6'>OpenAI API Key <Link title={link_title['openAIKey']}><FontAwesomeIcon icon={faCircleQuestion} /></Link></Form.Label>
