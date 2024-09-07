@@ -43,6 +43,7 @@ INSTALLED_APPS = [
 ]
 CELERY_BROKER_URL = 'amqps://lhcyjupx:rKqBe890tVvjUWkMdnCwmUl0szi8FL-F@shark.rmq.cloudamqp.com/lhcyjupx?ssl=1&ssl_options={"ssl_verify_hostname": false}'
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -50,11 +51,11 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "corsheaders.middleware.CorsMiddleware",
 ]
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
+    "http://127.0.0.1:3000",
 ]
 # allow cookies to be sent to the server
 CORS_ALLOW_CREDENTIALS = True
@@ -98,8 +99,7 @@ from mongoengine import connect
 
 connect(
     db='assignment',
-    host='localhost', 
-    port=27017  
+    host='mongodb://localhost:27017/?replicaSet=rs0'
 )
 
 

@@ -31,11 +31,17 @@ const link_title = {
   temp: "Loweing results in less ramdom completions. As randomness approaches zero, the model will become deterministic and repetitive",
 };
 
-const AnalogyCard = ({ searchResult, isCard, userInfo, isCollected }) => {
-  // console.log(isCard)
-  // console.log(userInfo)
-  // console.log(searchResult.like)
-  // console.log(userInfo)
+const AnalogyCard = ({
+  searchResult,
+  isCard,
+  userInfo,
+  isCollected,
+  inCollection = false,
+  onSendMessage = null,
+}) => {
+  // console.log(userInfo);
+  // console.log(searchResult.like);
+  // console.log(userInfo);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const openModal = () => setIsModalOpen(true);
@@ -57,13 +63,25 @@ const AnalogyCard = ({ searchResult, isCard, userInfo, isCollected }) => {
 
   const [showImage, setShowImage] = useState(false);
 
-  const [sLike, setSLike] = useState(searchResult.like[0]);
-  const [tLike, setTLike] = useState(searchResult.like[1]);
-  const [eLike, setELike] = useState(searchResult.like[2]);
+  const [sLike, setSLike] = useState(
+    searchResult.like ? searchResult.like[0] : null
+  );
+  const [tLike, setTLike] = useState(
+    searchResult.like ? searchResult.like[1] : null
+  );
+  const [eLike, setELike] = useState(
+    searchResult.like ? searchResult.like[2] : null
+  );
 
-  const [sDisLike, setSDisLike] = useState(searchResult.dislike[0]);
-  const [tDisLike, setTDisLike] = useState(searchResult.dislike[1]);
-  const [eDisLike, setEDisLike] = useState(searchResult.dislike[2]);
+  const [sDisLike, setSDisLike] = useState(
+    searchResult.like ? searchResult.dislike[0] : null
+  );
+  const [tDisLike, setTDisLike] = useState(
+    searchResult.like ? searchResult.dislike[1] : null
+  );
+  const [eDisLike, setEDisLike] = useState(
+    searchResult.like ? searchResult.dislike[2] : null
+  );
 
   const [errors, setErrors] = useState(null);
 
@@ -266,8 +284,11 @@ const AnalogyCard = ({ searchResult, isCard, userInfo, isCollected }) => {
   }, [cancelCollectError]);
 
   const collectAnalogy = async () => {
-    if (collected) {
+    if (collected || inCollection) {
       await doRequestCancelCollect();
+      if (onSendMessage) {
+        onSendMessage(searchResult.pid);
+      }
     } else {
       await doRequestCollect();
     }
@@ -407,11 +428,11 @@ const AnalogyCard = ({ searchResult, isCard, userInfo, isCollected }) => {
           </>
         )}
       </Modal>
-      {isCard === true || isCard === "true" ? (
+      {isCard || isCard === "true" || inCollection ? (
         <Card
           style={{
-            width: "30%",
-            height: "50%",
+            width: inCollection ? "100%" : "30%",
+            height: inCollection ? "25%" : "50%",
             display: "inline-block",
             margin: "1%",
             overflow: "auto",
@@ -427,23 +448,24 @@ const AnalogyCard = ({ searchResult, isCard, userInfo, isCollected }) => {
             >
               <div>
                 {searchResult.target}
-                {collected ? (
-                  <Link title={"Collect this analogy to your collection"}>
-                    <FontAwesomeIcon
-                      icon={faMinus}
-                      style={{ marginLeft: "1rem", cursor: "pointer" }}
-                      onClick={collectAnalogy}
-                    />
-                  </Link>
-                ) : (
-                  <Link title={"Collect this analogy to your collection"}>
-                    <FontAwesomeIcon
-                      icon={faPlus}
-                      style={{ marginLeft: "1rem", cursor: "pointer" }}
-                      onClick={collectAnalogy}
-                    />
-                  </Link>
-                )}
+                {userInfo &&
+                  (collected || inCollection ? (
+                    <Link title={"Collect this analogy to your collection"}>
+                      <FontAwesomeIcon
+                        icon={faMinus}
+                        style={{ marginLeft: "1rem", cursor: "pointer" }}
+                        onClick={collectAnalogy}
+                      />
+                    </Link>
+                  ) : (
+                    <Link title={"Collect this analogy to your collection"}>
+                      <FontAwesomeIcon
+                        icon={faPlus}
+                        style={{ marginLeft: "1rem", cursor: "pointer" }}
+                        onClick={collectAnalogy}
+                      />
+                    </Link>
+                  ))}
               </div>
               <div>
                 {searchResult.generatorRole === "STUDENT" && (
@@ -563,7 +585,7 @@ const AnalogyCard = ({ searchResult, isCard, userInfo, isCollected }) => {
                   }}
                 />
               }{" "}
-              {searchResult.image && (
+              {searchResult.image && !inCollection && (
                 // <ImageTooltip image={searchResult.image}><FontAwesomeIcon icon={faImages} /></ImageTooltip>
                 <>
                   <Link title={"Click to view/hide image"}>
@@ -583,18 +605,55 @@ const AnalogyCard = ({ searchResult, isCard, userInfo, isCollected }) => {
                 </>
               )}
             </Card.Text>
-            <Row>
-              <Col md="2" onClick={(e) => likeAnalogy(true, e)}>
-                <Link
-                  title={
-                    "Student: " +
-                    sLike +
-                    "; Teacher: " +
-                    tLike +
-                    "; Expert: " +
-                    eLike
-                  }
-                >
+            {!inCollection && (
+              <Row>
+                <Col md="2" onClick={(e) => likeAnalogy(true, e)}>
+                  <Link
+                    title={
+                      "Student: " +
+                      sLike +
+                      "; Teacher: " +
+                      tLike +
+                      "; Expert: " +
+                      eLike
+                    }
+                  >
+                    <div
+                      style={{
+                        display: "inline-block",
+                        width: "auto",
+                        cursor: "pointer",
+                      }}
+                    >
+                      <FontAwesomeIcon icon={faThumbsUp} />{" "}
+                      <span>{" " + (sLike + tLike + eLike)}</span>
+                    </div>
+                  </Link>
+                </Col>
+                <Col md="2" onClick={(e) => likeAnalogy(false, e)}>
+                  <Link
+                    title={
+                      "Student: " +
+                      sDisLike +
+                      "; Teacher: " +
+                      tDisLike +
+                      "; Expert: " +
+                      eDisLike
+                    }
+                  >
+                    <div
+                      style={{
+                        display: "inline-block",
+                        width: "auto",
+                        cursor: "pointer",
+                      }}
+                    >
+                      <FontAwesomeIcon icon={faThumbsDown} />{" "}
+                      <span> {" " + (sDisLike + tDisLike + eDisLike)}</span>
+                    </div>
+                  </Link>
+                </Col>
+                <Col md="4" onClick={reportAnlogy}>
                   <div
                     style={{
                       display: "inline-block",
@@ -602,22 +661,11 @@ const AnalogyCard = ({ searchResult, isCard, userInfo, isCollected }) => {
                       cursor: "pointer",
                     }}
                   >
-                    <FontAwesomeIcon icon={faThumbsUp} />{" "}
-                    <span>{" " + (sLike + tLike + eLike)}</span>
+                    <FontAwesomeIcon icon={faFlag} style={{ color: "red" }} />{" "}
+                    {" Report"}
                   </div>
-                </Link>
-              </Col>
-              <Col md="2" onClick={(e) => likeAnalogy(false, e)}>
-                <Link
-                  title={
-                    "Student: " +
-                    sDisLike +
-                    "; Teacher: " +
-                    tDisLike +
-                    "; Expert: " +
-                    eDisLike
-                  }
-                >
+                </Col>
+                <Col md="4" onClick={() => commnetAnlogy(searchResult.pid)}>
                   <div
                     style={{
                       display: "inline-block",
@@ -625,35 +673,11 @@ const AnalogyCard = ({ searchResult, isCard, userInfo, isCollected }) => {
                       cursor: "pointer",
                     }}
                   >
-                    <FontAwesomeIcon icon={faThumbsDown} />{" "}
-                    <span> {" " + (sDisLike + tDisLike + eDisLike)}</span>
+                    <FontAwesomeIcon icon={faComment} /> {" Comment"}
                   </div>
-                </Link>
-              </Col>
-              <Col md="4" onClick={reportAnlogy}>
-                <div
-                  style={{
-                    display: "inline-block",
-                    width: "auto",
-                    cursor: "pointer",
-                  }}
-                >
-                  <FontAwesomeIcon icon={faFlag} style={{ color: "red" }} />{" "}
-                  {" Report"}
-                </div>
-              </Col>
-              <Col md="4" onClick={() => commnetAnlogy(searchResult.pid)}>
-                <div
-                  style={{
-                    display: "inline-block",
-                    width: "auto",
-                    cursor: "pointer",
-                  }}
-                >
-                  <FontAwesomeIcon icon={faComment} /> {" Comment"}
-                </div>
-              </Col>
-            </Row>
+                </Col>
+              </Row>
+            )}
           </Card.Body>
         </Card>
       ) : (
@@ -665,23 +689,24 @@ const AnalogyCard = ({ searchResult, isCard, userInfo, isCollected }) => {
                   <span style={{ marginRight: "1rem" }}>
                     {searchResult.target}
                   </span>
-                  {collected ? (
-                    <Link title={"Collect this analogy to your collection"}>
-                      <FontAwesomeIcon
-                        icon={faMinus}
-                        style={{ marginLeft: "1rem", cursor: "pointer" }}
-                        onClick={collectAnalogy}
-                      />
-                    </Link>
-                  ) : (
-                    <Link title={"Collect this analogy to your collection"}>
-                      <FontAwesomeIcon
-                        icon={faPlus}
-                        style={{ marginLeft: "1rem", cursor: "pointer" }}
-                        onClick={collectAnalogy}
-                      />
-                    </Link>
-                  )}
+                  {userInfo &&
+                    (collected ? (
+                      <Link title={"Collect this analogy to your collection"}>
+                        <FontAwesomeIcon
+                          icon={faMinus}
+                          style={{ marginLeft: "1rem", cursor: "pointer" }}
+                          onClick={collectAnalogy}
+                        />
+                      </Link>
+                    ) : (
+                      <Link title={"Collect this analogy to your collection"}>
+                        <FontAwesomeIcon
+                          icon={faPlus}
+                          style={{ marginLeft: "1rem", cursor: "pointer" }}
+                          onClick={collectAnalogy}
+                        />
+                      </Link>
+                    ))}
                   {searchResult.generatorRole === "STUDENT" && (
                     <Link
                       title={
@@ -795,6 +820,13 @@ const AnalogyCard = ({ searchResult, isCard, userInfo, isCollected }) => {
               </div>
               <br />
               <Card.Text>
+                {
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: DOMPurify.sanitize(searchResult.analogy),
+                    }}
+                  />
+                }{" "}
                 {
                   <div
                     dangerouslySetInnerHTML={{

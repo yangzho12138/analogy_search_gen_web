@@ -15,8 +15,7 @@ from assign.mongo_models import User
 def setup_mongo_app():
     connect(
         db='assignment',
-        host='localhost',
-        port=27017
+        host='mongodb://localhost:27017/?replicaSet=rs0'
     )
 
 def fetch_users_from_api():
@@ -34,9 +33,7 @@ def migrate_users():
         try:
             mongo_user = User(
                 username=user["username"],
-                collected_analogies=[], 
-                generated_questions=[], 
-                generated_questionnaires=[]
+                collected_analogies=[]
             )
             mongo_user.save()
             print(f'Migrated {user["username"]} to MongoDB')

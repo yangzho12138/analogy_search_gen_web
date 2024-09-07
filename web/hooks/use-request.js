@@ -4,23 +4,24 @@ import axios from 'axios';
 export default ({ url, method, body, onSuccess }) => {
     const [errors, setErrors] = useState(null);
 
-    const doRequest = async() => {
+    const doRequest = async(options = {}) => {
+        const requestUrl = options.url || url;
+        const requestBody = options.body || body;
         try{
             setErrors(null);
             let response;
-
-            if(method === 'get' || method === 'delete'){
-                response = await axios[method](url, {
-                    params: body, // For GET requests, use params
-                    data: body,   // For DELETE requests, need to include body in the data field
+            if(method === "get" || method === 'delete'){
+                response = await axios[method](requestUrl, {
+                    params: requestBody,
+                    data: requestBody,
                     withCredentials: true
                 });
             }else{
-                response = await axios[method](url, body, {
+                response = await axios[method](requestUrl, requestBody, {
                     withCredentials: true
                 });
             }
-            console.log(response);
+            // console.log(response);
             if(onSuccess){
                 onSuccess(response.data);
             }

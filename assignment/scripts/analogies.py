@@ -13,8 +13,7 @@ from assign.mongo_models import Analogy
 def setup_mongo_app():
     connect(
         db='assignment',
-        host='localhost',
-        port=27017
+        host='mongodb://localhost:27017/?replicaSet=rs0'
     )
 
 def fetch_analogies_from_api():
@@ -41,9 +40,9 @@ def migrate_analogies():
                 generatorRole = analogy['generatorRole']
             )
             mongo_analogy.save()
-            print(f'Migrated {analogy['pid']} to MongoDB')
+            print(f"Migrated {analogy['pid']} to MongoDB")
         except Exception as e:
-            print(f'Error migrating {analogy['pid']}: {e}')
+            print(f"Error migrating {analogy['pid']}: {e}")
 
 if __name__ == "__main__":
     migrate_analogies()
