@@ -190,3 +190,7 @@ input[type="range"]::-webkit-slider-thumb {
       background-position: -100% 0;
   }
 }
+
+.question-card:hover {
+  background-color: lightgray;
+}
