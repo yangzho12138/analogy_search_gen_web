@@ -15,6 +15,8 @@ import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import useRequest from "../hooks/use-request";
 import QuestionCard from "../components/QuestionCard";
 import AnalogyCard from "../components/AnalogyCard";
+import jsPDF from "jspdf";
+import Modal from "../components/Modal";
 
 const auth_url = process.env.NEXT_PUBLIC_AUTH_BASE_URL;
 const assignment_url = process.env.NEXT_PUBLIC_ASSIGNMENT_BASE_URL;
@@ -59,6 +61,16 @@ const question = ({
   const [myQuestions, setMyQuestions] = useState(savedQuestions);
 
   const [myQuestionnaires, setMyQuestionnaires] = useState(savedQuestionnaires);
+
+  const [downloadId, setDownloadId] = useState(null);
+
+  const [isDownload, setIsDownload] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setIsDownload(false);
+  };
 
   const handleAddQuestion = () => {
     const newQuestion = {
@@ -534,6 +546,62 @@ const question = ({
     },
   });
 
+  const { doRequest: doRequestDownload, errors: downloadError } = useRequest({
+    method: "get",
+    onSuccess: (data) => {
+      console.log(data);
+      const isStuVer = data.questionnaire.is_student_version === 1;
+      const doc = new jsPDF();
+      doc.setFontSize(16);
+      doc.text(data.questionnaire.name, 10, 10);
+      doc.setFontSize(12);
+      doc.text(`Created by: ${data.questionnaire.created_by}`, 10, 20);
+      doc.text(
+        `Created at: ${new Date(
+          data.questionnaire.created_at
+        ).toLocaleString()}`,
+        10,
+        30
+      );
+
+      let yPosition = 40;
+      data.questionnaire.questions.forEach((question, index) => {
+        doc.text(`Q${index + 1}: ${question.title}`, 10, yPosition);
+        yPosition += 10;
+
+        if (question.type === 0) {
+          question.choices.forEach((choice, choiceIndex) => {
+            const choiceLetter = String.fromCharCode(65 + choiceIndex);
+            let choiceText = `${choiceLetter}. ${choice.text}`;
+
+            if (!isStuVer && choice.is_correct) {
+              choiceText += " (Correct)";
+            }
+
+            doc.text(choiceText, 15, yPosition);
+            yPosition += 10;
+          });
+        }
+
+        if (!isStuVer && question.note) {
+          doc.text(`Note: ${question.note}`, 10, yPosition);
+          yPosition += 10;
+        }
+
+        if (yPosition > 250) {
+          doc.addPage();
+          yPosition = 10;
+        }
+      });
+
+      if (isStuVer) {
+        doc.save(`${data.questionnaire.name}.pdf`);
+      } else {
+        doc.save(`${data.questionnaire.name} - Teacher Version.pdf`);
+      }
+    },
+  });
+
   const handleReceiveMessage = async (op, type, id, name) => {
     console.log(op, type, id, name);
     if (type === "question") {
@@ -545,7 +613,7 @@ const question = ({
             "Are you sure to delete this question? This will also move the question in questionnaires"
           )
         ) {
-          doRequestDeleteQuestion({
+          await doRequestDeleteQuestion({
             body: {
               id: id,
             },
@@ -579,18 +647,21 @@ const question = ({
       }
     } else if (type === "questionnaire") {
       if (op === "choose") {
-        doRequestGetQuestionnaireDetail({
+        await doRequestGetQuestionnaireDetail({
           url: `${assignment_url}/api/assignment/questionnaire/${id}`,
         });
       } else if (op === "delete") {
         if (window.confirm("Are you sure to delete this questionnaire?")) {
-          doRequestDeleteQuestionnaire({
+          await doRequestDeleteQuestionnaire({
             body: {
               id: id,
             },
           });
         }
       } else if (op === "download") {
+        setDownloadId(id);
+        setIsDownload(true);
+        setIsModalOpen(true);
       }
     }
   };
@@ -606,8 +677,46 @@ const question = ({
     navigator.clipboard.writeText(text);
   };
 
+  const handleDownload = async (isStuVer) => {
+    await doRequestDownload({
+      url: `${assignment_url}/api/assignment/download/${downloadId}/${isStuVer}`,
+    });
+  };
+
   return (
     <div style={{ margin: "3%", height: "100vh" }}>
+      <Modal isOpen={isModalOpen} onClose={closeModal}>
+        {isDownload && (
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              width: "100%",
+            }}
+          >
+            <Button
+              style={{ width: "40%", marginBottom: "10px" }}
+              onClick={() => {
+                handleDownload(1);
+              }}
+            >
+              Download Student Version
+            </Button>
+            <div>There are no correct answer and note in student version</div>
+            <br />
+            <Button
+              style={{ width: "40%", marginBottom: "10px" }}
+              onClick={() => {
+                handleDownload(0);
+              }}
+            >
+              Download Teacher Version
+            </Button>
+            <div>There are correct answer and note in teacher version</div>
+          </div>
+        )}
+      </Modal>
       <Row style={{ height: "100%" }}>
         <Col md="4">
           <Card style={{ height: "100%" }}>
