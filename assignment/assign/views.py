@@ -281,3 +281,28 @@ class QuestionnaireView(APIView):
                 'id': questionnaire_id
             }
         )
+
+class DownloadView(APIView):
+    authentication_classes = (CookieJWTAuthentication,)
+    permission_classes = [IsAuthenticated]
+    def get(self, request, id=None, isStuVer=1):
+        if id:
+            questionnaire = json.loads(Questionnaire.objects.get(id=id).to_json())
+            questions = json.loads(Question.objects.filter(id__in=questionnaire['questions']).to_json())
+            return Response(
+                status=status.HTTP_200_OK,
+                data={
+                    'questionnaire': {
+                        'name': questionnaire['name'],
+                        'created_at': questionnaire['created_at']['$date'],
+                        'created_by': questionnaire['created_by'],
+                        'questions': [{
+                            'title': question['title'],
+                            'type': question['type'],
+                            'note': question['note'],
+                            'choices': [{'text': choice['text'], 'is_correct': choice['is_correct']} for choice in question['choices']]
+                        } for question in questions],
+                        'is_student_version': isStuVer
+                    }
+                }
+            )
