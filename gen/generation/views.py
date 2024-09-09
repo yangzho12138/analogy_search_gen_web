@@ -38,7 +38,7 @@ class GenerationView(APIView):
         print(user.free_openai_api_key)
         api_key = request.data.get('api_key', '')
         if api_key == '' and user.free_openai_api_key > 0:
-            client = OpenAI(api_key='sk-proj-HwpLLwkb1kHkXcssAvJhT3BlbkFJqWqUGrplR9XdDVNtGcB4') 
+            client = OpenAI(api_key='Default API Key') 
         prompt = request.data.get('prompt', '')
         model = request.data.get('model', 'gpt-3.5-turbo')
         target = request.data.get('target', '')
