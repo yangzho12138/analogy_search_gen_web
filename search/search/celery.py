@@ -16,14 +16,16 @@ app.conf.update(
 app.conf.task_routes = {
     # 'auth.users.tasks.create_user': {'queue': 'user_created_queue'},
     'search.analogy.tasks.search_log': {'queue': 'search_log_queue'},
+    'gen.generation.tasks.generate_analogy': {'queue': 'generate_analogy_queue'},
+    'search.analogy.tasks.assign_analogy': {'queue': 'assign_analogy_queue'},
 }
 
 # schedule tasks
-app.conf.beat_schedule = {
-    'get-data-from-redis-every-second': {
-        'task': 'analogy.tasks.get_data_from_redis',
-        'schedule': timedelta(seconds=1),
-    },
-}
+# app.conf.beat_schedule = {
+#     'get-data-from-redis-every-second': {
+#         'task': 'analogy.tasks.get_data_from_redis',
+#         'schedule': timedelta(seconds=1),
+#     },
+# }
 
 app.autodiscover_tasks()

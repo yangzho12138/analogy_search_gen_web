@@ -4,10 +4,10 @@ from celery.utils.log import get_task_logger
 
 logger = get_task_logger(__name__)
 
-# @app.task(name='auth.users.tasks.create_user')
-# def create_user(user_data):
-#     print('produce_user_created', user_data)
-#     return user_data
+@app.task(name='auth.users.tasks.create_user')
+def create_user(user_data):
+    print('produce_user_created', user_data)
+    return user_data
 
 @app.task(name='gen.generation.tasks.generate_log')
 def generate_log(generation_log):
@@ -47,12 +47,12 @@ def search_log(search_log):
     search_log.save()
     return search_log
 
-@app.task(name='auth.users.tasks.analogy_issue')
-def analogy_issue(issue):
-    logger.info('produce_analogy_issue', issue)
-    issue = Issue.objects.get(id=issue['id'])
-    issue.solved = True
-    issue.save()
-    return issue
+# @app.task(name='auth.users.tasks.analogy_issue')
+# def analogy_issue(issue):
+#     logger.info('produce_analogy_issue', issue)
+#     issue = Issue.objects.get(id=issue['id'])
+#     issue.solved = True
+#     issue.save()
+#     return issue
     
 

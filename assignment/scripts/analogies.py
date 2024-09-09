@@ -28,6 +28,7 @@ def migrate_analogies():
     analogies = fetch_analogies_from_api().get('docs', [])
 
     for analogy in analogies:
+        # print(analogy)
         try:
             mongo_analogy = Analogy(
                 target = analogy['target'],
