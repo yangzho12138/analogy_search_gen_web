@@ -9,7 +9,7 @@ class Analogy(Document):
     target = StringField(max_length=100)
     prompt = StringField(max_length=1000)
     analogy = StringField()
-    id = StringField(max_length=10, primary_key=True)
+    id = StringField(primary_key=True, max_length=100)
     temp = StringField(max_length=10)
     src = StringField(max_length=1000)
     model = StringField(max_length=20)

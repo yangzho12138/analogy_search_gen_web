@@ -6,7 +6,6 @@ from rest_framework.permissions import IsAuthenticated
 from .authentication import CookieJWTAuthentication
 import json
 from mongoengine.errors import DoesNotExist, ValidationError
-from mongoengine.queryset.visitor import Q
 from mongoengine.connection import get_connection
 from bson import ObjectId
 

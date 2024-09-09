@@ -4,6 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 from django.core.mail import send_mail
 from rest_framework import status
 from rest_framework_simplejwt.views import TokenObtainPairView
+from .tasks import create_user
 
 # from django.contrib.auth.models import User
 from .models import CustomUser as User, Issue, Comment
@@ -49,6 +50,11 @@ class SignUpView(APIView):
         user = User(username=username, email=email, role=role)
         user.set_password(password)
         user.save()
+
+        # send user created message to assignment system for MongoDB
+        create_user.delay({
+            'username': username,
+        })
 
         return Response(
             status=status.HTTP_201_CREATED,

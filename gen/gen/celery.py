@@ -15,6 +15,7 @@ app.conf.update(
 app.conf.task_routes = {
     # 'auth.users.tasks.create_user': {'queue': 'user_created_queue'},
     'gen.generation.tasks.generate_log': {'queue': 'generate_log_queue'},
-    }
+    'gen.generation.tasks.generate_analogy': {'queue': 'generate_analogy_queue'},
+}
 
 app.autodiscover_tasks()

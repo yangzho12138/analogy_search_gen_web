@@ -2,12 +2,10 @@ from openai import OpenAI
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-import redis
-from redis import Redis
 from redis.connection import ConnectionPool
 from django.utils import timezone
 import json
-from .tasks import generate_log
+from .tasks import generate_log, generate_analogy
 from rest_framework import status
 from .models import CustomUser as User
 
@@ -39,9 +37,9 @@ class GenerationView(APIView):
         print(user.free_openai_api_key)
         api_key = request.data.get('api_key', '')
         if api_key == '' and user.free_openai_api_key > 0:
-            client = OpenAI(api_key='DEFAULT API KEY') 
+            client = OpenAI(api_key='sk-proj-HwpLLwkb1kHkXcssAvJhT3BlbkFJqWqUGrplR9XdDVNtGcB4') 
         prompt = request.data.get('prompt', '')
-        model = request.data.get('model', 'gpt-3')
+        model = request.data.get('model', 'gpt-3.5-turbo')
         target = request.data.get('target', '')
         #print(target, flush=True)
         src = request.data.get('src', '')
@@ -123,7 +121,6 @@ class GenerationView(APIView):
 
         # store data into cache
         # r = redis.Redis(host='localhost', port=6379, db=1)
-        r = Redis(connection_pool=pool)
         generationAnalogy = {
             'username': request.user.username,
             'prompt': prompt,
@@ -140,7 +137,8 @@ class GenerationView(APIView):
             'analogy': analogy,
             'generatorRole': role
         }
-        r.rpush('generationAnalogy', json.dumps(generationAnalogy))
+        # send generated analogy to search/assignment system
+        generate_analogy.delay(generationAnalogy)
         return Response(
             status = status.HTTP_200_OK,
             data = {

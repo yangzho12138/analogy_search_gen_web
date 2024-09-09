@@ -13,7 +13,8 @@ app.conf.update(
     accept_content=["pickle"]
 )
 app.conf.task_routes = {
-    'assignment.assign.tasks.generate_log': {'queue': 'generate_log_queue'},
+   'search.analogy.tasks.assign_analogy': {'queue': 'assign_analogy_queue'},
+   'auth.users.tasks.create_user': {'queue': 'user_created_queue'},
 }
 
 app.autodiscover_tasks()

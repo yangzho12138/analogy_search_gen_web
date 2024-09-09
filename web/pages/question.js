@@ -683,258 +683,479 @@ const question = ({
     });
   };
 
-  return (
-    <div style={{ margin: "3%", height: "100vh" }}>
-      <Modal isOpen={isModalOpen} onClose={closeModal}>
-        {isDownload && (
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              width: "100%",
-            }}
-          >
-            <Button
-              style={{ width: "40%", marginBottom: "10px" }}
-              onClick={() => {
-                handleDownload(1);
-              }}
-            >
-              Download Student Version
-            </Button>
-            <div>There are no correct answer and note in student version</div>
-            <br />
-            <Button
-              style={{ width: "40%", marginBottom: "10px" }}
-              onClick={() => {
-                handleDownload(0);
-              }}
-            >
-              Download Teacher Version
-            </Button>
-            <div>There are correct answer and note in teacher version</div>
-          </div>
-        )}
-      </Modal>
-      <Row style={{ height: "100%" }}>
-        <Col md="4">
-          <Card style={{ height: "100%" }}>
-            <Card.Body
+  if (userInfo) {
+    return (
+      <div style={{ margin: "3%", height: "100vh" }}>
+        <Modal isOpen={isModalOpen} onClose={closeModal}>
+          {isDownload && (
+            <div
               style={{
-                height: "70vh",
                 display: "flex",
                 flexDirection: "column",
-                alignItems: "flex-start",
-                justifyContent: "flex-start",
-                overflowY: "auto",
+                alignItems: "center",
+                width: "100%",
               }}
             >
-              <Card.Title>Analogy Collection</Card.Title>
-              {analogies.map((analogy, index) => {
-                return (
-                  <AnalogyCard
-                    key={index}
-                    searchResult={analogy}
-                    isCard={true}
-                    userInfo={userInfo}
-                    isCollected={true}
-                    inCollection={true}
-                    onSendMessage={handleCancelCollection}
-                  />
-                );
-              })}
-            </Card.Body>
-          </Card>
-        </Col>
-        <Col md="4">
-          <Row style={{ height: "49%", marginBottom: "1%", marginRight: "1%" }}>
+              <Button
+                style={{ width: "40%", marginBottom: "10px" }}
+                onClick={() => {
+                  handleDownload(1);
+                }}
+              >
+                Download Student Version
+              </Button>
+              <div>There are no correct answer and note in student version</div>
+              <br />
+              <Button
+                style={{ width: "40%", marginBottom: "10px" }}
+                onClick={() => {
+                  handleDownload(0);
+                }}
+              >
+                Download Teacher Version
+              </Button>
+              <div>There are correct answer and note in teacher version</div>
+            </div>
+          )}
+        </Modal>
+        <Row>
+          <a
+            href="/search"
+            style={{
+              display: "inline-block",
+              width: "auto",
+              cursor: "pointer",
+            }}
+          >
+            Back
+          </a>
+        </Row>
+        <br />
+        <Row style={{ height: "100%" }}>
+          <Col md="4">
             <Card style={{ height: "100%" }}>
               <Card.Body
                 style={{
-                  height: "100%",
+                  height: "70vh",
                   display: "flex",
                   flexDirection: "column",
+                  alignItems: "flex-start",
+                  justifyContent: "flex-start",
+                  overflowY: "auto",
                 }}
               >
-                <div
+                <Card.Title>Analogy Collection</Card.Title>
+                {analogies.map((analogy, index) => {
+                  return (
+                    <AnalogyCard
+                      key={index}
+                      searchResult={analogy}
+                      isCard={true}
+                      userInfo={userInfo}
+                      isCollected={true}
+                      inCollection={true}
+                      onSendMessage={handleCancelCollection}
+                    />
+                  );
+                })}
+              </Card.Body>
+            </Card>
+          </Col>
+          <Col md="4">
+            <Row
+              style={{ height: "49%", marginBottom: "1%", marginRight: "1%" }}
+            >
+              <Card style={{ height: "100%" }}>
+                <Card.Body
                   style={{
-                    overflowX: "auto",
-                    whiteSpace: "nowrap",
-                    margin: "0",
-                    padding: "0",
+                    height: "100%",
+                    display: "flex",
+                    flexDirection: "column",
                   }}
                 >
-                  {questions.map((q, index) => (
-                    <div
-                      key={index}
-                      style={{
-                        display: "inline-block",
-                        cursor: "pointer",
-                        border: "1px solid black",
-                        borderLeft: index === 0 ? "1px solid black" : "none",
-                        borderBottom:
-                          index === qIndex ? "none" : "1px solid black",
-                        borderTopLeftRadius: "5px",
-                        borderTopRightRadius: "5px",
-                        padding: "5px",
-                        whiteSpace: "nowrap",
-                        textAlign: "center",
-                        boxSizing: "border-box",
-                        boxShadow:
-                          index === qIndex
-                            ? "none"
-                            : "0px 4px 8px rgba(0, 0, 0, 0.2)",
-                        backgroundColor: index === qIndex ? "white" : "#f0f0f0",
-                      }}
-                      onClick={() => {
-                        setQIndex(index);
-                      }}
-                    >
-                      {q.name}{" "}
+                  <div
+                    style={{
+                      overflowX: "auto",
+                      whiteSpace: "nowrap",
+                      margin: "0",
+                      padding: "0",
+                    }}
+                  >
+                    {questions.map((q, index) => (
+                      <div
+                        key={index}
+                        style={{
+                          display: "inline-block",
+                          cursor: "pointer",
+                          border: "1px solid black",
+                          borderLeft: index === 0 ? "1px solid black" : "none",
+                          borderBottom:
+                            index === qIndex ? "none" : "1px solid black",
+                          borderTopLeftRadius: "5px",
+                          borderTopRightRadius: "5px",
+                          padding: "5px",
+                          whiteSpace: "nowrap",
+                          textAlign: "center",
+                          boxSizing: "border-box",
+                          boxShadow:
+                            index === qIndex
+                              ? "none"
+                              : "0px 4px 8px rgba(0, 0, 0, 0.2)",
+                          backgroundColor:
+                            index === qIndex ? "white" : "#f0f0f0",
+                        }}
+                        onClick={() => {
+                          setQIndex(index);
+                        }}
+                      >
+                        {q.name}{" "}
+                        <FontAwesomeIcon
+                          icon={faX}
+                          size="2xs"
+                          style={{ marginLeft: "3px" }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleRemoveQuestion(index);
+                          }}
+                        />
+                      </div>
+                    ))}
+                    <Link title="Create a new question">
                       <FontAwesomeIcon
-                        icon={faX}
-                        size="2xs"
-                        style={{ marginLeft: "3px" }}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleRemoveQuestion(index);
+                        icon={faPlus}
+                        size="lg"
+                        style={{ marginLeft: "5px", cursor: "pointer" }}
+                        onClick={handleAddQuestion}
+                      />
+                    </Link>
+                  </div>
+                  <div style={{ overflowY: "auto", paddingTop: "3%" }}>
+                    <Form.Select
+                      value={questions[qIndex]?.type || ""}
+                      onChange={(e) => {
+                        const updatedQuestions = [...questions];
+                        updatedQuestions[qIndex].type = e.target.value;
+                        setQuestions(updatedQuestions);
+                      }}
+                      style={{ width: "50%" }}
+                    >
+                      <option value={0}>Multi-Choice</option>
+                    </Form.Select>
+                    <br />
+                    <FloatingLabel
+                      controlId="name"
+                      label="Question Name"
+                      className="mb-3"
+                    >
+                      <Form.Control
+                        as="textarea"
+                        value={questions[qIndex]?.name || ""}
+                        onChange={(e) => {
+                          const updatedQuestions = [...questions];
+                          updatedQuestions[qIndex].name = e.target.value;
+                          setQuestions(updatedQuestions);
                         }}
                       />
+                    </FloatingLabel>
+                    <FloatingLabel
+                      controlId="title"
+                      label="Question Title"
+                      className="mb-3"
+                    >
+                      <Form.Control
+                        as="textarea"
+                        value={questions[qIndex]?.title || ""}
+                        onChange={(e) => {
+                          const updatedQuestions = [...questions];
+                          updatedQuestions[qIndex].title = e.target.value;
+                          setQuestions(updatedQuestions);
+                        }}
+                      />
+                    </FloatingLabel>
+                    {questions[qIndex]?.type == 0 && (
+                      <>
+                        <div
+                          style={{ cursor: "pointer" }}
+                          onClick={handleAddChoice}
+                        >
+                          <FontAwesomeIcon
+                            icon={faPlus}
+                            style={{ marginRight: "3%" }}
+                          />
+                          Add a choice
+                        </div>
+                        <br />
+                        <DragDropContext onDragEnd={handleDragEndQuestion}>
+                          <Droppable droppableId="choices">
+                            {(provided) => (
+                              <div
+                                {...provided.droppableProps}
+                                ref={provided.innerRef}
+                              >
+                                {questions[qIndex].choices.map(
+                                  (choice, index) => (
+                                    <Draggable
+                                      key={index}
+                                      draggableId={`choice-${index}`}
+                                      index={index}
+                                    >
+                                      {(provided) => (
+                                        <Row
+                                          className="d-flex align-items-center"
+                                          ref={provided.innerRef}
+                                          {...provided.draggableProps}
+                                          {...provided.dragHandleProps}
+                                          style={{
+                                            width: "90%",
+                                            display: "flex",
+                                            justifyContent: "space-between",
+                                            alignItems: "center",
+                                            paddingLeft: "3%",
+                                            ...provided.draggableProps.style,
+                                          }}
+                                        >
+                                          <Col xs="auto" className="p-0">
+                                            <Link title="remove this choice">
+                                              <FontAwesomeIcon
+                                                icon={faMinus}
+                                                style={{ cursor: "pointer" }}
+                                                onClick={() =>
+                                                  handleRemoveChoice(index)
+                                                }
+                                              />
+                                            </Link>
+                                          </Col>
+                                          <Col>
+                                            <Form.Control
+                                              type="text"
+                                              value={choice.text}
+                                              onChange={(e) =>
+                                                handleChoiceChange(
+                                                  index,
+                                                  e.target.value
+                                                )
+                                              }
+                                              placeholder={`Choice ${
+                                                index + 1
+                                              }`}
+                                              style={{ marginLeft: "8px" }}
+                                            />
+                                          </Col>
+                                          <Col xs="auto" className="p-0">
+                                            <Link title="check if this is a correct answer">
+                                              <Form.Check
+                                                type="checkbox"
+                                                checked={choice.isCorrect}
+                                                onChange={() =>
+                                                  handleCorrectChange(index)
+                                                }
+                                                style={{ marginLeft: "8px" }}
+                                              />
+                                            </Link>
+                                          </Col>
+                                        </Row>
+                                      )}
+                                    </Draggable>
+                                  )
+                                )}
+                                {provided.placeholder}
+                              </div>
+                            )}
+                          </Droppable>
+                        </DragDropContext>
+                      </>
+                    )}
+                    <br />
+                    <FloatingLabel
+                      controlId="note"
+                      label="Note"
+                      className="mb-3"
+                    >
+                      <Form.Control
+                        as="textarea"
+                        value={questions[qIndex]?.note || ""}
+                        onChange={(e) => {
+                          const updatedQuestions = [...questions];
+                          updatedQuestions[qIndex].note = e.target.value;
+                          setQuestions(updatedQuestions);
+                        }}
+                      />
+                    </FloatingLabel>
+                    <div>
+                      <Button
+                        as="input"
+                        type="button"
+                        value="Save"
+                        style={{ width: "100%", marginTop: "3%" }}
+                        onClick={handleSaveQuestion}
+                      />
                     </div>
-                  ))}
-                  <Link title="Create a new question">
-                    <FontAwesomeIcon
-                      icon={faPlus}
-                      size="lg"
-                      style={{ marginLeft: "5px", cursor: "pointer" }}
-                      onClick={handleAddQuestion}
-                    />
-                  </Link>
-                </div>
-                <div style={{ overflowY: "auto", paddingTop: "3%" }}>
-                  <Form.Select
-                    value={questions[qIndex]?.type || ""}
-                    onChange={(e) => {
-                      const updatedQuestions = [...questions];
-                      updatedQuestions[qIndex].type = e.target.value;
-                      setQuestions(updatedQuestions);
+                  </div>
+                </Card.Body>
+              </Card>
+            </Row>
+            <Row style={{ height: "49%", marginTop: "1%", marginRight: "1%" }}>
+              <Card style={{ height: "100%" }}>
+                <Card.Body
+                  style={{
+                    height: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                  }}
+                >
+                  <div
+                    style={{
+                      overflowX: "auto",
+                      whiteSpace: "nowrap",
+                      margin: "0",
+                      padding: "0",
                     }}
-                    style={{ width: "50%" }}
                   >
-                    <option value={0}>Multi-Choice</option>
-                  </Form.Select>
-                  <br />
-                  <FloatingLabel
-                    controlId="name"
-                    label="Question Name"
-                    className="mb-3"
-                  >
-                    <Form.Control
-                      as="textarea"
-                      value={questions[qIndex]?.name || ""}
-                      onChange={(e) => {
-                        const updatedQuestions = [...questions];
-                        updatedQuestions[qIndex].name = e.target.value;
-                        setQuestions(updatedQuestions);
-                      }}
-                    />
-                  </FloatingLabel>
-                  <FloatingLabel
-                    controlId="title"
-                    label="Question Title"
-                    className="mb-3"
-                  >
-                    <Form.Control
-                      as="textarea"
-                      value={questions[qIndex]?.title || ""}
-                      onChange={(e) => {
-                        const updatedQuestions = [...questions];
-                        updatedQuestions[qIndex].title = e.target.value;
-                        setQuestions(updatedQuestions);
-                      }}
-                    />
-                  </FloatingLabel>
-                  {questions[qIndex]?.type == 0 && (
-                    <>
+                    {questionnaires.map((q, index) => (
                       <div
-                        style={{ cursor: "pointer" }}
-                        onClick={handleAddChoice}
+                        key={index}
+                        style={{
+                          display: "inline-block",
+                          cursor: "pointer",
+                          border: "1px solid black",
+                          borderBottom:
+                            index === qnIndex ? "none" : "1px solid black",
+                          borderLeft: index === 0 ? "1px solid black" : "none",
+                          borderTopLeftRadius: "5px",
+                          borderTopRightRadius: "5px",
+                          padding: "5px",
+                          whiteSpace: "nowrap",
+                          textAlign: "center",
+                          boxSizing: "border-box",
+                          boxShadow:
+                            index === qnIndex
+                              ? "none"
+                              : "0px 4px 8px rgba(0, 0, 0, 0.2)",
+                          backgroundColor:
+                            index === qnIndex ? "white" : "#f0f0f0",
+                        }}
+                        onClick={() => setQnIndex(index)}
                       >
+                        {q.name}{" "}
                         <FontAwesomeIcon
-                          icon={faPlus}
-                          style={{ marginRight: "3%" }}
+                          icon={faX}
+                          size="2xs"
+                          style={{ marginLeft: "3px" }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleRemoveQuestionnaire(index);
+                          }}
                         />
-                        Add a choice
                       </div>
-                      <br />
-                      <DragDropContext onDragEnd={handleDragEndQuestion}>
-                        <Droppable droppableId="choices">
+                    ))}
+                    <Link title="Create a new questionaire">
+                      <FontAwesomeIcon
+                        icon={faPlus}
+                        size="lg"
+                        style={{ marginLeft: "5px", cursor: "pointer" }}
+                        onClick={handleAddQuestionnaire}
+                      />
+                    </Link>
+                  </div>
+                  <div style={{ overflowY: "auto", paddingTop: "3%" }}>
+                    <FloatingLabel
+                      controlId="qnName"
+                      label="Questionnaire Name"
+                      className="mb-3"
+                    >
+                      <Form.Control
+                        as="textarea"
+                        value={questionnaires[qnIndex]?.name || ""}
+                        onChange={(e) => {
+                          const updatedQuestionnaires = [...questionnaires];
+                          updatedQuestionnaires[qnIndex].name = e.target.value;
+                          setQuestionnaires(updatedQuestionnaires);
+                        }}
+                      />
+                    </FloatingLabel>
+                    <>
+                      <DragDropContext onDragEnd={handleDragEndQuestionnaires}>
+                        <Droppable droppableId="questionnaires">
                           {(provided) => (
                             <div
                               {...provided.droppableProps}
                               ref={provided.innerRef}
+                              style={{
+                                marginTop: "20px",
+                                padding: "10px",
+                                borderRadius: "5px",
+                              }}
                             >
-                              {questions[qIndex].choices.map(
-                                (choice, index) => (
+                              {questionnaires[qnIndex].questions.map(
+                                (question, index) => (
                                   <Draggable
                                     key={index}
-                                    draggableId={`choice-${index}`}
+                                    draggableId={`question-${index}`}
                                     index={index}
                                   >
                                     {(provided) => (
-                                      <Row
-                                        className="d-flex align-items-center"
+                                      <div
                                         ref={provided.innerRef}
                                         {...provided.draggableProps}
                                         {...provided.dragHandleProps}
                                         style={{
-                                          width: "90%",
                                           display: "flex",
                                           justifyContent: "space-between",
                                           alignItems: "center",
-                                          paddingLeft: "3%",
+                                          border: "1px solid #ccc",
+                                          borderRadius: "4px",
+                                          padding: "10px",
+                                          marginBottom: "8px",
                                           ...provided.draggableProps.style,
                                         }}
                                       >
-                                        <Col xs="auto" className="p-0">
-                                          <Link title="remove this choice">
+                                        <span
+                                          style={{
+                                            wordBreak: "break-word",
+                                            maxWidth: "90%",
+                                          }}
+                                        >
+                                          {question.name}
+                                        </span>
+                                        <span
+                                          style={{
+                                            marginLeft: "auto",
+                                            display: "flex",
+                                            alignItems: "center",
+                                          }}
+                                        >
+                                          <Link title="Get Detail of this question">
                                             <FontAwesomeIcon
-                                              icon={faMinus}
-                                              style={{ cursor: "pointer" }}
+                                              icon={faInfo}
+                                              size="sm"
+                                              style={{
+                                                cursor: "pointer",
+                                                marginLeft: "10px",
+                                              }}
                                               onClick={() =>
-                                                handleRemoveChoice(index)
+                                                handleGetQuestionDetail(
+                                                  question.id
+                                                )
                                               }
                                             />
                                           </Link>
-                                        </Col>
-                                        <Col>
-                                          <Form.Control
-                                            type="text"
-                                            value={choice.text}
-                                            onChange={(e) =>
-                                              handleChoiceChange(
-                                                index,
-                                                e.target.value
-                                              )
-                                            }
-                                            placeholder={`Choice ${index + 1}`}
-                                            style={{ marginLeft: "8px" }}
-                                          />
-                                        </Col>
-                                        <Col xs="auto" className="p-0">
-                                          <Link title="check if this is a correct answer">
-                                            <Form.Check
-                                              type="checkbox"
-                                              checked={choice.isCorrect}
-                                              onChange={() =>
-                                                handleCorrectChange(index)
+                                          <Link title="Delete this question">
+                                            <FontAwesomeIcon
+                                              icon={faX}
+                                              size="sm"
+                                              style={{
+                                                cursor: "pointer",
+                                                marginLeft: "10px",
+                                              }}
+                                              onClick={() =>
+                                                handleRemoveQuestionFromQuestionnaire(
+                                                  index
+                                                )
                                               }
-                                              style={{ marginLeft: "8px" }}
                                             />
                                           </Link>
-                                        </Col>
-                                      </Row>
+                                        </span>
+                                      </div>
                                     )}
                                   </Draggable>
                                 )
@@ -945,302 +1166,114 @@ const question = ({
                         </Droppable>
                       </DragDropContext>
                     </>
-                  )}
-                  <br />
-                  <FloatingLabel controlId="note" label="Note" className="mb-3">
-                    <Form.Control
-                      as="textarea"
-                      value={questions[qIndex]?.note || ""}
-                      onChange={(e) => {
-                        const updatedQuestions = [...questions];
-                        updatedQuestions[qIndex].note = e.target.value;
-                        setQuestions(updatedQuestions);
-                      }}
-                    />
-                  </FloatingLabel>
-                  <div>
                     <Button
                       as="input"
                       type="button"
                       value="Save"
                       style={{ width: "100%", marginTop: "3%" }}
-                      onClick={handleSaveQuestion}
+                      onClick={handleSaveQuestionnaire}
                     />
                   </div>
-                </div>
-              </Card.Body>
-            </Card>
-          </Row>
-          <Row style={{ height: "49%", marginTop: "1%", marginRight: "1%" }}>
-            <Card style={{ height: "100%" }}>
-              <Card.Body
-                style={{
-                  height: "100%",
-                  display: "flex",
-                  flexDirection: "column",
-                }}
-              >
-                <div
+                </Card.Body>
+              </Card>
+            </Row>
+          </Col>
+          <Col md="4">
+            <Row style={{ height: "33%", marginBottom: "1%" }}>
+              <Card style={{ height: "100%" }}>
+                <Card.Body
                   style={{
-                    overflowX: "auto",
-                    whiteSpace: "nowrap",
-                    margin: "0",
-                    padding: "0",
+                    height: "100%",
+                    display: "flex",
+                    flexDirection: "column",
                   }}
                 >
-                  {questionnaires.map((q, index) => (
-                    <div
-                      key={index}
-                      style={{
-                        display: "inline-block",
-                        cursor: "pointer",
-                        border: "1px solid black",
-                        borderBottom:
-                          index === qnIndex ? "none" : "1px solid black",
-                        borderLeft: index === 0 ? "1px solid black" : "none",
-                        borderTopLeftRadius: "5px",
-                        borderTopRightRadius: "5px",
-                        padding: "5px",
-                        whiteSpace: "nowrap",
-                        textAlign: "center",
-                        boxSizing: "border-box",
-                        boxShadow:
-                          index === qnIndex
-                            ? "none"
-                            : "0px 4px 8px rgba(0, 0, 0, 0.2)",
-                        backgroundColor:
-                          index === qnIndex ? "white" : "#f0f0f0",
-                      }}
-                      onClick={() => setQnIndex(index)}
-                    >
-                      {q.name}{" "}
-                      <FontAwesomeIcon
-                        icon={faX}
-                        size="2xs"
-                        style={{ marginLeft: "3px" }}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleRemoveQuestionnaire(index);
-                        }}
-                      />
-                    </div>
-                  ))}
-                  <Link title="Create a new questionaire">
-                    <FontAwesomeIcon
-                      icon={faPlus}
-                      size="lg"
-                      style={{ marginLeft: "5px", cursor: "pointer" }}
-                      onClick={handleAddQuestionnaire}
-                    />
-                  </Link>
-                </div>
-                <div style={{ overflowY: "auto", paddingTop: "3%" }}>
-                  <FloatingLabel
-                    controlId="qnName"
-                    label="Questionnaire Name"
-                    className="mb-3"
+                  <Card.Title>Template</Card.Title>
+                  <Form.Select
+                    value={templateType}
+                    onChange={(e) => setTemplateType(e.target.value)}
+                    style={{ width: "50%" }}
                   >
-                    <Form.Control
-                      as="textarea"
-                      value={questionnaires[qnIndex]?.name || ""}
-                      onChange={(e) => {
-                        const updatedQuestionnaires = [...questionnaires];
-                        updatedQuestionnaires[qnIndex].name = e.target.value;
-                        setQuestionnaires(updatedQuestionnaires);
-                      }}
-                    />
-                  </FloatingLabel>
-                  <>
-                    <DragDropContext onDragEnd={handleDragEndQuestionnaires}>
-                      <Droppable droppableId="questionnaires">
-                        {(provided) => (
-                          <div
-                            {...provided.droppableProps}
-                            ref={provided.innerRef}
-                            style={{
-                              marginTop: "20px",
-                              padding: "10px",
-                              borderRadius: "5px",
-                            }}
-                          >
-                            {questionnaires[qnIndex].questions.map(
-                              (question, index) => (
-                                <Draggable
-                                  key={index}
-                                  draggableId={`question-${index}`}
-                                  index={index}
-                                >
-                                  {(provided) => (
-                                    <div
-                                      ref={provided.innerRef}
-                                      {...provided.draggableProps}
-                                      {...provided.dragHandleProps}
-                                      style={{
-                                        display: "flex",
-                                        justifyContent: "space-between",
-                                        alignItems: "center",
-                                        border: "1px solid #ccc",
-                                        borderRadius: "4px",
-                                        padding: "10px",
-                                        marginBottom: "8px",
-                                        ...provided.draggableProps.style,
-                                      }}
-                                    >
-                                      <span
-                                        style={{
-                                          wordBreak: "break-word",
-                                          maxWidth: "90%",
-                                        }}
-                                      >
-                                        {question.name}
-                                      </span>
-                                      <span
-                                        style={{
-                                          marginLeft: "auto",
-                                          display: "flex",
-                                          alignItems: "center",
-                                        }}
-                                      >
-                                        <Link title="Get Detail of this question">
-                                          <FontAwesomeIcon
-                                            icon={faInfo}
-                                            size="sm"
-                                            style={{
-                                              cursor: "pointer",
-                                              marginLeft: "10px",
-                                            }}
-                                            onClick={() =>
-                                              handleGetQuestionDetail(
-                                                question.id
-                                              )
-                                            }
-                                          />
-                                        </Link>
-                                        <Link title="Delete this question">
-                                          <FontAwesomeIcon
-                                            icon={faX}
-                                            size="sm"
-                                            style={{
-                                              cursor: "pointer",
-                                              marginLeft: "10px",
-                                            }}
-                                            onClick={() =>
-                                              handleRemoveQuestionFromQuestionnaire(
-                                                index
-                                              )
-                                            }
-                                          />
-                                        </Link>
-                                      </span>
-                                    </div>
-                                  )}
-                                </Draggable>
-                              )
-                            )}
-                            {provided.placeholder}
-                          </div>
-                        )}
-                      </Droppable>
-                    </DragDropContext>
-                  </>
-                  <Button
-                    as="input"
-                    type="button"
-                    value="Save"
-                    style={{ width: "100%", marginTop: "3%" }}
-                    onClick={handleSaveQuestionnaire}
-                  />
-                </div>
-              </Card.Body>
-            </Card>
-          </Row>
-        </Col>
-        <Col md="4">
-          <Row style={{ height: "33%", marginBottom: "1%" }}>
-            <Card style={{ height: "100%" }}>
-              <Card.Body
-                style={{
-                  height: "100%",
-                  display: "flex",
-                  flexDirection: "column",
-                }}
-              >
-                <Card.Title>Template</Card.Title>
-                <Form.Select
-                  value={templateType}
-                  onChange={(e) => setTemplateType(e.target.value)}
-                  style={{ width: "50%" }}
+                    <option value={0}>Multi-Choice</option>
+                  </Form.Select>
+                  <br />
+                  {templateType === 0 && (
+                    <>
+                      {multiChoiceTemplate.map((template, index) => (
+                        <div
+                          key={index}
+                          style={{
+                            marginBottom: "3%",
+                            border: "1px solid black",
+                            padding: "5px",
+                            borderRadius: "5px",
+                          }}
+                        >
+                          {template}{" "}
+                          <Link title="Copy the template">
+                            <FontAwesomeIcon
+                              icon={faCopy}
+                              style={{ cursor: "pointer" }}
+                              onClick={() => handleCopy(template)}
+                            />
+                          </Link>
+                        </div>
+                      ))}
+                    </>
+                  )}
+                </Card.Body>
+              </Card>
+            </Row>
+            <Row style={{ height: "32%", marginBottom: "1%" }}>
+              <Card style={{ height: "100%" }}>
+                <Card.Body
+                  style={{
+                    height: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                  }}
                 >
-                  <option value={0}>Multi-Choice</option>
-                </Form.Select>
-                <br />
-                {templateType === 0 && (
-                  <>
-                    {multiChoiceTemplate.map((template, index) => (
-                      <div
-                        key={index}
-                        style={{
-                          marginBottom: "3%",
-                          border: "1px solid black",
-                          padding: "5px",
-                          borderRadius: "5px",
-                        }}
-                      >
-                        {template}{" "}
-                        <Link title="Copy the template">
-                          <FontAwesomeIcon
-                            icon={faCopy}
-                            style={{ cursor: "pointer" }}
-                            onClick={() => handleCopy(template)}
-                          />
-                        </Link>
-                      </div>
-                    ))}
-                  </>
-                )}
-              </Card.Body>
-            </Card>
-          </Row>
-          <Row style={{ height: "32%", marginBottom: "1%" }}>
-            <Card style={{ height: "100%" }}>
-              <Card.Body
-                style={{
-                  height: "100%",
-                  display: "flex",
-                  flexDirection: "column",
-                }}
-              >
-                <Card.Title>My Question</Card.Title>
-                <QuestionCard
-                  type={"question"}
-                  items={myQuestions}
-                  onSendMessage={handleReceiveMessage}
-                />
-              </Card.Body>
-            </Card>
-          </Row>
-          <Row style={{ height: "32%" }}>
-            <Card style={{ height: "100%" }}>
-              <Card.Body
-                style={{
-                  height: "100%",
-                  display: "flex",
-                  flexDirection: "column",
-                }}
-              >
-                <Card.Title>My Questionnaire</Card.Title>
-                <QuestionCard
-                  type={"questionnaire"}
-                  items={myQuestionnaires}
-                  onSendMessage={handleReceiveMessage}
-                />
-              </Card.Body>
-            </Card>
-          </Row>
-        </Col>
+                  <Card.Title>My Question</Card.Title>
+                  <QuestionCard
+                    type={"question"}
+                    items={myQuestions}
+                    onSendMessage={handleReceiveMessage}
+                  />
+                </Card.Body>
+              </Card>
+            </Row>
+            <Row style={{ height: "32%" }}>
+              <Card style={{ height: "100%" }}>
+                <Card.Body
+                  style={{
+                    height: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                  }}
+                >
+                  <Card.Title>My Questionnaire</Card.Title>
+                  <QuestionCard
+                    type={"questionnaire"}
+                    items={myQuestionnaires}
+                    onSendMessage={handleReceiveMessage}
+                  />
+                </Card.Body>
+              </Card>
+            </Row>
+          </Col>
+        </Row>
+      </div>
+    );
+  } else {
+    return (
+      <Row style={{ textAlign: "center", marginTop: "10%" }}>
+        <h2>
+          Only Subscribed User Could Use Assignment Function,{" "}
+          <a href="/login">Subscribe Now!</a>
+        </h2>
       </Row>
-    </div>
-  );
+    );
+  }
 };
 
 question.getInitialProps = async ({ req }) => {
