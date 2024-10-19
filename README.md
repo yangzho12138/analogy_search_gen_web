@@ -11,6 +11,8 @@ Analego is being developed mainly by a team of CS researchers and developers at 
 *ChengXiang Zhai:* Project Supervisor & Bhavya's Thesis Advisor -- He has been instrumental in shaping the vision of Analego 
 
 *Past Contributors:* Aditi Mallavarapu (Researcher, NC State), Jinjun Xiong (Project Supervisor, University at Buffalo)  
+# Structure of the project
+![TIMAN drawio](https://github.com/user-attachments/assets/e06983cc-6f5e-4f76-8a7e-13d2248bc45e)
 
 # Installation instructions
 Create a virtual environment in /auth, /gen and /search folders  
@@ -53,4 +55,3 @@ MySQL db:
 Auth: Go to auth folder and run `./script.sh`  
 Gen: Go to gen folder and run `./script.sh`   
 Search: Go to search folder and run `./script.sh`    
-
