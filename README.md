@@ -52,6 +52,23 @@ MySQL db:
       `CREATE DATABASE mydb;`  
       `SHOW DATABASES;`  
 
-Auth: Go to auth folder and run `./script.sh`  
-Gen: Go to gen folder and run `./script.sh`   
-Search: Go to search folder and run `./script.sh`    
+MongoDB:
+
+docker run -d   --name anamongodb -p 27018:27018   --restart unless-stopped mongo:latest mongod  --replSet rs0 --port 27018
+docker exec -it anamongodb mongosh --port 27018
+
+rs.initiate({
+ _id: "rs0",
+ members: [
+   {_id: 0, host: "localhost:27018"},
+ ]
+})
+
+Auth: Go to auth folder and run `source auth/bin/activate`, `python manage.py migrate`, then `nohup sh ./script.sh &`  
+Gen: Go to gen folder and run `source gen/bin/activate`, `nohup sh ./script.sh &`   
+Search: Go to search folder and run `source search/bin/activate`, `nohup sh ./script.sh &`    
+Assignment: Go to assignment folder and run `source assign/bin/activate`, `nohup sh ./script.sh &`   
+Web:
+`screen -R analego`
+`cd web`
+`npm run start`
