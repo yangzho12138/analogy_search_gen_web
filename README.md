@@ -54,15 +54,18 @@ MySQL db:
 
 MongoDB:
 
-docker run -d   --name anamongodb -p 27018:27018   --restart unless-stopped mongo:latest mongod  --replSet rs0 --port 27018
-docker exec -it anamongodb mongosh --port 27018
+`docker run -d   --name anamongodb -p 27018:27018   --restart unless-stopped mongo:latest mongod  --replSet rs0 --port 27018`
 
+`docker exec -it anamongodb mongosh --port 27018`
+Within the docker shell, run the following then exit
+`
 rs.initiate({
  _id: "rs0",
  members: [
    {_id: 0, host: "localhost:27018"},
  ]
 })
+`
 
 Auth: Go to auth folder and run `source auth/bin/activate`, `python manage.py migrate`, then `nohup sh ./script.sh &`  
 Gen: Go to gen folder and run `source gen/bin/activate`, `nohup sh ./script.sh &`   
